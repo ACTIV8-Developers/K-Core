@@ -35,6 +35,20 @@ abstract class Controller extends ContainerAware
     }
 
     /**
+    * Get post value from request object.
+    *
+    * @param string
+    * @return mixed
+    */
+    protected function post($key = null)
+    {
+        if ($key !== null) {
+            return $this->app['Request']->post->all();
+        }
+        return $this->app['Request']->post->get($key);
+    }
+
+    /**
     * Render output for display.
     *
     * @param string
