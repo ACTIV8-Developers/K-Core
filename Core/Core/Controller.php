@@ -10,31 +10,6 @@ namespace Core\Core;
 abstract class Controller extends ContainerAware
 {
     /**
-    * Set value in container.
-    *
-    * @param string
-    * @param mixed
-    */
-    protected function set($key, $value)
-    {
-        $this->app[$key] = $value;
-    }
-
-    /**
-    * Get value from container.
-    *
-    * @param string
-    * @return mixed
-    */
-    protected function get($key)
-    {
-        if (isset($this->app[$key])) {
-            return $this->app[$key];
-        }
-        return null;
-    }
-
-    /**
     * Get post value from request object.
     *
     * @param string
@@ -42,7 +17,7 @@ abstract class Controller extends ContainerAware
     */
     protected function post($key = null)
     {
-        if ($key !== null) {
+        if ($key === null) {
             return $this->app['Request']->post->all();
         }
         return $this->app['Request']->post->get($key);

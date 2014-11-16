@@ -9,16 +9,41 @@ namespace Core\Core;
 */
 abstract class ContainerAware
 {
-	/**
-	* @var object Core
-	*/
-	protected $app = null;
+    /**
+    * Set value in container.
+    *
+    * @param string
+    * @param mixed
+    */
+    protected function set($key, $value)
+    {
+        $this->app[$key] = $value;
+    }
 
-	/**
-	* @param object Core
-	*/
-	public function setContainer(\Pimple\Container $app)
-	{
-		$this->app = $app;
+    /**
+    * Get value from container.
+    *
+    * @param string
+    * @return mixed
+    */
+    protected function get($key)
+    {
+        if (isset($this->app[$key])) {
+            return $this->app[$key];
+        }
+        return null;
+    }
+
+    /**
+    * @param string
+    * @return mixed
+    */
+	public function __get($var) {
+		if ($var === 'app') {
+			$this->app = \Core\Core\Core::getInstance();
+			return $this->app;
+		} else {
+			return $this->get($var);
+		}
 	}
 }

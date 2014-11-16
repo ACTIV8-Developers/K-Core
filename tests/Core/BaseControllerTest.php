@@ -14,11 +14,10 @@ class BaseControllerTest extends PHPUnit_Framework_TestCase
 		$_SERVER['REQUEST_URI'] = '';
 
 		$con = new MockController();
-		$con->setContainer(\Core\Core\Core::getInstance());
 
-		$this->assertSame(\Core\Core\Core::getInstance()['Request'], $con->getRequest());
-		$this->assertSame(\Core\Core\Core::getInstance()['Response'], $con->getResponse());
-		$this->assertSame(\Core\Core\Core::getInstance()['Session'], $con->getSession());
+		$this->assertSame(\Core\Core\Core::getInstance()['request'], $con->getRequest());
+		$this->assertSame(\Core\Core\Core::getInstance()['response'], $con->getResponse());
+		$this->assertSame(\Core\Core\Core::getInstance()['session'], $con->getSession());
 	}
 
 	public function testRender()
@@ -59,17 +58,17 @@ class MockController extends Controller
 {
 	public function getSession()
 	{
-		return $this->get('Session');
+		return $this->get('session');
 	}
 
 	public function getRequest()
 	{
-		return $this->app['Request'];
+		return $this->app['request'];
 	}
 
 	public function getResponse()
 	{
-		return $this->get('Response');
+		return $this->get('response');
 	}
 
     public function bufferIt($view, $data = [])

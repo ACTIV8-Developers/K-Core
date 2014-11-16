@@ -41,7 +41,8 @@ class Core extends \Pimple\Container
         'before.routing' => null, 
         'after.routing'  => null,
         'after.system'   => null,
-        'not.found'      => null
+        'not.found'      => null,
+        'internal.error' => null
     ];
 
     /**
@@ -76,14 +77,14 @@ class Core extends \Pimple\Container
         date_default_timezone_set($this['config']['timezone']);
 
         // Create request class closure.
-        $this['Request'] = function() {
+        $this['request'] = function() {
             return new Request($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
         }; 
 
         // Create response class closure.
-        $this['Response'] = function($c) {
+        $this['response'] = function($c) {
             $response = new Response();
-            $response->setProtocolVersion($c['Request']->getProtocolVersion());
+            $response->setProtocolVersion($c['request']->getProtocolVersion());
             return $response;
         };
 
@@ -109,7 +110,7 @@ class Core extends \Pimple\Container
         }
 
         // Create session class closure.
-        $this['Session'] = function($c) {
+        $this['session'] = function($c) {
             // Select session handler.
             $handler = null;
             switch ($c['config']['sessionHandler']) {
@@ -151,7 +152,7 @@ class Core extends \Pimple\Container
 
             // Load and start session if enabled in configuration.
             if ($this['config']['sessionStart']) {
-                $this['Session']->start();
+                $this['session']->start();
             }
 
             // Execute routing.
@@ -159,11 +160,13 @@ class Core extends \Pimple\Container
         } catch (NotFoundException $e) {
             $this->notFound();
         } catch (\Exception $e) {
-            $this['Response']->setStatusCode(500);
+            $this['response']->setStatusCode(500);
             if ($this['config']['debug'] === true) {
-                $this['Response']->setBody($this->printException($e));
+                $this['response']->setBody($this->printException($e));
             }
-
+            if (isset($this->hooks['internal.error'])) {
+                call_user_func($this->hooks['internal.error'], $this);
+            }
         }
 
         // Post routing/controller hook.
@@ -172,7 +175,7 @@ class Core extends \Pimple\Container
         }
 
         // Send final response.
-        $this['Response']->send();
+        $this['response']->send();
 
         // Display benchmark time if enabled.
         if ($this['config']['benchmark']) {
@@ -202,11 +205,11 @@ class Core extends \Pimple\Container
         }
 
         // Route requests
-        $matchedRoute = $route->run($this['Request']->getUri(), $this['Request']->getRequestMethod());
+        $matchedRoute = $route->run($this['request']->getUri(), $this['request']->getrequestMethod());
         
         // Execute route if found.
         if (false !== $matchedRoute) {
-            $this['Request']->get->replace($matchedRoute->params);
+            $this['request']->get->replace($matchedRoute->params);
             $matchedRoute->params = array_values($matchedRoute->params);
 
             // Get controller name with namespace prefix.
@@ -214,43 +217,10 @@ class Core extends \Pimple\Container
 
             // Create instance of controller to be called.
             $controller = new $matchedRoute->callable[0];
-            
-            // Inject container into controller.
-            $controller->setContainer(self::$instance);
 
-            // Try to resolve controller dependecies if enabled.
-            if ($this['config']['injectDependecies'] === true) {
-                // Get controller methods using reflection.
-                $classMethod = new \ReflectionMethod($matchedRoute->callable[0], $matchedRoute->callable[1]);
+            // Call controller method.
+            call_user_func_array([$controller, $matchedRoute->callable[1]], $matchedRoute->params);
 
-                $methods = $classMethod->getParameters();
-
-                $params = [];
-
-                $num = 0;
-
-                foreach ($methods as $method) {
-                    $export = \ReflectionParameter::export(
-                       [
-                          $method->getDeclaringClass()->name,
-                          $method->getDeclaringFunction()->name
-                       ], 
-                       $method->name, 
-                       true
-                    );
-
-                    $type = preg_replace('/.*?(\w+)\s+\$'.$method->name.'.*/', '\\1', $export);
-
-                    if (isset($this[$type])) {
-                        $params[] = $this[$type];
-                    } else {
-                        $params[] = $matchedRoute->params[$num++];
-                    }
-                }
-                call_user_func_array([$controller, $matchedRoute->callable[1]], $params);
-            } else {
-                call_user_func_array([$controller, $matchedRoute->callable[1]], $matchedRoute->params);
-            }
         } else {
             // If page not found display 404 error.
             $this->notFound();
@@ -265,8 +235,8 @@ class Core extends \Pimple\Container
         if (isset($this->hooks['not.found'])) {
             call_user_func($this->hooks['not.found'], $this);
         } else {
-            $this['Response']->setStatusCode(404);
-            $this['Response']->setBody('<h1>404 Not Found</h1>The page that you have requested could not be found.');
+            $this['response']->setStatusCode(404);
+            $this['response']->setBody('<h1>404 Not Found</h1>The page that you have requested could not be found.');
         }
     }
 
