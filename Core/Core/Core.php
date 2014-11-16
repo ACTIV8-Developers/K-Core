@@ -248,7 +248,7 @@ class Core extends \Pimple\Container
     */
     protected function printException($e)
     {
-        $out = '';
+        $out = '<div style="color:red"><hr>';
         $out .= '<h2>Error: '.$e->getMessage().'</h2>';
         $out .= '<h3>#Line: '.$e->getLine().'</h3>';
         $out .= '<h3>#File: '.$e->getFile().'</h3>';
@@ -261,7 +261,7 @@ class Core extends \Pimple\Container
                     $out .= '<li>'.$msg.'</li>';
                 }
             }
-            $out .= '</ul>';
+            $out .= '</ul><hr></div>';
         }
         
         return $out;

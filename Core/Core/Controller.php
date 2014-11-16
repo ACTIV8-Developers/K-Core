@@ -18,9 +18,9 @@ abstract class Controller extends ContainerAware
     protected function post($key = null)
     {
         if ($key === null) {
-            return $this->app['Request']->post->all();
+            return $this->app['request']->post->all();
         }
-        return $this->app['Request']->post->get($key);
+        return $this->app['request']->post->get($key);
     }
 
     /**
@@ -41,7 +41,7 @@ abstract class Controller extends ContainerAware
         include APPVIEW.$view.'.php';
 
         // Append to output body.
-        $this->app['Response']->writeBody(ob_get_contents());
+        $this->app['response']->writeBody(ob_get_contents());
         ob_end_clean();
     }
 
