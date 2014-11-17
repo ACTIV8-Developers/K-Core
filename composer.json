@@ -1,6 +1,8 @@
 {
     "name": "kajna/core",
     "description": "Simple and Lightweight yet powerfull MVC framework",
+    "keywords": ["framework", "k"],
+    "homepage": "http://kframework.info/",
     "authors": [
         {
         "name": "Milos Kajnaco",
@@ -14,6 +16,7 @@
         "phpunit/php-timer": "dev-master",
         "filp/whoops": "1.2.*@dev"
     },
+    "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
             "Core\\": "Core/"
