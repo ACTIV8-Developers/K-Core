@@ -205,7 +205,7 @@ class Core extends \Pimple\Container
         }
 
         // Route requests
-        $matchedRoute = $route->run($this['request']->getUri(), $this['request']->getrequestMethod());
+        $matchedRoute = $route->run($this['request']->getUri(), $this['request']->getMethod());
         
         // Execute route if found.
         if (false !== $matchedRoute) {

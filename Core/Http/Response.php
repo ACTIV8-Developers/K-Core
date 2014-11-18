@@ -89,14 +89,14 @@ class Response
      *
      * @var object HttpBag
      */
-    protected $headers;
+    public $headers;
 
     /**
     * Array of cookies to be sent.
     *
     * @var object HttpBag
     */
-    protected $cookies = [];
+    public $cookies = [];
 
     /**
     * HTTP response body.
