@@ -41,7 +41,7 @@ abstract class Controller extends ContainerAware
         include APPVIEW.$view.'.php';
 
         // Append to output body.
-        $this->app['response']->writeBody(ob_get_contents());
+        $this->app['response']->addContent(ob_get_contents());
         ob_end_clean();
     }
 
@@ -67,6 +67,19 @@ abstract class Controller extends ContainerAware
         $buffer = ob_get_contents();
         ob_end_clean();
         return $buffer;
+    }
+
+    /**
+     * Set response type to JSON.
+     *
+     * @param array
+     * @param int
+     * @param int
+     */
+    public function json($value, $options = 0)
+    {
+        $this->app['response']->headers->set('Content-Type', 'application/json');
+        $this->app['response']->setContent(json_encode($value, $options));
     }
 
     /**

@@ -30,7 +30,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($request1->getUri(), 'foo/bar/2');
 
 		// Test method
-		$this->assertEquals($request1->getRequestMethod(), 'PUT');
+		$this->assertEquals($request1->getMethod(), 'PUT');
 
 		// Test get protocol
 		$this->assertEquals($request1->getProtocolVersion(), 'HTTP/1.1');
@@ -58,7 +58,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($request2->getUri(), 'foo/bar');
 
 		// Test method
-		$this->assertEquals($request2->getRequestMethod(), 'POST');
+		$this->assertEquals($request2->getMethod(), 'POST');
 
 		// Test isPost ?
 		$this->assertTrue($request2->isPost());

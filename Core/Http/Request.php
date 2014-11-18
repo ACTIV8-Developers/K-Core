@@ -23,42 +23,43 @@ class Request
     /**
     * Server and execution environment parameters (parsed from $_SERVER).
     *
-    * @var object \Bag
+    * @var object HttpBag
     */
     public $server;
 
     /**
     * Request headers (parsed from the $_SERVER).
     *
-    * @var object \Bag
+    * @var object HttpBag
+    * @see http://en.wikipedia.org/wiki/List_of_HTTP_header_fields
     */
     public $headers;
 
     /**
     * Request parameters (parsed from the $_GET).
     *
-    * @var object \Bag
+    * @var object HttpBag
     */
     public $get;
 
     /**
     * Request parameters (parsed from the $_POST).
     *
-    * @var object \Bag
+    * @var object HttpBag
     */
     public $post;
 
     /**
     * Request cookies (parsed from the $_COOKIE).
     *
-    * @var object \Bag
+    * @var object HttpBag
     */
     public $cookies;
 
     /**
     * Request files (parsed from the $_FILES).
     *
-    * @var object \Bag
+    * @var object HttpBag
     */
     public $files;
 
@@ -204,7 +205,7 @@ class Request
     *
     * @return string
     */
-    public function getRequestMethod()
+    public function getMethod()
     {
         return $this->method;
     }

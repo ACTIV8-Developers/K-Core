@@ -15,7 +15,8 @@ class Response
      /**
      * HTTP response codes and messages.
      *
-     * @var array 
+     * @var array
+     * @see http://en.wikipedia.org/wiki/List_of_HTTP_status_codes 
      */
     protected static $messages = [
         // Informational 1xx.
@@ -86,44 +87,30 @@ class Response
     /**
      * List of HTTP headers to be sent.
      *
-     * @var array
+     * @var object HttpBag
      */
-    protected $headers = [];
+    protected $headers;
+
+    /**
+    * Array of cookies to be sent.
+    *
+    * @var object HttpBag
+    */
+    protected $cookies = [];
 
     /**
     * HTTP response body.
     *
     * @var string 
     */
-    protected $body = '';
+    protected $content = '';
 
     /**
-    * Array of cookies to be sent.
-    *
-    * @var array
+    * Class construct
     */
-    protected $cookies = [];
-
-    /**
-    * Add or replace header.
-    *
-    * @var string
-    * @var string
-    * @var bool
-    */
-    public function setHeader($header, $value, $replace = true)
+    public function __construct()
     {
-        $this->headers[] = [$header.': '.$value, $replace];
-    }
-
-    /**
-    * Return array of headers.
-    *
-    * @return array
-    */
-    public function getHeaders()
-    {
-        return $this->headers;
+        $this->headers = new HttpBag();
     }
 
     /**
@@ -131,9 +118,9 @@ class Response
     *
     * @var string
     */
-    public function setBody($body)
+    public function setContent($body)
     {
-        $this->body = $body;
+        $this->content = $body;
     }
 
     /**
@@ -141,9 +128,9 @@ class Response
     *
     * @var string
     */
-    public function writeBody($part)
+    public function addContent($part)
     {
-        $this->body .= $part;
+        $this->content .= $part;
     }
 
     /**
@@ -151,9 +138,9 @@ class Response
     *
     * @return string
     */
-    public function getBody()
+    public function getContent()
     {
-        return $this->body;
+        return $this->content;
     }
 
     /**
@@ -238,19 +225,6 @@ class Response
     }
 
     /**
-     * Set response type to JSON.
-     *
-     * @param array
-     * @param int
-     * @param int
-     */
-    public function json($value, $options = 0)
-    {
-        $this->headers[] = ['Content-Type: application/json', true];
-        $this->body = json_encode($value, $options);
-    }
-
-    /**
     * Send final headers, cookies and content.
     */
     public function send()
@@ -262,8 +236,8 @@ class Response
             header(sprintf('%s %s', $this->protocolVersion, self::$messages[$this->statusCode]), true, $this->statusCode);
             
             // Send headers.
-            foreach ($this->headers as $header) {
-                header($header[0], $header[1], $this->statusCode);
+            foreach ($this->headers as $header => $value) {
+                header(sprintf('%s: %s', $header, $value), true, $this->statusCode);
             }
 
             // Send cookies.
@@ -273,7 +247,7 @@ class Response
             }
 
             // Send body.
-            echo $this->body;
+            echo $this->content;
         }
     }
 }
