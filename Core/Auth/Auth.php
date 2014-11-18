@@ -141,7 +141,7 @@ class Auth
 
 		if ($this->hasher->CheckPassword($password, $result['user_pass'])) {
 			// Clear previous session
-            Core::getInstance()['Session']->regenerate();
+            Core::getInstance()['session']->regenerate();
 			// Write new data to session
             $_SESSION['user']['id'] = $result['user_id'];
 			$_SESSION['user']['logged_'.$this->table] = true;

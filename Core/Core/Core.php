@@ -160,12 +160,13 @@ class Core extends \Pimple\Container
         } catch (NotFoundException $e) {
             $this->notFound();
         } catch (\Exception $e) {
-            $this['response']->setStatusCode(500);
-            if ($this['config']['debug'] === true) {
-                $this['response']->setBody($this->printException($e));
-            }
             if (isset($this->hooks['internal.error'])) {
                 call_user_func($this->hooks['internal.error'], $this);
+            } else {
+                $this['response']->setStatusCode(500);                
+                if ($this['config']['debug'] === true) {
+                    $this['response']->setContent($this->printException($e));
+                }
             }
         }
 
@@ -236,7 +237,7 @@ class Core extends \Pimple\Container
             call_user_func($this->hooks['not.found'], $this);
         } else {
             $this['response']->setStatusCode(404);
-            $this['response']->setBody('<h1>404 Not Found</h1>The page that you have requested could not be found.');
+            $this['response']->setContent('<h1>404 Not Found</h1>The page that you have requested could not be found.');
         }
     }
 
@@ -248,7 +249,7 @@ class Core extends \Pimple\Container
     */
     protected function printException($e)
     {
-        $out = '<div style="color:red"><hr>';
+        $out = '<pre><div style="color:red">';
         $out .= '<h2>Error: '.$e->getMessage().'</h2>';
         $out .= '<h3>#Line: '.$e->getLine().'</h3>';
         $out .= '<h3>#File: '.$e->getFile().'</h3>';
@@ -261,10 +262,10 @@ class Core extends \Pimple\Container
                     $out .= '<li>'.$msg.'</li>';
                 }
             }
-            $out .= '</ul><hr></div>';
+            $out .= '</ul>';
         }
         
-        return $out;
+        return '</div></pre>'.$out;
     }
 
     /**
