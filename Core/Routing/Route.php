@@ -17,12 +17,18 @@ class Route
 	public $url = '';
 
     /**
-    * The route callable 
-    * (name of controller and function to execute e.g ['ExampleController', 'index']).
+    * The route controller.
     *
-	* @var array
+	* @var string
 	*/
-    public $callable = [];
+    public $controller = '';
+
+    /**
+    * The route method.
+    *
+    * @var string
+    */
+    public $method = '';
 
     /**
     * List of parameters to be passed if URL is matched.
@@ -76,7 +82,8 @@ class Route
 	public function __construct($url, $callable, $requestMethod = 'GET')
 	{
         $this->url = $url;
-        $this->callable = $callable;
+        $this->controller = $callable[0];
+        $this->method = $callable[1];
         $this->methods[] = $requestMethod;
 	}
 

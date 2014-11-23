@@ -163,17 +163,9 @@ class Core extends \Pimple\Container
             // Execute routing.
             $this->routeRequest();
         } catch (NotFoundException $e) {
-            $this->notFound();
+            $this->notFound($e);
         } catch (\Exception $e) {
-            if (isset($this->hooks['internal.error'])) {
-                $this['error'] = $e;
-                call_user_func($this->hooks['internal.error'], $this);
-            } else {
-                $this['response']->setStatusCode(500);                
-                if ($this['config']['debug'] === true) {
-                    $this['response']->setContent($this->printException($e));
-                }
-            }
+            $this->internalError();
         }
 
         // Post routing/controller hook.
@@ -216,17 +208,14 @@ class Core extends \Pimple\Container
         
         // Execute route if found.
         if (false !== $matchedRoute) {
+            // Write passed params to GET array.
             $this['request']->get->replace($matchedRoute->params);
-            $matchedRoute->params = array_values($matchedRoute->params);
 
             // Get controller name with namespace prefix.
-            $matchedRoute->callable[0] = CONTROLERS.'\\'.$matchedRoute->callable[0];
-
-            // Create instance of controller to be called.
-            $controller = new $matchedRoute->callable[0];
+            $matchedRoute->controller = CONTROLERS.'\\'.$matchedRoute->controller;
 
             // Call controller method.
-            call_user_func_array([$controller, $matchedRoute->callable[1]], $matchedRoute->params);
+            call_user_func_array([new $matchedRoute->controller, $matchedRoute->method], $matchedRoute->params);
         } else {
             // If page not found display 404 error.
             $this->notFound();
@@ -235,14 +224,35 @@ class Core extends \Pimple\Container
 
     /**
     * Default handler for 404 error.
+    *
+    * @var object \NotFoundException
     */
-    protected function notFound()
+    protected function notFound(NotFoundException $e)
     {
         if (isset($this->hooks['not.found'])) {
+            $this['error'] = $e;
             call_user_func($this->hooks['not.found'], $this);
         } else {
             $this['response']->setStatusCode(404);
             $this['response']->setContent('<h1>404 Not Found</h1>The page that you have requested could not be found.');
+        }
+    }
+
+    /**
+    * Handle error.
+    *
+    * @var object \Exception
+    */
+    protected function internalError(\Exception $e)
+    {
+        if (isset($this->hooks['internal.error'])) {
+            $this['error'] = $e;
+            call_user_func($this->hooks['internal.error'], $this);
+        } else {
+            $this['response']->setStatusCode(500);                
+            if ($this['config']['debug'] === true) {
+                $this['response']->setContent($this->printException($e));
+            }
         }
     }
 

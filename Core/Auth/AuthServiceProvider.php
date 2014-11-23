@@ -1,6 +1,7 @@
 <?php
 namespace Core\Auth;
 
+use Core\Core\ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -11,6 +12,6 @@ class AuthServiceProvider extends ServiceProvider
 	{
 		$this->app['auth'] = function() {
 			return new Auth();
-		}
+		};
 	}
 }
