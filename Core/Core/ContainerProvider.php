@@ -2,12 +2,11 @@
 namespace Core\Core;
 
 /**
-* Abstract class ContainerAware. Extend to gain acess to app core.
-* Every called controller should be instance of ContainerAware.
+* Abstract class ContainerProvider. Extend to gain acess to core container.
 *
 * @author Milos Kajnaco <miloskajnaco@gmail.com>
 */
-abstract class ContainerAware
+abstract class ContainerProvider
 {
     /**
     * Set value in container.

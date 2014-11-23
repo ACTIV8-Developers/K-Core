@@ -22,7 +22,7 @@ class Core extends \Pimple\Container
     *
     * @var string
     */
-    const VERSION = '1.3';
+    const VERSION = '1.37b';
 
     /**
     * Singleton instance of Core.
@@ -61,7 +61,7 @@ class Core extends \Pimple\Container
 
         // Set error reporting.
         if ($this['config']['debug'] === true) {
-            ini_set("display_errors", 1);
+            ini_set('display_errors', 1);
             error_reporting(E_ALL);
             if ($this['config']['whoops'] === true) {
                 $whoops = new \Whoops\Run();
@@ -123,13 +123,12 @@ class Core extends \Pimple\Container
                     $handler = new \Core\Session\Handlers\DatabaseSessionHandler();
                     break;
                 case 'redis':
-                    try {
-                        $db = new \Predis\Client($c['config']['redis']);
-                        $handler = new \Core\Session\Handlers\RedisSessionHandler($db);
+                    try {                       
+                        $handler = new \Core\Session\Handlers\RedisSessionHandler($c['redis']);
                         $handler->prefix = $c['config']['session']['name'];
                         $handler->expire = $c['config']['session']['expiration'];
                     } catch(\Exception $e) {
-                        throw new \InvalidArgumentException('Error! Cannot connect to Redis server. '.$e->getMessage());
+                        throw new \InvalidArgumentException('Error!'.$e->getMessage());
                     }
                     break;
             }
@@ -145,9 +144,15 @@ class Core extends \Pimple\Container
     public function run()
     {
         try {    
-            // Pre routing/controller hook.
+            // Pre system hook.
             if (isset($this->hooks['before.system'])) {
                 call_user_func($this->hooks['before.system'], $this);
+            }
+
+            // Register service providers.
+            foreach ($this['config']['services'] as $service) {
+                $s = new $service($this);
+                $s->register();
             }
 
             // Load and start session if enabled in configuration.
@@ -161,6 +166,7 @@ class Core extends \Pimple\Container
             $this->notFound();
         } catch (\Exception $e) {
             if (isset($this->hooks['internal.error'])) {
+                $this['error'] = $e;
                 call_user_func($this->hooks['internal.error'], $this);
             } else {
                 $this['response']->setStatusCode(500);                
@@ -178,14 +184,14 @@ class Core extends \Pimple\Container
         // Send final response.
         $this['response']->send();
 
-        // Display benchmark time if enabled.
-        if ($this['config']['benchmark']) {
-            print \PHP_Timer::resourceUsage();
-        }
-
         // Post response hook.
         if (isset($this->hooks['after.system'])) {
             call_user_func($this->hooks['after.system'], $this);
+        }
+
+        // Display benchmark time if enabled.
+        if ($this['config']['benchmark']) {
+            print '<!--'.\PHP_Timer::resourceUsage().'-->';
         }
     }  
 
@@ -221,7 +227,6 @@ class Core extends \Pimple\Container
 
             // Call controller method.
             call_user_func_array([$controller, $matchedRoute->callable[1]], $matchedRoute->params);
-
         } else {
             // If page not found display 404 error.
             $this->notFound();

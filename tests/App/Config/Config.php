@@ -45,7 +45,7 @@ return [
 | All parameters are optional and default ones will be used if none is passed.
 */
 'session' => [
-	// Session Cookie Name
+    // Session Cookie Name
     'name' => 'K',
     // Connection name (needed only if handler is database).
     'connName' => 'default',
@@ -79,15 +79,17 @@ return [
 'key' => 'super_secret',
 /*
 |--------------------------------------------------------------------------
-| Inject dependecies
-|--------------------------------------------------------------------------
-| If enabled application will try to inject hinted classes into controllers.
-*/
-'injectDependecies' => true,
-/*
-|--------------------------------------------------------------------------
 | Display benchmarking.
 |--------------------------------------------------------------------------
 */
-'benchmark' => true
+'benchmark' => true,
+/*
+|--------------------------------------------------------------------------
+| Service providers.
+|--------------------------------------------------------------------------
+*/
+'services' => [
+    '\Core\Auth\AuthServiceProvider',
+    '\Core\Redis\RedisServiceProvider'
+    ]
 ];

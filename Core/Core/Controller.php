@@ -7,7 +7,7 @@ namespace Core\Core;
 *
 * @author Milos Kajnaco <miloskajnaco@gmail.com>
 */
-abstract class Controller extends ContainerAware
+abstract class Controller extends ContainerProvider
 {
     /**
     * Get post value from request object.

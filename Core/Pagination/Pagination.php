@@ -14,6 +14,7 @@ class Pagination
     * @var int
     */
     protected $perPage = 12;
+    
     /**
     * Total number of rows.
     * @var int
@@ -53,6 +54,7 @@ class Pagination
     
     /**
     * Class constructor
+    *
     * @param array
     */
     public function __construct(array $params = [])
@@ -69,12 +71,23 @@ class Pagination
     }
 
     /**
+    * Shortcut static function.
+    *
+    * @param array
+    */
+    public static function make($config)
+    {
+        return new Pagination($config)->createLinks();
+    }
+
+    /**
     * Generate the pagination links.
+    *
     * @return string (HTML of pagination menu)
     */
     public function createLinks()
     {
-        $r = '';//variable to hold result
+        $r = '';// Variable to hold result
         // Calculate the total number of pages
         $num_pages = ceil($this->totalRows / $this->perPage);
 
@@ -103,18 +116,18 @@ class Pagination
             }
         }
 
-        //create links according to parameters
-        for ($i = $start;$i < $end;++$i) {//create links tags
-            $offset = $i * $this->perPage;//set offset to pass to jquery function
-            if ($offset != $this->curOffset) $class = ''; else $class=' active';//set current link active
-            //add link to result variable
+        // Create links according to parameters
+        for ($i = $start;$i < $end;++$i) {// Create links tags
+            $offset = $i * $this->perPage;// Set offset to pass to jquery function
+            if ($offset != $this->curOffset) $class = ''; else $class=' active';// Set current link active
+            // Add link to result variable
             $r.='<li class="'.$this->liClass.$class.'" id="'.($i+1).'">
             <a href="'.$this->baseUrl.'/'.($i*$this->perPage).'/'.$this->perPage.$this->extraParams.'">'.($i+1).'</a></li>';
         }
 
         $r.='<li class="'.$this->liClass.'" id="'.$num_pages.'"><a href="'.$this->baseUrl.'/'.(($num_pages-1)*$this->perPage).'/'.$this->perPage.$this->extraParams.'">»</a></li>';//set go to last tag
-        $r.='</div><ul>';//set closing tags
+        $r.='</div><ul>';// Set closing tags
 
-        return $r;//return final result
+        return $r;// Return final result
     }
 }

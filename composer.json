@@ -16,6 +16,16 @@
         "phpunit/php-timer": "dev-master",
         "filp/whoops": "1.2.*@dev"
     },
+    "suggest": {
+        "predis/predis": "Redis client",
+        "monolog/monolog": "Allows more advanced logging of the application flow",
+        "swiftmailer/swiftmailer": "Great mailer library",
+        "codeguy/upload": "Handle file uploads with extensible validation and storage strategies",
+        "gregwar/image": "Image handling",
+        "nesbot/carbon": "A simple API extension for DateTime.",
+        "patchwork/utf8": "Portable and performant UTF-8, Unicode and Grapheme Clusters for PHP",
+        "tecnick.com/tcpdf": "PDF creation library"
+    },
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
