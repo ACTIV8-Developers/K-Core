@@ -79,7 +79,7 @@ class Route
     * @param array
 	* @param string
 	*/
-	public function __construct($url, $callable, $requestMethod = 'GET')
+	public function __construct($url, array $callable, $requestMethod = 'GET')
 	{
         $this->url = $url;
         $this->controller = $callable[0];

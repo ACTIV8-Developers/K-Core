@@ -165,7 +165,7 @@ class Core extends \Pimple\Container
         } catch (NotFoundException $e) {
             $this->notFound($e);
         } catch (\Exception $e) {
-            $this->internalError();
+            $this->internalError($e);
         }
 
         // Post routing/controller hook.

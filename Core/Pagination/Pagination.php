@@ -77,7 +77,8 @@ class Pagination
     */
     public static function make($config)
     {
-        return new Pagination($config)->createLinks();
+        $pagi = new Pagination($config);
+        return $pagi->createLinks();
     }
 
     /**
