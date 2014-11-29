@@ -45,12 +45,7 @@ class Auth
      * @param object \Core\Session\Session
 	 */
 	public function __construct(AbstractDatabase $db = null, Session $sess)
-	{
-		// Take parameters from passed array.
-        foreach ($params as $key => $val) {
-            $this->$key = $val;
-        }
-		
+	{		
 		// Set database connection link.
         $this->conn = $db->getConnection();
 
@@ -163,8 +158,11 @@ class Auth
      * @param string
      * @return bool
      */
-	public function createTable($name, $additional)
+	public function createTable($name = null, $additional = null)
 	{
+		if ($name === null) {
+			$name = $this->table;
+		}
 		$stmt = $this->conn->prepare("CREATE TABLE $name (
 			  user_id int(10) unsigned NOT NULL auto_increment,
 			  user_name varchar(255) NOT NULL default '',

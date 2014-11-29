@@ -6,7 +6,7 @@ namespace Core\Core;
 * 
 * @author Milos Kajnaco <miloskajnaco@gmail.com>
 */
-abstract class Model
+abstract class Model extends ContainerProvider
 {
     /**
     * Get database object.
@@ -17,5 +17,22 @@ abstract class Model
     protected function db($dbName = 'default')
     {
         return Core::getInstance()['db.'.$dbName ];
+    }
+
+    /**
+    * Get value from container.
+    *
+    * @param string
+    * @return mixed
+    */
+    protected function get($key)
+    {
+        if ($key === 'db') {
+            return $this->app['db.default'];
+        }
+        if (isset($this->app[$key])) {
+            return $this->app[$key];
+        }
+        return null;
     }
 }
