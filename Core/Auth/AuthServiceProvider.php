@@ -10,8 +10,8 @@ class AuthServiceProvider extends ServiceProvider
 	*/
 	public function register()
 	{
-		$this->app['auth'] = function() {
-			return new Auth();
+		$this->app['auth'] = function($c) {
+			return new Auth($c['db.default'], $c['session']);
 		};
 	}
 }

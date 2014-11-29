@@ -1,10 +1,11 @@
 <?php 
 namespace Core\Auth;
 
-use \Core\Core\Core;
+use Core\Session\Session;
+use Core\Database\AbstractDatabase;
 
 /**
-* Authentication class.
+* Authentication class (works with MySQL only).
 *
 * @author Milos Kajnaco <miloskajnaco@gmail.com>
 */
@@ -12,6 +13,7 @@ class Auth
 {
 	/**
 	 * User table.
+	 *
 	 * @var string
 	 */
 	protected $table = 'users';
@@ -19,47 +21,44 @@ class Auth
 	/**
 	 * Connections variable to use work with database,
 	 * loaded in class constructor.
+	 *
 	 * @var object \PDO
 	 */
 	protected $conn = null;
 
 	/**
-	 * PasswordHash object, used for
-	 * password hashing.
+	 * PasswordHash object, used for password hashing.
+	 *
 	 * @var object
 	 */
 	protected $hasher = null;
 
 	/**
+	* @var object \Core\Session\Session
+	*/
+	protected $session = null;
+
+	/**
 	 * Class constructor.
-	 * @param array
-     * @param object \PDO
+	 *
+     * @param object \Core\Database\AbstractDatabase
+     * @param object \Core\Session\Session
 	 */
-	public function __construct(array $params = [], \PDO $conn = null)
+	public function __construct(AbstractDatabase $db = null, Session $sess)
 	{
 		// Take parameters from passed array.
         foreach ($params as $key => $val) {
             $this->$key = $val;
         }
-
-		// Try to get database connection from core class if one is not passed.
-		if ($conn === null) {
-			$this->conn = $this->getDbConnection();
-		} else {
-			$this->conn = $conn;
-		}
 		
+		// Set database connection link.
+        $this->conn = $db->getConnection();
+
+        // Set session link.
+        $this->session = $sess;
+
 		// Create hasher tool
 		$this->hasher = new PasswordHash(8, FALSE);
-	}
-
-	/**
-	* Get PDO connection object.
-	* @return object \PDO
-	*/
-	protected function getDbConnection()
-	{
-		return Core::getInstance()['db.default']->getConnection();
 	}
 
 	/**
@@ -69,6 +68,7 @@ class Auth
 	public function setTable($table)
 	{
 		$this->table = $table;
+		return $this;
 	}
 
 	/**
@@ -82,18 +82,22 @@ class Auth
 		// Check if user exists
 		$stmt = $this->conn->prepare("SELECT user_name FROM $this->table WHERE user_name = :name");
 		$stmt->execute([':name'=>$username]);
-		$result = $stmt->fetchAll();
-		// If username exists return false
-		if (count($result)) {
+		$result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+		// If username already exists return false.
+		if (count($result) !== 0) {
 			return false;
 		}
+
 		// Hash password
 		$password = $this->hasher->HashPassword($password);
+
 		// Insert into database
 		$stmt = $this->conn->prepare("INSERT INTO $this->table (user_name, user_pass, user_date) VALUES (:name, :pass, now())");
 		$stmt->execute([':name'=>$username,':pass'=>$password]);
+
 		// Return sucess status
-		if ($stmt->rowCount()==1) {
+		if ($stmt->rowCount() === 1) {
 			return $this->conn->lastInsertId();;
 		}
 		return false;
@@ -107,8 +111,9 @@ class Auth
 	 */
 	public function changePassword($username, $newPass)
 	{
+		$password = $this->hasher->HashPassword($newPass);
         $stmt = $this->conn->prepare("UPDATE $this->table SET user_pass=:newPass WHERE user_name=:username");
-        return $stmt->execute([':newPass'=>$newPass, ':username'=>$username]);
+        return $stmt->execute([':newPass'=>$password, ':username'=>$username]);
 	}
 
 	/**
@@ -134,14 +139,16 @@ class Auth
 		$stmt = $this->conn->prepare("SELECT user_id, user_name, user_pass 
 			FROM $this->table WHERE user_name = :name LIMIT 1");
 		$stmt->execute([':name'=>$username]);
+		
 		$result = $stmt->fetch(\PDO::FETCH_ASSOC);
+
 		if ($result['user_name']!=$username) {
 			return false;
 		}
 
 		if ($this->hasher->CheckPassword($password, $result['user_pass'])) {
 			// Clear previous session
-            Core::getInstance()['session']->regenerate();
+            $this->session->regenerate();
 			// Write new data to session
             $_SESSION['user']['id'] = $result['user_id'];
 			$_SESSION['user']['logged_'.$this->table] = true;
@@ -150,12 +157,13 @@ class Auth
 		return false;
 	}
 
-        /*
-         * Create users table
-         * @param string
-         * @return bool
-         */
-	public function createTable($name)
+    /**
+     * Create users table.
+     *
+     * @param string
+     * @return bool
+     */
+	public function createTable($name, $additional)
 	{
 		$stmt = $this->conn->prepare("CREATE TABLE $name (
 			  user_id int(10) unsigned NOT NULL auto_increment,
@@ -164,7 +172,7 @@ class Auth
 			  user_date datetime NOT NULL default '0000-00-00 00:00:00',
 			  user_modified datetime NOT NULL default '0000-00-00 00:00:00',
 			  user_last_login datetime NULL default NULL,
-			  PRIMARY KEY  (user_id),
+			  PRIMARY KEY (user_id),
 			  UNIQUE KEY user_name (user_name)
 			) DEFAULT CHARSET=utf8");
 		return $stmt->execute();
@@ -172,6 +180,7 @@ class Auth
 
     /**
      * Get id of current logged user, return false if no user logged.
+     *
      * @return int|bool
      */
     public function getUserId()
@@ -186,6 +195,7 @@ class Auth
 	/**
 	 * Check if there is logged user,
 	 * returns false or logged user id.
+	 *
 	 * @return boolean|int
 	 */
 	public function isLogged()

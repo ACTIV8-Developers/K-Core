@@ -174,4 +174,20 @@ class Database extends AbstractDatabase
 	  	$stmt = $this->connection->prepare($sql);
 	  	return $stmt->execute();
 	}
+
+	/**
+	* Add index to table column.
+	*
+	* @param string
+	* @param string
+	* @param string
+	*/
+	public function addIndex($table, $column, $name)
+	{
+		$sql = sprintf('ALTER TABLE %s ADD INDEX %s(%)', $table, $name, $column);
+
+		// execute query
+	  	$stmt = $this->connection->prepare($sql);
+	  	return $stmt->execute(); 
+	}
 }
