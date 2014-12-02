@@ -16,7 +16,7 @@ abstract class Model extends ContainerProvider
     */
     protected function db($dbName = 'default')
     {
-        return Core::getInstance()['db.'.$dbName ];
+        return $this->app['db.'.$dbName];
     }
 
     /**
@@ -25,7 +25,7 @@ abstract class Model extends ContainerProvider
     * @param string
     * @return mixed
     */
-    protected function get($key)
+    protected function getValue($key)
     {
         if ($key === 'db') {
             return $this->app['db.default'];

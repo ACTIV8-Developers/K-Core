@@ -58,7 +58,7 @@ class MockController extends Controller
 {
 	public function getSession()
 	{
-		return $this->get('session');
+		return $this->getValue('session');
 	}
 
 	public function getRequest()
@@ -68,7 +68,7 @@ class MockController extends Controller
 
 	public function getResponse()
 	{
-		return $this->get('response');
+		return $this->getValue('response');
 	}
 
     public function bufferIt($view, $data = [])

@@ -227,7 +227,7 @@ class Core extends \Pimple\Container
     *
     * @var object \NotFoundException
     */
-    protected function notFound(NotFoundException $e)
+    protected function notFound(NotFoundException $e = null)
     {
         if (isset($this->hooks['not.found'])) {
             $this['error'] = $e;

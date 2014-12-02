@@ -10,7 +10,22 @@ namespace Core\Core;
 abstract class Controller extends ContainerProvider
 {
     /**
-    * Get post value from request object.
+    * Get GET value from request object.
+    *
+    * @param string
+    * @return mixed
+    */
+    protected function get($key = null)
+    {
+        if ($key === null) {
+            return $this->app['request']->get->all();
+        }
+        return $this->app['request']->get->get($key);
+    }
+
+
+    /**
+    * Get POST value from request object.
     *
     * @param string
     * @return mixed
@@ -100,18 +115,6 @@ abstract class Controller extends ContainerProvider
     protected function language($lang, $file = 'default')
     {
         return APP.'Languages/'.$lang.'/'.$file.'.php';
-    }
-
-    /**
-    * Load model.
-    *
-    * @param string
-    * @return object
-    */
-    protected function model($model)
-    {
-        $model = MODELS."\\".$model;
-        return new $model();
     }
 
     /**
