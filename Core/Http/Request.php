@@ -100,6 +100,9 @@ class Request
         } elseif (strpos($server['REQUEST_URI'], dirname($server['SCRIPT_NAME'])) === 0) {
             $server['REQUEST_URI'] = substr($server['REQUEST_URI'], strlen(dirname($server['SCRIPT_NAME'])));
         }
+        if(!empty($_SERVER['QUERY_STRING'])) {
+            $server['REQUEST_URI'] = str_replace('?'.$_SERVER['QUERY_STRING'], '', $server['REQUEST_URI']);
+        }
         $server['REQUEST_URI'] = trim($server['REQUEST_URI'], '/');
 
         // Get request method.

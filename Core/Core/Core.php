@@ -209,7 +209,7 @@ class Core extends \Pimple\Container
         // Execute route if found.
         if (false !== $matchedRoute) {
             // Write passed params to GET array.
-            $this['request']->get->replace($matchedRoute->params);
+            $this['request']->get->add($matchedRoute->params);
 
             // Get controller name with namespace prefix.
             $matchedRoute->controller = CONTROLERS.'\\'.$matchedRoute->controller;
