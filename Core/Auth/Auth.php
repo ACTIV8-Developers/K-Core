@@ -163,7 +163,7 @@ class Auth
 		if ($name === null) {
 			$name = $this->table;
 		}
-		$stmt = $this->conn->prepare("CREATE TABLE $name (
+		$stmt = $this->conn->prepare("CREATE TABLE IF NOT EXISTS $name (
 			  user_id int(10) unsigned NOT NULL auto_increment,
 			  user_name varchar(255) NOT NULL default '',
 			  user_pass varchar(60) NOT NULL default '',

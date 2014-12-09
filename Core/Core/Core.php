@@ -22,7 +22,7 @@ class Core extends \Pimple\Container
     *
     * @var string
     */
-    const VERSION = '1.37b';
+    const VERSION = '1.38b';
 
     /**
     * Singleton instance of Core.
