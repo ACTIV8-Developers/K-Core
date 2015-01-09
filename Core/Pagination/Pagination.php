@@ -11,18 +11,21 @@ class Pagination
 {
     /**
     * Number of products to display per page.
+    *
     * @var int
     */
     protected $perPage = 12;
     
     /**
     * Total number of rows.
+    *
     * @var int
     */
     protected $totalRows = 0; 
 
     /**
     * Current displaying offset.
+    *
     * @var int
     */
     protected $curOffset = 0;
@@ -30,24 +33,28 @@ class Pagination
     /**
     * Number of links to display at once.
     * NumLinks must be odd number in order to class function properly.
+    *
     * @var int
     */
     protected $numLinks = 9;
 
     /**
     * Class to add to <li> tag.
+    *
     * @var string
     */
     protected $liClass = 'pagi';
 
     /**
     * Base added to all links.
+    *
     * @var string
     */
     protected $baseUrl = '';
 
     /**
     * Added at end of every link.
+    *
     * @var string
     */
     protected $extraParams = '';
@@ -55,7 +62,7 @@ class Pagination
     /**
     * Class constructor
     *
-    * @param array
+    * @param array $params
     */
     public function __construct(array $params = [])
     {
@@ -71,9 +78,10 @@ class Pagination
     }
 
     /**
-    * Shortcut static function.
+    * Shortcut static function, makes new Pagination object
+    * and calls createLinks method.
     *
-    * @param array
+    * @param array $config
     */
     public static function make($config)
     {

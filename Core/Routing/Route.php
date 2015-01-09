@@ -75,9 +75,9 @@ class Route
     /**
 	* Class constructor.
     *
-	* @param string
-    * @param array
-	* @param string
+	* @param string $url
+    * @param array $callable
+	* @param string $requestMethod
 	*/
 	public function __construct($url, array $callable, $requestMethod = 'GET')
 	{
@@ -91,8 +91,8 @@ class Route
     * Check if requested URI matches this route.
     * Inspired by: http://blog.sosedoff.com/2009/09/20/rails-like-php-url-router/
     *
-    * @param string
-    * @param string
+    * @param string $uri
+    * @param string method
     * @return bool
     */
     public function matches($uri, $method)
@@ -125,7 +125,7 @@ class Route
     /**
     * Helper regex for matches function.
     *
-    * @param string
+    * @param string $matches
     * @return string
     **/
     protected function regexUrl($matches) 
@@ -141,8 +141,8 @@ class Route
     /**
     * Set route parameter condition.
     *
-    * @param string
-    * @param string
+    * @param string $key
+    * @param string $condition
     * @return object \Core\Core\Route (for method chaining)
     */
     public function where($key, $condition)
@@ -154,8 +154,8 @@ class Route
     /**
     * Set route custom parameter condition.
     *
-    * @param string
-    * @param string
+    * @param string $key
+    * @param string $pattern
     * @return object \Core\Core\Route (for method chaining)
     */
     public function whereRegex($key, $pattern)

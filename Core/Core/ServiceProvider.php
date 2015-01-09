@@ -1,6 +1,11 @@
 <?php
 namespace Core\Core;
 
+/**
+* Abstract class ServiceProvider.
+* 
+* @author Milos Kajnaco <miloskajnaco@gmail.com>
+*/
 abstract class ServiceProvider 
 {
 	/**
@@ -8,11 +13,10 @@ abstract class ServiceProvider
 	*/
 	protected $app = null;
 
-
 	/**
 	* Create a new service provider instance.
 	*
-	* @param Core
+	* @param Core $app
 	*/
 	public function __construct($app)
 	{

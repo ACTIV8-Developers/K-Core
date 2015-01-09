@@ -1,10 +1,10 @@
 <?php
-
 namespace Core\Util;
 
 /**
  * Class Message.
  * Used for sending flash messages between requests.
+ * (uses PHP session for storing data)
  *
  * @author miloskajnaco@gmail.com
  */
@@ -13,8 +13,8 @@ class Message
     /**
      * Set message. 
      *
-     * @param string
-     * @param mixed
+     * @param string $key
+     * @param mixed $value
      */
     public static function set($key, $value)
     {
@@ -24,8 +24,8 @@ class Message
     /**
      * Get message and destroy upon reading unless stated otherwise. 
      *
-     * @param string
-     * @param bool
+     * @param string $key
+     * @param bool $preserve
      * @return mixed
      */
     public static function get($key = '', $preserve = false)

@@ -80,11 +80,11 @@ class Request
     /**
     * Class constructor.
     *
-    * @param array
-    * @param array
-    * @param array
-    * @param array
-    * @param array
+    * @param array $_SERVER
+    * @param array $_GET
+    * @param array $_POST
+    * @param array $_COOKIES
+    * @param array $_FILES
     * @throws \InvalidArgumentException
     */
     public function __construct(array $server = [], array $get = [], array $post = [], array $cookies = [], array $files = [])
@@ -166,14 +166,14 @@ class Request
     /**
     * Get request URI segment.
     *
-    * @param int
+    * @param int $index
     * @return string|bool
     */
-    public function getUriSegment($num)
+    public function getUriSegment($index)
     {
         $segments = explode('/', $this->server->get('REQUEST_URI'));
-        if (isset($segments[$num])) {
-            return $segments[$num];
+        if (isset($segments[$index])) {
+            return $segments[$index];
         }
         return false;
     }
@@ -264,7 +264,7 @@ class Request
     }
 
     /**
-    * Check if it is PUT request.  
+    * Check if it is DELETE request.  
     *
     * @return bool
     */
@@ -294,7 +294,7 @@ class Request
     }
 
     /**
-    * Get referer.
+    * Get HTTP referer.
     *
     * @return string|null
     */

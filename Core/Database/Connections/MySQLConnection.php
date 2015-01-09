@@ -11,7 +11,7 @@ class MySQLConnection extends PDOConnection
     /**
     * Class constructor.
     *
-    * @param array
+    * @param array $params
     */
     public function __construct(array $params)
     {
@@ -24,7 +24,8 @@ class MySQLConnection extends PDOConnection
     }
 
     /**
-    * Connect to database with passed settings.
+    * Connect to database with using settings
+    * defined in class.
     *
     * @return object \PDO
     * @throws \PDOException

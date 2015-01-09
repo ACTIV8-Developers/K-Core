@@ -18,7 +18,7 @@ abstract class AbstractDatabase
     /**
      * Set connection variable.
      *
-     * @var object \PDO
+     * @param object \PDO
      */
     public function setConnection(\PDO $conn)
     {
@@ -36,10 +36,10 @@ abstract class AbstractDatabase
     }
 
     /**
-    * Sets PDO attribute.
+    * Set PDO attribute.
     *
-    * @param int
-    * @param mixed (attribute value)
+    * @param int $attr
+    * @param mixed $value
     * @return bool
     */
     public function setAttribute($attr, $value)

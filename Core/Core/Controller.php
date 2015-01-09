@@ -12,7 +12,7 @@ abstract class Controller extends ContainerProvider
     /**
     * Get GET value from request object.
     *
-    * @param string
+    * @param string $key
     * @return mixed
     */
     protected function get($key = null)
@@ -27,7 +27,7 @@ abstract class Controller extends ContainerProvider
     /**
     * Get POST value from request object.
     *
-    * @param string
+    * @param string $key
     * @return mixed
     */
     protected function post($key = null)
@@ -41,10 +41,10 @@ abstract class Controller extends ContainerProvider
     /**
     * Render output for display.
     *
-    * @param string
-    * @param array
+    * @param string $view
+    * @param array $data 
     */
-    protected function render($view, $data = [])
+    protected function render($view, array $data = [])
     {
         // Extract variables.
         extract($data);
@@ -63,11 +63,11 @@ abstract class Controller extends ContainerProvider
     /**
     * Buffer output and return it as string.
     *
-    * @param string
-    * @param array
+    * @param string $view
+    * @param array $data
     * @return string
     */
-    protected function buffer($view, $data = [])
+    protected function buffer($view, array $data = [])
     {
         // Extract variables.
         extract($data);
@@ -87,11 +87,10 @@ abstract class Controller extends ContainerProvider
     /**
      * Set response type to JSON.
      *
-     * @param array
-     * @param int
-     * @param int
+     * @param array $data
+     * @param int $options
      */
-    public function json($value, $options = 0)
+    public function json($data, $options = 0)
     {
         $this->app['response']->headers->set('Content-Type', 'application/json');
         $this->app['response']->setContent(json_encode($value, $options));
@@ -99,6 +98,7 @@ abstract class Controller extends ContainerProvider
 
     /**
     * Display page with not found code.
+    * @throws NotFoundException
     */
     protected function notFound()
     {
@@ -108,8 +108,8 @@ abstract class Controller extends ContainerProvider
     /**
     * Load language file with defined constants.
     *
-    * @param string
-    * @param string
+    * @param string $lang,
+    * @param string $file
     * @return array
     */
     protected function language($lang, $file = 'default')
@@ -120,8 +120,8 @@ abstract class Controller extends ContainerProvider
     /**
     * Redirect helper function.
     *
-    * @var string
-    * @var int 
+    * @var string $url
+    * @var int $statusCode
     */
     protected function redirect($url = '', $statusCode = 303)
     {
@@ -132,8 +132,8 @@ abstract class Controller extends ContainerProvider
     /**
     * Redirect helper function.
     *
-    * @var string
-    * @var int 
+    * @var string $url
+    * @var int $statusCode
     */
     protected function redirectToUrl($url = '', $statusCode = 303)
     {

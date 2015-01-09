@@ -47,7 +47,7 @@ class Core extends \Pimple\Container
 
     /**
     * Class constructor.
-    * Prepares all needed classes.
+    * Initializes framework and loads needed classes.
     *
     * @throws \InvalidArgumentException
     */
@@ -139,7 +139,7 @@ class Core extends \Pimple\Container
     }
     
     /**
-    * Application main executive function.
+    * Framework main executive function.
     */        
     public function run()
     {
@@ -225,7 +225,7 @@ class Core extends \Pimple\Container
     /**
     * Default handler for 404 error.
     *
-    * @var object \NotFoundException
+    * @param object \NotFoundException
     */
     protected function notFound(NotFoundException $e = null)
     {
@@ -241,7 +241,7 @@ class Core extends \Pimple\Container
     /**
     * Handle error.
     *
-    * @var object \Exception
+    * @param object \Exception
     */
     protected function internalError(\Exception $e)
     {
@@ -259,10 +259,10 @@ class Core extends \Pimple\Container
     /**
     * Print exception to string.
     *
-    * @var object \Exception
+    * @param object \Exception
     * @return string
     */
-    protected function printException($e)
+    protected function printException(\Exception $e)
     {
         $out = '<pre><div style="color:red">';
         $out .= '<h2>Error: '.$e->getMessage().'</h2>';
@@ -286,7 +286,7 @@ class Core extends \Pimple\Container
     /**
     * Get singleton instance of Core class.
     *
-    * @return object \Core\Core\Core
+    * @return object Core
     */
     public static function getInstance()
     {
@@ -299,8 +299,8 @@ class Core extends \Pimple\Container
     /**
     * Add hook.
     *
-    * @param string
-    * @param callable
+    * @param string $key
+    * @param callable $callable
     */
     public function setHook($key, $callable) 
     {
@@ -310,7 +310,7 @@ class Core extends \Pimple\Container
     /**
     * Get hook.
     *
-    * @param string
+    * @param string $key
     * @return callable
     */
     public function getHook($key) 

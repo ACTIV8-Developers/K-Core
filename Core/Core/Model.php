@@ -11,7 +11,7 @@ abstract class Model extends ContainerProvider
     /**
     * Get database object.
     *
-    * @param string
+    * @param string $dbName
     * @return object \Core\Database\Database
     */
     protected function db($dbName = 'default')
@@ -22,7 +22,7 @@ abstract class Model extends ContainerProvider
     /**
     * Get value from container.
     *
-    * @param string
+    * @param string $key
     * @return mixed
     */
     protected function getValue($key)

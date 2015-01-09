@@ -13,8 +13,8 @@ abstract class ContainerProvider
     /**
     * Set value in container.
     *
-    * @param string
-    * @param mixed
+    * @param string $key
+    * @param mixed $value
     */
     protected function setValue($key, $value)
     {
@@ -24,7 +24,7 @@ abstract class ContainerProvider
     /**
     * Get value from container.
     *
-    * @param string
+    * @param string $key
     * @return mixed
     */
     protected function getValue($key)
@@ -36,7 +36,7 @@ abstract class ContainerProvider
     }
 
     /**
-    * @param string
+    * @param string $var
     * @return mixed
     */
 	public function __get($var) 
