@@ -93,7 +93,7 @@ abstract class Controller extends ContainerProvider
     public function json($data, $options = 0)
     {
         $this->app['response']->headers->set('Content-Type', 'application/json');
-        $this->app['response']->setContent(json_encode($value, $options));
+        $this->app['response']->setContent(json_encode($data, $options));
     }
 
     /**
