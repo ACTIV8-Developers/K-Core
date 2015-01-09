@@ -116,7 +116,7 @@ class Response
     /**
     * Set HTTP response body.
     *
-    * @var string $body
+    * @param string $body
     */
     public function setContent($body)
     {
@@ -126,7 +126,7 @@ class Response
     /**
     * Append to HTTP response body.
     *
-    * @var string $part
+    * @param string $part
     */
     public function addContent($part)
     {
@@ -146,7 +146,7 @@ class Response
     /**
     * Set HTTP response code to be sent with headers.
     *
-    * @var int $code
+    * @param int $code
     */
     public function setStatusCode($code)
     {

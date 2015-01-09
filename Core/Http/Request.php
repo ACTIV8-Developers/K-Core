@@ -234,90 +234,90 @@ class Request
     }
 
     /**
-    * Check if it is POST request.  
-    *
-    * @return bool
-    */
+     * Check if it is POST request.  
+     *
+     * @return bool
+     */
     public function isPost()
     {
         return self::METHOD_POST === $this->method;
     }
 
     /**
-    * Check if it is PUT request.
-    *  
-    * @return bool
-    */
+     * Check if it is PUT request.
+     *  
+     * @return bool
+     */
     public function isPut()
     {
         return self::METHOD_PUT === $this->method;
     }
 
     /**
-    * Check if it is PATCH request. 
-    * 
-    * @return bool
-    */
+     * Check if it is PATCH request. 
+     * 
+     * @return bool
+     */
     public function isPatch()
     {
         return self::METHOD_PATCH === $this->method;
     }
 
     /**
-    * Check if it is DELETE request.  
-    *
-    * @return bool
-    */
+     * Check if it is DELETE request.  
+     *
+     * @return bool
+     */
     public function isDelete()
     {
         return self::METHOD_DELETE === $this->method;
     }
 
     /**
-    * Check if it is OPTIONS request. 
-    * 
-    * @return bool
-    */
+     * Check if it is OPTIONS request. 
+     * 
+     * @return bool
+     */
     public function isOptions()
     {
         return self::METHOD_OPTIONS === $this->method;
     }
 
     /**
-    * Get user agent.
-    *
-    * @return string|null
-    */
+     * Get user agent.
+     *
+     * @return string|null
+     */
     public function getUserAgent()
     {
         return $this->headers->get('HTTP_USER_AGENT');
     }
 
     /**
-    * Get HTTP referer.
-    *
-    * @return string|null
-    */
+     * Get HTTP referer.
+     *
+     * @return string|null
+     */
     public function getReferer()
     {
         return $this->headers->get('HTTP_REFERER');
     }
 
     /**
-    * Get content type.
-    *
-    * @return string|null
-    */
+     * Get content type.
+     *
+     * @return string|null
+     */
     public function getContentType()
     {
         return $this->headers->get('CONTENT_TYPE');
     }
 
     /**
-    * Get content length.
-    *
-    * @return string|null
-    */
+     * Get content length.
+     *
+     * @return string|null
+     */
     public function getContentLength()
     {
         return $this->headers->get('CONTENT_LENGTH');
