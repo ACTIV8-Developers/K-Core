@@ -5,10 +5,10 @@ use Core\Session\Session;
 use Core\Database\AbstractDatabase;
 
 /**
-* Authentication class (works with MySQL only).
-*
-* @author <milos@caenazzo.com>
-*/
+ * Authentication class (works with MySQL only).
+ *
+ * @author <milos@caenazzo.com>
+ */
 class Auth
 {
 	/**

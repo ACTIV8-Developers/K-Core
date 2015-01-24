@@ -2,32 +2,32 @@
 namespace Core\Session\Handlers;
 
 /**
-* Session handler using Redis mechanism.
-*/
+ * Session handler using Redis mechanism.
+ */
 class RedisSessionHandler implements \SessionHandlerInterface
 {
     /**
-    * @var int
-    */
+     * @var int
+     */
     public $expire = 7200;
 
     /**
-    * @var string
-    */
+     * @var string
+     */
     public $prefix = 'PHPSESSID:';
 
     /**
-    * @var object \Predis\Client
-    */
-    protected $db;
+     * @var object \Predis\Client
+     */
+    protected $redis;
 
     /**
-    * @param object \Predis\Client
-    * @param string
-    */
-    public function __construct(\Predis\Client $db) 
+     * @param object \Predis\Client
+     * @param string
+     */
+    public function __construct(\Predis\Client $redis) 
     {
-        $this->db = $db;
+        $this->redis = $redis;
     }
  
     public function open($savePath, $sessionName) 
@@ -38,28 +38,28 @@ class RedisSessionHandler implements \SessionHandlerInterface
  
     public function close() 
     {
-        $this->db = null;
-        unset($this->db);
+        $this->redis = null;
+        unset($this->redis);
     }
  
     public function read($id) 
     {
         $id = $this->prefix.$id;
-        $sessData = $this->db->get($id);
-        $this->db->expire($id, $this->expire);
+        $sessData = $this->redis->get($id);
+        $this->redis->expire($id, $this->expire);
         return $sessData;
     }
  
     public function write($id, $data) 
     {
         $id = $this->prefix.$id;
-        $this->db->set($id, $data);
-        $this->db->expire($id, $this->expire);
+        $this->redis->set($id, $data);
+        $this->redis->expire($id, $this->expire);
     }
  
     public function destroy($id) 
     {
-        $this->db->del($this->prefix.$id);
+        $this->redis->del($this->prefix.$id);
     }
  
     public function gc($maxLifetime) 

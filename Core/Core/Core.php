@@ -8,56 +8,56 @@ use Core\Session\Session;
 use Core\Database\Database;
 
 /**
-* Core class.
-* This is the heart of whole framework. It is a singleton container for all main 
-* objects of application. This class containes main 
-* run method which handles life cycle of application.
-* 
-* @author <milos@caenazzo.com>
-*/
+ * Core class.
+ * This is the heart of whole framework. It is a singleton container for all main 
+ * objects of application. This class containes main run method which handles life cycle of application.
+ * 
+ * @author <milos@caenazzo.com>
+ */
 class Core extends \Pimple\Container
 {
     /**
-    * Core version.
-    *
-    * @var string
-    */
-    const VERSION = '1.38b';
+     * Core version.
+     *
+     * @var string
+     */
+    const VERSION = '1.39b';
 
     /**
-    * Singleton instance of Core.
-    *
-    * @var object
-    */
+     * Singleton instance of Core.
+     *
+     * @var object
+     */
     protected static $instance = null;
 
     /**
-    * Array of hooks to be applied.
-    *
-    * @var array
-    */
+     * Array of hooks to be applied.
+     *
+     * @var array
+     */
     protected $hooks = [
         'before.system'  => null, 
+        'after.system'   => null,
         'before.routing' => null, 
         'after.routing'  => null,
-        'after.system'   => null,
+        'after.response' => null,
         'not.found'      => null,
         'internal.error' => null
     ];
 
     /**
-    * Class constructor.
-    * Initializes framework and loads needed classes.
-    *
-    * @throws \InvalidArgumentException
-    */
+     * Class constructor.
+     * Initializes framework and loads required classes.
+     *
+     * @throws \InvalidArgumentException
+     */
     public function __construct()
     {
         // Call parent container constructor.
         parent::__construct();
 
         // Load application configuration.
-        $this['config'] = require APP.'Config/Config.php';
+        $this['config'] = require APP.'/Config/Config.php';
 
         // Set error reporting.
         if ($this['config']['debug'] === true) {
@@ -75,9 +75,16 @@ class Core extends \Pimple\Container
             error_reporting(0);
         }
 
-        // Set default timezone.
-        date_default_timezone_set($this['config']['timezone']);
+        // Pre system hook.
+        if (isset($this->hooks['before.system'])) {
+            call_user_func($this->hooks['before.system'], $this);
+        }
 
+        // Set default timezone.
+        if (isset($this['config']['timezone'])) {
+            date_default_timezone_set($this['config']['timezone']);
+        }
+        
         // Create request class closure.
         $this['request'] = function() {
             return new Request($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
@@ -91,7 +98,7 @@ class Core extends \Pimple\Container
         };
 
         // Load database configuration.
-        $this['config.database'] = require APP.'Config/Database.php';
+        $this['config.database'] = require APP.'/Config/Database.php';
 
         // For each needed database create database class closure.
         foreach ($this['config.database'] as $name => $dbConfig) {
@@ -138,25 +145,25 @@ class Core extends \Pimple\Container
             $session->setHashKey($c['config']['key']);
             return $session;
         };
+
+        // Register service providers.
+        foreach ($this['config']['services'] as $service) {
+            $s = new $service($this);
+            $s->register();
+        }
+
+        // After system hook
+        if (isset($this->hooks['after.system'])) {
+            call_user_func($this->hooks['after.system'], $this);
+        }
     }
     
     /**
-    * Framework main executive function.
-    */        
+     * Framework main executive function.
+     */        
     public function run()
     {
-        try {    
-            // Pre system hook.
-            if (isset($this->hooks['before.system'])) {
-                call_user_func($this->hooks['before.system'], $this);
-            }
-
-            // Register service providers.
-            foreach ($this['config']['services'] as $service) {
-                $s = new $service($this);
-                $s->register();
-            }
-
+        try {
             // Load and start session if enabled in configuration.
             if ($this['config']['sessionStart']) {
                 $this['session']->start();
@@ -164,35 +171,21 @@ class Core extends \Pimple\Container
 
             // Execute routing.
             $this->routeRequest();
+
         } catch (NotFoundException $e) {
             $this->notFound($e);
         } catch (\Exception $e) {
             $this->internalError($e);
         }
 
-        // Post routing/controller hook.
-        if (isset($this->hooks['after.routing'])) {
-            call_user_func($this->hooks['after.routing'], $this);
-        }
-
-        // Send final response.
-        $this['response']->send();
-
-        // Post response hook.
-        if (isset($this->hooks['after.system'])) {
-            call_user_func($this->hooks['after.system'], $this);
-        }
-
-        // Display benchmark time if enabled.
-        if ($this['config']['benchmark']) {
-            print '<!--'.\PHP_Timer::resourceUsage().'-->';
-        }
+        // Send application response
+        $this->sendResponse();
     }  
 
     /**
-    * Route request and execute proper controller if route found.
-    */
-    protected function routeRequest()
+     * Route request and execute proper controller if route found.
+     */
+    public function routeRequest()
     {
         // Create router instance.
         $route = new Router();
@@ -222,14 +215,38 @@ class Core extends \Pimple\Container
             // If page not found display 404 error.
             $this->notFound();
         }
+
+        // Post routing/controller hook.
+        if (isset($this->hooks['after.routing'])) {
+            call_user_func($this->hooks['after.routing'], $this);
+        }
     }
 
     /**
-    * Default handler for 404 error.
-    *
-    * @param object \NotFoundException
-    */
-    protected function notFound(NotFoundException $e = null)
+     * Send application response.
+     */
+    public function sendResponse()
+    {
+        // Send final response.
+        $this['response']->send();
+
+        // Post response hook.
+        if (isset($this->hooks['after.response'])) {
+            call_user_func($this->hooks['after.response'], $this);
+        }
+
+        // Display benchmark time if enabled.
+        if ($this['config']['benchmark']) {
+            print '<!--'.\PHP_Timer::resourceUsage().'-->';
+        }
+    }
+
+    /**
+     * Default handler for 404 error.
+     *
+     * @param object NotFoundException
+     */
+    public function notFound(NotFoundException $e = null)
     {
         if (isset($this->hooks['not.found'])) {
             $this['error'] = $e;
@@ -241,10 +258,10 @@ class Core extends \Pimple\Container
     }
 
     /**
-    * Handle error.
-    *
-    * @param object \Exception
-    */
+     * Handle error.
+     *
+     * @param object \Exception
+     */
     protected function internalError(\Exception $e)
     {
         if (isset($this->hooks['internal.error'])) {
@@ -259,37 +276,10 @@ class Core extends \Pimple\Container
     }
 
     /**
-    * Print exception to string.
-    *
-    * @param object \Exception
-    * @return string
-    */
-    protected function printException(\Exception $e)
-    {
-        $out = '<pre><div style="color:red">';
-        $out .= '<h2>Error: '.$e->getMessage().'</h2>';
-        $out .= '<h3>#Line: '.$e->getLine().'</h3>';
-        $out .= '<h3>#File: '.$e->getFile().'</h3>';
-        $stack = $e->getTrace();
-
-        foreach ($stack as $s) {
-            $out .= '<ul>';
-            foreach ($s as $msg) {
-                if (is_string($msg)) {
-                    $out .= '<li>'.$msg.'</li>';
-                }
-            }
-            $out .= '</ul>';
-        }
-        
-        return '</div></pre>'.$out;
-    }
-
-    /**
-    * Get singleton instance of Core class.
-    *
-    * @return object Core
-    */
+     * Get singleton instance of Core class.
+     *
+     * @return object Core
+     */
     public static function getInstance()
     {
         if (null === self::$instance) {
@@ -299,22 +289,22 @@ class Core extends \Pimple\Container
     }
 
     /**
-    * Add hook.
-    *
-    * @param string $key
-    * @param callable $callable
-    */
+     * Add hook.
+     *
+     * @param string $key
+     * @param callable $callable
+     */
     public function setHook($key, $callable) 
     {
         $this->hooks[$key] = $callable;
     }
 
     /**
-    * Get hook.
-    *
-    * @param string $key
-    * @return callable
-    */
+     * Get hook.
+     *
+     * @param string $key
+     * @return callable
+     */
     public function getHook($key) 
     {
         return $this->hooks[$key];

@@ -17,13 +17,4 @@ class UtilTest extends PHPUnit_Framework_TestCase
     	$this->assertEquals(Util::js('foo.js'), 'http://localhost/www/public/js/foo.js');
     	$this->assertEquals(Util::img('foo.png'), 'http://localhost/www/public/images/foo.png');
 	}
-
-	public function testDateConvert()
-	{
-    	// Test conversion
-    	$this->assertEquals(Date::convertDate('2014-06-08'), '08-06-2014');
-    	$this->assertEquals(Date::convertSrbDate('2014-06-08'), '08.06.2014.');
-        // Test with custom delimiter
-        $this->assertEquals(Date::convertSrbDate('2014.06.08', '.'), '08.06.2014.');
-	}
 }

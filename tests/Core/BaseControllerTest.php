@@ -1,9 +1,6 @@
 <?php
-use \Core\Http\Response;
-use \Core\Core\Controller;
-
-// Define location of mock views to this dir
-define('APPVIEW', __DIR__.'/MockViews/');
+use Core\Http\Response;
+use Core\Core\Controller;
 
 class BaseControllerTest extends PHPUnit_Framework_TestCase
 {

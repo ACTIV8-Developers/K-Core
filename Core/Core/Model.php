@@ -2,29 +2,29 @@
 namespace Core\Core;
 
 /**
-* Base model abstract class.
-* 
-* @author <milos@caenazzo.com>
-*/
+ * Base model abstract class.
+ * 
+ * @author <milos@caenazzo.com>
+ */
 abstract class Model extends ContainerProvider
 {
     /**
-    * Get database object.
-    *
-    * @param string $dbName
-    * @return object \Core\Database\Database
-    */
+     * Get database object.
+     *
+     * @param string $dbName
+     * @return object \Core\Database\Database
+     */
     protected function db($dbName = 'default')
     {
         return $this->app['db.'.$dbName];
     }
 
     /**
-    * Get value from container.
-    *
-    * @param string $key
-    * @return mixed
-    */
+     * Get value from container.
+     *
+     * @param string $key
+     * @return mixed
+     */
     protected function getValue($key)
     {
         if ($key === 'db') {

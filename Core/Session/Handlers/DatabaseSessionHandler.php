@@ -2,14 +2,15 @@
 namespace Core\Session\Handlers;
 
 /**
-* Session handler using database interface.
+ * Session handler using database interface.
     CREATE TABLE `session_handler_table` (
     `id` varchar(255) NOT NULL,
     `data` mediumtext NOT NULL,
     `timestamp` int(255) NOT NULL,
     PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-*/
+ * (MySQL support only)
+ */
 class DatabaseSessionHandler implements \SessionHandlerInterface
 {
 	
@@ -35,29 +36,29 @@ class DatabaseSessionHandler implements \SessionHandlerInterface
     }
 
 	/**
-	* Inject DB connection from outside
-	*
-	* @param object \PDO
-	*/
+	 * Inject DB connection from outside
+	 *
+ 	 * @param object \PDO
+	 */
 	public function setDbConnection($dbConnection)
 	{
 		$this->dbConnection = $dbConnection;
 	}
 
 	/**
-	* Inject DB connection from outside
-	* @param string
-	*/
+	 * Inject DB connection from outside
+	 * @param string
+	 */
 	public function setDbTable($tableName)
 	{
 		$this->tableName = $tableName;
 	}
 
 	/**
-	* Open the session
-	*
-	* @return bool
-	*/
+	 * Open the session
+	 *
+	 * @return bool
+	 */
 	public function open() 
 	{
 		//delete old session handlers
@@ -67,20 +68,20 @@ class DatabaseSessionHandler implements \SessionHandlerInterface
 	}
 
 	/**
-	* Close the session
-	* @return bool
-	*/
+	 * Close the session
+	 * @return bool
+	 */
 	public function close() 
 	{
 		return $this->dbConnection->close();
 	}
 
 	/**
-	* Read the session
-	*
-	* @param int session id
-	* @return string string of the sessoin
-	*/
+	 * Read the session
+	 *
+	 * @param int session id
+	 * @return string string of the sessoin
+	 */
 	public function read($id) 
 	{
 		$sql = sprintf("SELECT data FROM %s WHERE id = '%s'", $this->tableName, $this->dbConnection->escape_string($id));
@@ -98,11 +99,11 @@ class DatabaseSessionHandler implements \SessionHandlerInterface
 	}
 
 	/**
-	* Write the session
-	*
-	* @param int session id
-	* @param string data of the session
-	*/
+	 * Write the session
+	 *
+	 * @param int session id
+	 * @param string data of the session
+	 */
 	public function write($id, $data) 
 	{
 		$sql = sprintf("REPLACE INTO %s VALUES('%s', '%s', '%s')",
@@ -114,11 +115,11 @@ class DatabaseSessionHandler implements \SessionHandlerInterface
 	}
 
 	/**
-	* Destoroy the session
-	*
-	* @param int session id
-	* @return bool
-	*/
+	 * Destoroy the session
+	 *
+	 * @param int session id
+	 * @return bool
+	 */
 	public function destroy($id) 
 	{
 		$sql = sprintf("DELETE FROM %s WHERE `id` = '%s'", $this->tableName, $this->dbConnection->escape_string($id));
@@ -126,16 +127,16 @@ class DatabaseSessionHandler implements \SessionHandlerInterface
 	}
 
 	/**
-	* Garbage Collector
-	*
-	* @param int life time (sec.)
-	* @return bool
-	* @see session.gc_divisor 100
-	* @see session.gc_maxlifetime 1440
-	* @see session.gc_probability 1
-	* @usage execution rate 1/100
-	* (session.gc_probability/session.gc_divisor)
-	*/
+	 * Garbage Collector
+	 *
+	 * @param int life time (sec.)
+	 * @return bool
+	 * @see session.gc_divisor 100
+	 * @see session.gc_maxlifetime 1440
+	 * @see session.gc_probability 1
+	 * @usage execution rate 1/100
+	 * (session.gc_probability/session.gc_divisor)
+	 */
 	public function gc($max) 
 	{
 		$sql = sprintf("DELETE FROM %s WHERE `timestamp` < '%s'", $this->tableName, time() - intval($max));

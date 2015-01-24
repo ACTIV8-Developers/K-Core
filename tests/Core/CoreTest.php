@@ -40,4 +40,35 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($app->getHook('before.routing'), $function1);
         $this->assertEquals($app->getHook('after.routing'), $function2);
     }
+
+    public function testSendReponse()
+    {
+        // Make instance of app.
+        $app = Core\Core\Core::getInstance();
+
+        $app['response']->setContent('<div>Test</div>');
+
+        $app->sendResponse();
+
+        $this->expectOutputString('<div>Test</div>');
+    }
+
+    public function testRouteRequest()
+    {
+        // Make instance of app.
+        $app = Core\Core\Core::getInstance();
+        // TO DO
+    }
+
+    public function testNotFound()
+    {
+        // Make instance of app.
+        $app = Core\Core\Core::getInstance();
+
+        $ex = new \Core\Core\NotFoundException('Test');
+
+        $app->notFound($ex);
+
+        $this->assertEquals($app['response']->getContent(), '<h1>404 Not Found</h1>The page that you have requested could not be found.');
+    }
 }

@@ -4,29 +4,29 @@ namespace Core\Core;
 use Core\Core\Core;
 
 /**
-* Abstract class ContainerProvider. Extend to gain acess to core container.
-*
-* @author <milos@caenazzo.com>
-*/
+ * Abstract class ContainerProvider. Extend to gain acess to core container.
+ *
+ * @author <milos@caenazzo.com>
+ */
 abstract class ContainerProvider
 {
     /**
-    * Set value in container.
-    *
-    * @param string $key
-    * @param mixed $value
-    */
+     * Set value in container.
+     *
+     * @param string $key
+     * @param mixed $value
+     */
     protected function setValue($key, $value)
     {
         $this->app[$key] = $value;
     }
 
     /**
-    * Get value from container.
-    *
-    * @param string $key
-    * @return mixed
-    */
+     * Get value from container.
+     *
+     * @param string $key
+     * @return mixed
+     */
     protected function getValue($key)
     {
         if (isset($this->app[$key])) {
@@ -36,9 +36,9 @@ abstract class ContainerProvider
     }
 
     /**
-    * @param string $var
-    * @return mixed
-    */
+     * @param string $var
+     * @return mixed
+     */
 	public function __get($var) 
     {
 		if ($var === 'app') {
