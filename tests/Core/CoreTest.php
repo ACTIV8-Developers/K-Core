@@ -48,9 +48,9 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
         $app['response']->setContent('<div>Test</div>');
 
-        $app->sendResponse();
-
         $this->expectOutputString('<div>Test</div>');
+
+        $app->sendResponse();
     }
 
     public function testRouteRequest()
