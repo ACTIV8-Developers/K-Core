@@ -4,7 +4,7 @@ namespace Core\Database;
 /**
 * Basic database class used for common CRUD operations.
 *
-* @author Milos Kajnaco <miloskajnaco@gmail.com>
+* @author <milos@caenazzo.com>
 */
 class Database extends AbstractDatabase
 {

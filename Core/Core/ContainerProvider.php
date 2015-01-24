@@ -1,12 +1,12 @@
 <?php
 namespace Core\Core;
 
-use \Core\Core\Core;
+use Core\Core\Core;
 
 /**
 * Abstract class ContainerProvider. Extend to gain acess to core container.
 *
-* @author Milos Kajnaco <miloskajnaco@gmail.com>
+* @author <milos@caenazzo.com>
 */
 abstract class ContainerProvider
 {

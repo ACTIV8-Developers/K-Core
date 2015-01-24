@@ -7,7 +7,7 @@ use Core\Database\AbstractDatabase;
 /**
 * Authentication class (works with MySQL only).
 *
-* @author Milos Kajnaco <miloskajnaco@gmail.com>
+* @author <milos@caenazzo.com>
 */
 class Auth
 {

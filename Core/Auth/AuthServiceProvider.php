@@ -6,7 +6,7 @@ use Core\Core\ServiceProvider;
 /**
 * Class AuthServiceProvider.
 *
-* @author Milos Kajnaco <miloskajnaco@gmail.com>
+* @author <milos@caenazzo.com>
 */
 class AuthServiceProvider extends ServiceProvider
 {

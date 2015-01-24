@@ -8,7 +8,7 @@ namespace Core\Routing;
 * also here are methods for adding things to list and
 * here is defined run method for routing requests.
 *
-* @author Milos Kajnaco <miloskajnaco@gmail.com>
+* @author <milos@caenazzo.com>
 */
 class Router
 {

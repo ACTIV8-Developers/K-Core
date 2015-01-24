@@ -4,7 +4,7 @@ namespace Core\Session;
 /**
 * Session manager class.
 *
-* @author Milos Kajnaco <miloskajnaco@gmail.com>
+* @author <milos@caenazzo.com>
 */
 class Session
 {

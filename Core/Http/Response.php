@@ -8,7 +8,7 @@ namespace Core\Http;
 * This class provides methods to set the HTTP status, the HTTP headers,
 * the HTTP cookies and the HTTP body.
 *
-* @author Milos Kajnaco <miloskajnaco@gmail.com>
+* @author <milos@caenazzo.com>
 */
 class Response
 {

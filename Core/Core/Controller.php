@@ -5,7 +5,7 @@ namespace Core\Core;
 * Base controller abstract class.
 * Extend to get access to app main container and common functions.
 *
-* @author Milos Kajnaco <miloskajnaco@gmail.com>
+* @author <milos@caenazzo.com>
 */
 abstract class Controller extends ContainerProvider
 {

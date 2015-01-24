@@ -1,11 +1,11 @@
 <?php 
 namespace Core\Core;
 
-use \Core\Http\Request;
-use \Core\Http\Response;
-use \Core\Routing\Router;
-use \Core\Session\Session;
-use \Core\Database\Database;
+use Core\Http\Request;
+use Core\Http\Response;
+use Core\Routing\Router;
+use Core\Session\Session;
+use Core\Database\Database;
 
 /**
 * Core class.
@@ -13,7 +13,7 @@ use \Core\Database\Database;
 * objects of application. This class containes main 
 * run method which handles life cycle of application.
 * 
-* @author Milos Kajnaco <miloskajnaco@gmail.com>
+* @author <milos@caenazzo.com>
 */
 class Core extends \Pimple\Container
 {
@@ -64,9 +64,11 @@ class Core extends \Pimple\Container
             ini_set('display_errors', 1);
             error_reporting(E_ALL);
             if ($this['config']['whoops'] === true) {
-                $whoops = new \Whoops\Run();
-                $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler());
-                $whoops->register();
+                $this['whoops'] = function() {
+                    return new \Whoops\Run();
+                };
+                $this['whoops']->pushHandler(new \Whoops\Handler\PrettyPageHandler());
+                $this['whoops']->register();
             }
         } else {
             ini_set('display_errors', 'Off');
@@ -250,8 +252,8 @@ class Core extends \Pimple\Container
             call_user_func($this->hooks['internal.error'], $this);
         } else {
             $this['response']->setStatusCode(500);                
-            if ($this['config']['debug'] === true) {
-                $this['response']->setContent($this->printException($e));
+            if ($this['config']['debug'] === true && $this['config']['whoops'] === true) {
+                $this['whoops']->handleException($e);
             }
         }
     }

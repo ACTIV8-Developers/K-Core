@@ -4,7 +4,7 @@ namespace Core\Http;
 /**
 * Simple container class for storing HTTP request data.
 *
-* @author miloskajnaco@gmail.com
+* @author <milos@caenazzo.com>
 */
 class HttpBag implements \IteratorAggregate, \Countable
 {

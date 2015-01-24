@@ -4,7 +4,7 @@ namespace Core\Util;
 /**
 * Utility class.
 *
-* @author Milos Kajnaco <miloskajnaco@gmail.com>
+* @author <milos@caenazzo.com>
 */
 class Util
 {

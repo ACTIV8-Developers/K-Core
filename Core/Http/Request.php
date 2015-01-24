@@ -5,7 +5,7 @@ namespace Core\Http;
 * HTTP request class.
 * This class provides interface for common request parameters.
 *
-* @author Milos Kajnaco <miloskajnaco@gmail.com>
+* @author <milos@caenazzo.com>
 */
 class Request
 {

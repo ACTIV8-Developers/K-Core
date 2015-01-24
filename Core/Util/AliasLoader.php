@@ -4,7 +4,7 @@ namespace Core\Util;
 /**
 * Class AliasLoader.
 *
-* @author miloskajnaco@gmail.com
+* @author milos@caenazzo.com
 */
 class AliasLoader {
 

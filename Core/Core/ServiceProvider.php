@@ -4,7 +4,7 @@ namespace Core\Core;
 /**
 * Abstract class ServiceProvider.
 * 
-* @author Milos Kajnaco <miloskajnaco@gmail.com>
+* @author <milos@caenazzo.com>
 */
 abstract class ServiceProvider 
 {

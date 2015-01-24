@@ -4,7 +4,7 @@ namespace Core\Core;
 /**
 * Base model abstract class.
 * 
-* @author Milos Kajnaco <miloskajnaco@gmail.com>
+* @author <milos@caenazzo.com>
 */
 abstract class Model extends ContainerProvider
 {
