@@ -5,7 +5,7 @@ namespace Core\Http;
 * HTTP request class.
 * This class provides interface for common request parameters.
 *
-* @author Milos Kajnaco <miloskajnaco@gmail.com>
+* @author <milos@caenazzo.com>
 */
 class Request
 {
@@ -80,11 +80,11 @@ class Request
     /**
     * Class constructor.
     *
-    * @param array
-    * @param array
-    * @param array
-    * @param array
-    * @param array
+    * @param array $_SERVER
+    * @param array $_GET
+    * @param array $_POST
+    * @param array $_COOKIES
+    * @param array $_FILES
     * @throws \InvalidArgumentException
     */
     public function __construct(array $server = [], array $get = [], array $post = [], array $cookies = [], array $files = [])
@@ -166,14 +166,14 @@ class Request
     /**
     * Get request URI segment.
     *
-    * @param int
+    * @param int $index
     * @return string|bool
     */
-    public function getUriSegment($num)
+    public function getUriSegment($index)
     {
         $segments = explode('/', $this->server->get('REQUEST_URI'));
-        if (isset($segments[$num])) {
-            return $segments[$num];
+        if (isset($segments[$index])) {
+            return $segments[$index];
         }
         return false;
     }
@@ -234,90 +234,90 @@ class Request
     }
 
     /**
-    * Check if it is POST request.  
-    *
-    * @return bool
-    */
+     * Check if it is POST request.  
+     *
+     * @return bool
+     */
     public function isPost()
     {
         return self::METHOD_POST === $this->method;
     }
 
     /**
-    * Check if it is PUT request.
-    *  
-    * @return bool
-    */
+     * Check if it is PUT request.
+     *  
+     * @return bool
+     */
     public function isPut()
     {
         return self::METHOD_PUT === $this->method;
     }
 
     /**
-    * Check if it is PATCH request. 
-    * 
-    * @return bool
-    */
+     * Check if it is PATCH request. 
+     * 
+     * @return bool
+     */
     public function isPatch()
     {
         return self::METHOD_PATCH === $this->method;
     }
 
     /**
-    * Check if it is PUT request.  
-    *
-    * @return bool
-    */
+     * Check if it is DELETE request.  
+     *
+     * @return bool
+     */
     public function isDelete()
     {
         return self::METHOD_DELETE === $this->method;
     }
 
     /**
-    * Check if it is OPTIONS request. 
-    * 
-    * @return bool
-    */
+     * Check if it is OPTIONS request. 
+     * 
+     * @return bool
+     */
     public function isOptions()
     {
         return self::METHOD_OPTIONS === $this->method;
     }
 
     /**
-    * Get user agent.
-    *
-    * @return string|null
-    */
+     * Get user agent.
+     *
+     * @return string|null
+     */
     public function getUserAgent()
     {
         return $this->headers->get('HTTP_USER_AGENT');
     }
 
     /**
-    * Get referer.
-    *
-    * @return string|null
-    */
+     * Get HTTP referer.
+     *
+     * @return string|null
+     */
     public function getReferer()
     {
         return $this->headers->get('HTTP_REFERER');
     }
 
     /**
-    * Get content type.
-    *
-    * @return string|null
-    */
+     * Get content type.
+     *
+     * @return string|null
+     */
     public function getContentType()
     {
         return $this->headers->get('CONTENT_TYPE');
     }
 
     /**
-    * Get content length.
-    *
-    * @return string|null
-    */
+     * Get content length.
+     *
+     * @return string|null
+     */
     public function getContentLength()
     {
         return $this->headers->get('CONTENT_LENGTH');

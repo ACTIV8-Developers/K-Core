@@ -2,10 +2,10 @@
 namespace Core\Database;
 
 /**
-* AbstractDatabase class.
-*
-* @author Milos Kajnaco <miloskajnaco@gmail.com>
-*/
+ * AbstractDatabase class.
+ *
+ * @author <milos@caenazzo.com>
+ */
 abstract class AbstractDatabase
 {
     /**
@@ -18,7 +18,7 @@ abstract class AbstractDatabase
     /**
      * Set connection variable.
      *
-     * @var object \PDO
+     * @param object \PDO $conn
      */
     public function setConnection(\PDO $conn)
     {
@@ -36,12 +36,12 @@ abstract class AbstractDatabase
     }
 
     /**
-    * Sets PDO attribute.
-    *
-    * @param int
-    * @param mixed (attribute value)
-    * @return bool
-    */
+     * Set PDO attribute.
+     *
+     * @param int $attr
+     * @param mixed $value
+     * @return bool
+     */
     public function setAttribute($attr, $value)
     {
     	$this->connection->setAttribute($attr, $value);

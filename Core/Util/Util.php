@@ -4,7 +4,7 @@ namespace Core\Util;
 /**
 * Utility class.
 *
-* @author Milos Kajnaco <miloskajnaco@gmail.com>
+* @author <milos@caenazzo.com>
 */
 class Util
 {
@@ -18,7 +18,7 @@ class Util
     /**
      * Get site base url.
      *
-     * @param  string
+     * @param string $path
      * @return string
      */
     public static function base($path = '')
@@ -41,7 +41,7 @@ class Util
 	/**
 	 * Get CSS file path.
 	 *
-	 * @param  string
+	 * @param  string $css
 	 * @return string
 	 */
 	public static function css($css)
@@ -52,7 +52,7 @@ class Util
 	/**
 	 * Get JavaScript file path.
 	 *
-	 * @param  string
+	 * @param  string $js
 	 * @return string
 	 */
 	public static function js($js)
@@ -63,7 +63,7 @@ class Util
 	/**
 	 * Get image file path.
 	 *
-	 * @param  string
+	 * @param  string $img
 	 * @return string
 	 */
 	public static function img($img)

@@ -4,7 +4,7 @@ namespace Core\Session;
 /**
 * Session manager class.
 *
-* @author Milos Kajnaco <miloskajnaco@gmail.com>
+* @author <milos@caenazzo.com>
 */
 class Session
 {
@@ -70,7 +70,7 @@ class Session
 	* Class construct.
 	* Register handler and start session here.
 	*
-	* @param array
+	* @param array $params
 	* @param object \SessionHandlerInterface
 	*/
 	public function __construct(array $params = [], \SessionHandlerInterface $handler = null)
@@ -173,7 +173,7 @@ class Session
     }
 
     /**
-    * @param string
+    * @param string $key
     * @return mixed
     */
     public function get($key)
@@ -182,8 +182,8 @@ class Session
     }
 
     /**
-    * @param string
-    * @param mixed
+    * @param string $key
+    * @param mixed $value
     */
     public function set($key, $value)
     {
@@ -207,7 +207,7 @@ class Session
     }
 
     /**
-    * @param string
+    * @param string $key
     */
     public function forget($key)
     {
@@ -215,7 +215,7 @@ class Session
     }
 
     /**
-    * @param string
+    * @param string $key
     */
     public function has($key)
     {
@@ -223,7 +223,7 @@ class Session
     }
 
     /**
-    * @param string
+    * @param string $hashKey
     */
     public function setHashKey($hashKey)
     {

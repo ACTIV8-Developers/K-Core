@@ -8,7 +8,7 @@ namespace Core\Routing;
 * also here are methods for adding things to list and
 * here is defined run method for routing requests.
 *
-* @author Milos Kajnaco <miloskajnaco@gmail.com>
+* @author <milos@caenazzo.com>
 */
 class Router
 {
@@ -22,8 +22,8 @@ class Router
 	/**
 	* Check routes and return matching one.
     *
-	* @var string
-    * @var string
+	* @var string $uri
+    * @var string $requestMethod
 	* @return bool|object \Core\Routing\Route
 	*/
 	public function run($uri, $requestMethod)
@@ -40,11 +40,11 @@ class Router
     /**
 	* Add a route object to the router accepting GET request method.
     *
-	* @param string 
+	* @param string $url
 	* @param array
     * @return object \Core\Routing\Route
     */
-    public function get($url, $callable)
+    public function get($url, array $callable)
     {
     	$route = new Route($url, $callable, 'GET');
 		$this->routes[] = $route;
@@ -54,11 +54,11 @@ class Router
     /**
 	* Add a route object to the router accepting POST request method.
     *
-	* @param string
-	* @param array
+	* @param string $url
+	* @param array $callable,
     * @return object \Core\Routing\Route
     */
-    public function post($url, $callable)
+    public function post($url, array $callable)
     {
     	$route = new Route($url, $callable, 'POST');
 		$this->routes[] = $route;
@@ -68,11 +68,11 @@ class Router
     /**
 	* Add a route object to the router accepting PUT request method.
     *
-	* @param string
-	* @param array
+	* @param string $url
+	* @param array $callable,
     * @return object \Core\Core\Route
 	*/
-    public function put($url, $callable)
+    public function put($url, array $callable)
     {
     	$route = new Route($url, $callable, 'PUT');
 		$this->routes[] = $route;
@@ -82,11 +82,11 @@ class Router
     /**
 	* Add a route object to the router accepting DELETE request method.
     *
-	* @param string
-	* @param array
+	* @param string $url
+	* @param array $callable,
     * @return object \Core\Core\Route
 	*/
-    public function delete($url, $callable)
+    public function delete($url, array $callable)
     {
     	$route = new Route($url, $callable, 'DELETE');
 		$this->routes[] = $route;

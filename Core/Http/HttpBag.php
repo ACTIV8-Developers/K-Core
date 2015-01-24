@@ -2,9 +2,9 @@
 namespace Core\Http;
 
 /**
-* Simple container for storing HTTP request data.
+* Simple container class for storing HTTP request data.
 *
-* @author miloskajnaco@gmail.com
+* @author <milos@caenazzo.com>
 */
 class HttpBag implements \IteratorAggregate, \Countable
 {
@@ -18,7 +18,7 @@ class HttpBag implements \IteratorAggregate, \Countable
     /**
      * Constructor.
      *
-     * @param array
+     * @param array $elements
      */
     public function __construct(array $elements = [])
     {
@@ -48,7 +48,7 @@ class HttpBag implements \IteratorAggregate, \Countable
     /**
      * Replaces the current elements by a new set.
      *
-     * @param array
+     * @param array $elements
      */
     public function replace(array $elements = [])
     {
@@ -58,7 +58,7 @@ class HttpBag implements \IteratorAggregate, \Countable
     /**
      * Adds elements.
      *
-     * @param array
+     * @param array $elements
      */
     public function add(array $elements = [])
     {
@@ -68,7 +68,7 @@ class HttpBag implements \IteratorAggregate, \Countable
     /**
      * Returns a element by name.
      *
-     * @param string
+     * @param string $key
      * @return mixed
      */
     public function get($key)
@@ -79,8 +79,8 @@ class HttpBag implements \IteratorAggregate, \Countable
     /**
      * Sets a element by name.
      *
-     * @param string
-     * @param mixed
+     * @param string $key
+     * @param mixed $value
      */
     public function set($key, $value)
     {
@@ -90,7 +90,7 @@ class HttpBag implements \IteratorAggregate, \Countable
     /**
      * Returns true if the element is defined.
      *
-     * @param string
+     * @param string $key
      * @return bool
      */
     public function has($key)
@@ -101,7 +101,7 @@ class HttpBag implements \IteratorAggregate, \Countable
     /**
      * Removes a element.
      *
-     * @param string
+     * @param string $key
      */
     public function remove($key)
     {
@@ -111,9 +111,9 @@ class HttpBag implements \IteratorAggregate, \Countable
     /**
      * Filter key.
      *
-     * @param string
-     * @param int   FILTER_* constant.
-     * @param mixed Filter options.
+     * @param string $key
+     * @param int $filter FILTER_* constant.
+     * @param mixed $options.
      * @see http://php.net/manual/en/function.filter-var.php
      * @return mixed
      */
@@ -137,7 +137,7 @@ class HttpBag implements \IteratorAggregate, \Countable
     /**
      * Returns an iterator for elements.
      *
-     * @return \ArrayIterator
+     * @return interface \ArrayIterator
      */
     public function getIterator()
     {

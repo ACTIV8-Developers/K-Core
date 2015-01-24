@@ -8,7 +8,7 @@ namespace Core\Http;
 * This class provides methods to set the HTTP status, the HTTP headers,
 * the HTTP cookies and the HTTP body.
 *
-* @author Milos Kajnaco <miloskajnaco@gmail.com>
+* @author <milos@caenazzo.com>
 */
 class Response
 {
@@ -116,7 +116,7 @@ class Response
     /**
     * Set HTTP response body.
     *
-    * @var string
+    * @param string $body
     */
     public function setContent($body)
     {
@@ -126,7 +126,7 @@ class Response
     /**
     * Append to HTTP response body.
     *
-    * @var string
+    * @param string $part
     */
     public function addContent($part)
     {
@@ -146,7 +146,7 @@ class Response
     /**
     * Set HTTP response code to be sent with headers.
     *
-    * @var int
+    * @param int $code
     */
     public function setStatusCode($code)
     {
@@ -176,7 +176,7 @@ class Response
     /**
     * Set HTTP protocol version ("HTTP/1.1" or "HTTP/1.0").
     *
-    * @param string 
+    * @param string $version
     */
     public function setProtocolVersion($version)
     {
@@ -186,13 +186,13 @@ class Response
     /**
     * Send cookie with response.
     *
-    * @param string   
-    * @param string  
-    * @param int|string|\DateTime
-    * @param string
-    * @param string
-    * @param bool                    
-    * @param bool
+    * @param string $name  
+    * @param string $value 
+    * @param int|string|\DateTime $expire 
+    * @param string $path
+    * @param string $domain
+    * @param bool $secure                   
+    * @param bool $httpOnly
     * @throws \InvalidArgumentException
     */
     public function setCookie($name, $value = null, $expire = 7200, $path = '/', $domain = null, $secure = false, $httpOnly = true)

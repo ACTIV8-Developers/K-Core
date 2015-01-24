@@ -7,7 +7,7 @@ use Core\Database\AbstractDatabase;
 /**
 * Authentication class (works with MySQL only).
 *
-* @author Milos Kajnaco <miloskajnaco@gmail.com>
+* @author <milos@caenazzo.com>
 */
 class Auth
 {
@@ -58,7 +58,8 @@ class Auth
 
 	/**
 	 * Set table to work with.
-	 * @var string 
+	 *
+	 * @param string 
 	 */
 	public function setTable($table)
 	{
@@ -68,8 +69,9 @@ class Auth
 
 	/**
 	 * Create user.
-	 * @var string
-	 * @var string
+	 *
+	 * @param string $username
+	 * @param string $password
 	 * @return bool|int
 	 */
 	public function createUser($username, $password)
@@ -100,33 +102,36 @@ class Auth
 
 	/**
 	 * Change user password.
-	 * @param  string
-	 * @param  string
+	 *
+	 * @param  string $username
+	 * @param  string $newPass
 	 * @return bool
 	 */
 	public function changePassword($username, $newPass)
 	{
 		$password = $this->hasher->HashPassword($newPass);
-        $stmt = $this->conn->prepare("UPDATE $this->table SET user_pass=:newPass WHERE user_name=:username");
+        $stmt = $this->conn->prepare("UPDATE $this->table SET user_pass=:newPass WHERE user_name = :username");
         return $stmt->execute([':newPass'=>$password, ':username'=>$username]);
 	}
 
 	/**
 	 * Delete user.
-	 * @var string
+	 *
+	 * @param string $username
 	 * @return int
 	 */
 	public function deleteUser($username)
 	{
         $stmt = $this->conn->prepare("DELETE * FROM $this->table WHERE user_name = :name");
-        $stmt->execute([':name'=>$username]);
+        $stmt->execute([':name' => $username]);
         return $stmt->rowCount();
 	}
 
 	/**
 	 * Try to login user with passed parameters.
-	 * @var string
-	 * @var string
+	 *
+	 * @param string $username
+	 * @param string $password
 	 * @return bool 
 	 */
 	public function login($username, $password)
@@ -155,10 +160,11 @@ class Auth
     /**
      * Create users table.
      *
-     * @param string
+     * @param string $name
+     * @param array $additionalColumns
      * @return bool
      */
-	public function createTable($name = null, $additional = null)
+	public function createTable($name = null, array $additionalColumns = [])
 	{
 		if ($name === null) {
 			$name = $this->table;
@@ -177,7 +183,7 @@ class Auth
 	}
 
     /**
-     * Get id of current logged user, return false if no user logged.
+     * Get id of current logged user, returns false if no user logged.
      *
      * @return int|bool
      */
@@ -191,10 +197,9 @@ class Auth
     }
         
 	/**
-	 * Check if there is logged user,
-	 * returns false or logged user id.
+	 * Check if there is logged user.
 	 *
-	 * @return boolean|int
+	 * @return bool
 	 */
 	public function isLogged()
 	{

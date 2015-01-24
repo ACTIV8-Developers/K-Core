@@ -2,10 +2,10 @@
 namespace Core\Database\Connections;
 
 /**
-* Database abstract PDO connection.
-*
-* @author Milos Kajnaco <miloskajnaco@gmail.com>
-*/
+ * Database abstract PDO connection.
+ *
+ * @author <milos@caenazzo.com>
+ */
 abstract class PDOConnection
 {
     /**

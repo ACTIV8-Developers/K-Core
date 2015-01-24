@@ -3,6 +3,11 @@ namespace Core\Auth;
 
 use Core\Core\ServiceProvider;
 
+/**
+* Class AuthServiceProvider.
+*
+* @author <milos@caenazzo.com>
+*/
 class AuthServiceProvider extends ServiceProvider
 {
 	/**

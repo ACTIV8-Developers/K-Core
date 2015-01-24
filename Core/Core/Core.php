@@ -1,11 +1,11 @@
 <?php 
 namespace Core\Core;
 
-use \Core\Http\Request;
-use \Core\Http\Response;
-use \Core\Routing\Router;
-use \Core\Session\Session;
-use \Core\Database\Database;
+use Core\Http\Request;
+use Core\Http\Response;
+use Core\Routing\Router;
+use Core\Session\Session;
+use Core\Database\Database;
 
 /**
 * Core class.
@@ -13,7 +13,7 @@ use \Core\Database\Database;
 * objects of application. This class containes main 
 * run method which handles life cycle of application.
 * 
-* @author Milos Kajnaco <miloskajnaco@gmail.com>
+* @author <milos@caenazzo.com>
 */
 class Core extends \Pimple\Container
 {
@@ -47,7 +47,7 @@ class Core extends \Pimple\Container
 
     /**
     * Class constructor.
-    * Prepares all needed classes.
+    * Initializes framework and loads needed classes.
     *
     * @throws \InvalidArgumentException
     */
@@ -64,9 +64,11 @@ class Core extends \Pimple\Container
             ini_set('display_errors', 1);
             error_reporting(E_ALL);
             if ($this['config']['whoops'] === true) {
-                $whoops = new \Whoops\Run();
-                $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler());
-                $whoops->register();
+                $this['whoops'] = function() {
+                    return new \Whoops\Run();
+                };
+                $this['whoops']->pushHandler(new \Whoops\Handler\PrettyPageHandler());
+                $this['whoops']->register();
             }
         } else {
             ini_set('display_errors', 'Off');
@@ -139,7 +141,7 @@ class Core extends \Pimple\Container
     }
     
     /**
-    * Application main executive function.
+    * Framework main executive function.
     */        
     public function run()
     {
@@ -225,7 +227,7 @@ class Core extends \Pimple\Container
     /**
     * Default handler for 404 error.
     *
-    * @var object \NotFoundException
+    * @param object \NotFoundException
     */
     protected function notFound(NotFoundException $e = null)
     {
@@ -241,7 +243,7 @@ class Core extends \Pimple\Container
     /**
     * Handle error.
     *
-    * @var object \Exception
+    * @param object \Exception
     */
     protected function internalError(\Exception $e)
     {
@@ -250,8 +252,8 @@ class Core extends \Pimple\Container
             call_user_func($this->hooks['internal.error'], $this);
         } else {
             $this['response']->setStatusCode(500);                
-            if ($this['config']['debug'] === true) {
-                $this['response']->setContent($this->printException($e));
+            if ($this['config']['debug'] === true && $this['config']['whoops'] === true) {
+                $this['whoops']->handleException($e);
             }
         }
     }
@@ -259,10 +261,10 @@ class Core extends \Pimple\Container
     /**
     * Print exception to string.
     *
-    * @var object \Exception
+    * @param object \Exception
     * @return string
     */
-    protected function printException($e)
+    protected function printException(\Exception $e)
     {
         $out = '<pre><div style="color:red">';
         $out .= '<h2>Error: '.$e->getMessage().'</h2>';
@@ -286,7 +288,7 @@ class Core extends \Pimple\Container
     /**
     * Get singleton instance of Core class.
     *
-    * @return object \Core\Core\Core
+    * @return object Core
     */
     public static function getInstance()
     {
@@ -299,8 +301,8 @@ class Core extends \Pimple\Container
     /**
     * Add hook.
     *
-    * @param string
-    * @param callable
+    * @param string $key
+    * @param callable $callable
     */
     public function setHook($key, $callable) 
     {
@@ -310,7 +312,7 @@ class Core extends \Pimple\Container
     /**
     * Get hook.
     *
-    * @param string
+    * @param string $key
     * @return callable
     */
     public function getHook($key) 
