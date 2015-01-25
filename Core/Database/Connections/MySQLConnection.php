@@ -9,10 +9,10 @@ namespace Core\Database\Connections;
 class MySQLConnection extends PDOConnection
 {
     /**
-    * Class constructor.
-    *
-    * @param array $params
-    */
+     * Class constructor.
+     *
+     * @param array $params
+     */
     public function __construct(array $params)
     {
         // Load configuration parameters
@@ -24,13 +24,13 @@ class MySQLConnection extends PDOConnection
     }
 
     /**
-    * Connect to database with using settings
-    * defined in class.
-    *
-    * @return object \PDO
-    * @throws \PDOException
-    * @throws \InvalidArgumentException
-    */
+     * Connect to database with using settings
+     * defined in class.
+     *
+     * @return \PDO
+     * @throws \PDOException
+     * @throws \InvalidArgumentException
+     */
     public function connect()
     {
         try {

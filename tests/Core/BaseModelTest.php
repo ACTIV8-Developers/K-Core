@@ -10,9 +10,9 @@ class BaseModelTest extends PHPUnit_Framework_TestCase
 	{
 		$mod = new MockModel();
 
-		$this->assertInstanceOf('Core\Session\Session', $mod->getDatabase());
+		$this->assertInstanceOf('Core\Database\Database', $mod->getDatabase());
 
-		$this->assertSame(\Core\Core\Core::getInstance()['dbdefault'], $mod->getDatabase());
+		$this->assertSame(\Core\Core\Core::getInstance()['db.default'], $mod->getDatabase());
 	}
 }
 
@@ -21,6 +21,6 @@ class MockModel extends Model
 {
     public function getDatabase()
     {
-        return $this->db();
+        return $this->db;
     }
 }

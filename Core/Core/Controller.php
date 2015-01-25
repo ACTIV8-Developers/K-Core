@@ -2,19 +2,19 @@
 namespace Core\Core;
 
 /**
-* Base controller abstract class.
-* Extend to get access to app main container and common functions.
-*
-* @author <milos@caenazzo.com>
-*/
+ * Base controller abstract class.
+ * Extend to get access to app main container and common functions.
+ *
+ * @author <milos@caenazzo.com>
+ */
 abstract class Controller extends ContainerProvider
 {
     /**
-    * Get GET value from request object.
-    *
-    * @param string $key
-    * @return mixed
-    */
+     * Get GET value from request object.
+     *
+     * @param string $key
+     * @return mixed
+     */
     protected function get($key = null)
     {
         if ($key === null) {
@@ -25,11 +25,11 @@ abstract class Controller extends ContainerProvider
 
 
     /**
-    * Get POST value from request object.
-    *
-    * @param string $key
-    * @return mixed
-    */
+     * Get POST value from request object.
+     *
+     * @param string $key
+     * @return mixed
+     */
     protected function post($key = null)
     {
         if ($key === null) {
@@ -39,11 +39,11 @@ abstract class Controller extends ContainerProvider
     }
 
     /**
-    * Render output for display.
-    *
-    * @param string $view
-    * @param array $data 
-    */
+     * Render output for display.
+     *
+     * @param string $view
+     * @param array $data 
+     */
     protected function render($view, array $data = [])
     {
         // Extract variables.
@@ -61,12 +61,12 @@ abstract class Controller extends ContainerProvider
     }
 
     /**
-    * Buffer output and return it as string.
-    *
-    * @param string $view
-    * @param array $data
-    * @return string
-    */
+     * Buffer output and return it as string.
+     *
+     * @param string $view
+     * @param array $data
+     * @return string
+     */
     protected function buffer($view, array $data = [])
     {
         // Extract variables.
@@ -97,32 +97,33 @@ abstract class Controller extends ContainerProvider
     }
 
     /**
-    * Display page with not found code.
-    * @throws NotFoundException
-    */
+     * Display page with not found code.
+     * 
+     * @throws \Core\Core\NotFoundException
+     */
     protected function notFound()
     {
         throw new NotFoundException();
     }
 
     /**
-    * Load language file with defined constants.
-    *
-    * @param string $lang,
-    * @param string $file
-    * @return array
-    */
+     * Load language file with defined constants.
+     *
+     * @param string $lang,
+     * @param string $file
+     * @return array
+     */
     protected function language($lang, $file = 'default')
     {
         return APP.'Languages/'.$lang.'/'.$file.'.php';
     }
 
     /**
-    * Redirect helper function.
-    *
-    * @var string $url
-    * @var int $statusCode
-    */
+     * Redirect helper function.
+     *
+     * @var string $url
+     * @var int $statusCode
+     */
     protected function redirect($url = '', $statusCode = 303)
     {
         header('Location: '.\Core\Util\Util::base($url), true, $statusCode);
@@ -130,11 +131,11 @@ abstract class Controller extends ContainerProvider
     }
 
     /**
-    * Redirect helper function.
-    *
-    * @var string $url
-    * @var int $statusCode
-    */
+     * Redirect helper function.
+     *
+     * @var string $url
+     * @var int $statusCode
+     */
     protected function redirectToUrl($url = '', $statusCode = 303)
     {
         header('Location: '.$url, true, $statusCode);

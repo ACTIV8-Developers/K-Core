@@ -15,9 +15,9 @@ class DatabaseSessionHandler implements \SessionHandlerInterface
 {
 	
 	/**
-	* PDO connection.
-	* @var \PDO
-	*/
+	 * PDO connection.
+	 * @var \PDO
+	 */
 	protected $dbConnection = null;
 
     /**
@@ -28,8 +28,8 @@ class DatabaseSessionHandler implements \SessionHandlerInterface
     protected $tableName = 'sessions';
 
     /**
-    * @param object \PDO
-    */
+     * @param \PDO
+     */
     public function __construct(\PDO $db) 
     {
         $this->db = $db;
@@ -38,7 +38,7 @@ class DatabaseSessionHandler implements \SessionHandlerInterface
 	/**
 	 * Inject DB connection from outside
 	 *
- 	 * @param object \PDO
+ 	 * @param \PDO
 	 */
 	public function setDbConnection($dbConnection)
 	{

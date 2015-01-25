@@ -11,14 +11,14 @@ abstract class AbstractDatabase
     /**
      * Database connection.
      *
-     * @var object \PDO
+     * @var \PDO
      */
     protected $connection = null;
 
     /**
      * Set connection variable.
      *
-     * @param object \PDO $conn
+     * @param \PDO $conn
      */
     public function setConnection(\PDO $conn)
     {
@@ -28,7 +28,7 @@ abstract class AbstractDatabase
     /**
      * Get connection variable.
      *
-     * @return object \PDO
+     * @return \PDO
      */
     public function getConnection()
     {
@@ -40,7 +40,6 @@ abstract class AbstractDatabase
      *
      * @param int $attr
      * @param mixed $value
-     * @return bool
      */
     public function setAttribute($attr, $value)
     {

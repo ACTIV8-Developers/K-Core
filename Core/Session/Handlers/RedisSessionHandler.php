@@ -17,12 +17,12 @@ class RedisSessionHandler implements \SessionHandlerInterface
     public $prefix = 'PHPSESSID:';
 
     /**
-     * @var object \Predis\Client
+     * @var \Predis\Client
      */
     protected $redis;
 
     /**
-     * @param object \Predis\Client
+     * @param \Predis\Client
      * @param string
      */
     public function __construct(\Predis\Client $redis) 

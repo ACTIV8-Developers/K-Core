@@ -1,5 +1,5 @@
 <?php
-use \Core\Http\Request;
+use Core\Http\Request;
 
 class RequestTest extends PHPUnit_Framework_TestCase
 {

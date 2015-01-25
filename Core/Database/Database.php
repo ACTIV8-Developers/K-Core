@@ -2,31 +2,31 @@
 namespace Core\Database;
 
 /**
-* Basic database class used for common CRUD operations.
-*
-* @author <milos@caenazzo.com>
-*/
+ * Basic database class used for common CRUD operations.
+ *
+ * @author <milos@caenazzo.com>
+ */
 class Database extends AbstractDatabase
 {
     /**
-    * Begin database transaction.
-    */
+     * Begin database transaction.
+     */
     public function beginTransaction()
     {
     	$this->connection->beginTransaction();
     }
 
-    /*
-    * Commit database transaction.
-    */
+    /**
+     * Commit database transaction.
+     */
     public function commit()
     {
     	$this->connection->commit();
     }
 
     /**
-    * Rollback current database transaction.
-    */
+     * Rollback current database transaction.
+     */
     public function rollback()
     {
     	$this->connection->rollBack();	
@@ -35,8 +35,8 @@ class Database extends AbstractDatabase
     /**
      * Classic query method using prepared statements.
      *
-     * @param string SQL query
-     * @param array parameters
+     * @param string $query
+     * @param array $params
      * @return resource
      */
     public function query($query, array $params = [])
@@ -49,31 +49,31 @@ class Database extends AbstractDatabase
     }
 
 	/**
-	* Select query.
-	*
-	* @param string SQL query
-	* @param array parameters
-	* @param string PDO fetch mode(optional)
-	* @return array
-	*/
-	public function select($query, array $params = [], $fetch = null)
+	 * Select query.
+	 *
+	 * @param string $query
+	 * @param array $params
+	 * @param string $fetchMode
+	 * @return array
+	 */
+	public function select($query, array $params = [], $fetchMode = null)
 	{
 	  	// Execute query	
 	  	$stmt = $this->connection->prepare($query);
 	  	$stmt->execute($params);
-	  	if ($fetch !== null) {
-			$stmt->setFetchMode($fetch);
+	  	if ($fetchMode !== null) {
+			$stmt->setFetchMode($fetchMode);
 	  	}
 	  	return $stmt->fetchAll();
 	}
 
 	/**
-	* Insert query.
-	*
-	* @param string SQL query
-	* @param array parameters
-	* @return int
-	*/
+	 * Insert query.
+	 *
+	 * @param string $query
+	 * @param array $params
+	 * @return int
+	 */
 	public function insert($query, array $params)
 	{
 	  	$stmt = $this->connection->prepare($query);
@@ -82,23 +82,23 @@ class Database extends AbstractDatabase
 	}
 
 	/**
-	* Wrapper for PDO last insert id.
-	*
-	* @param string $name (optional)
-	* @return int
-	*/
+	 * Wrapper for PDO last insert id.
+	 *
+	 * @param string $name (optional)
+	 * @return int
+	 */
 	public function lastInsertId($name = null)
 	{
 	  	return $this->connection->lastInsertId($name);
 	}
 
 	/**
-	* Update query.
-	*
-	* @param string SQL query
-	* @param array parameters
-	* @return int
-	*/
+	 * Update query.
+	 *
+	 * @param string $query
+	 * @param array $params
+	 * @return int
+	 */
 	public function update($query, array $params)
 	{
 	  	$stmt = $this->connection->prepare($query);
@@ -107,12 +107,12 @@ class Database extends AbstractDatabase
 	}
 
 	/**
-	* Delete query.
-	*
-	* @param string SQL query
-	* @param array parameters
-	* @return int
-	*/
+	 * Delete query.
+	 *
+	 * @param string $query
+	 * @param array $params
+	 * @return int
+	 */
 	public function delete($query, array $params)
 	{
 	  	$stmt = $this->connection->prepare($query);
@@ -121,12 +121,12 @@ class Database extends AbstractDatabase
 	}
 
 	/**
-	* Count query.
-	*
-	* @param string SQL query
-	* @param array parameters
-	* @return int
-	*/
+	 * Count query.
+	 *
+	 * @param string $query
+	 * @param array $params
+	 * @return int
+	 */
 	public function count($query, array $params)
 	{
 	  	$stmt = $this->connection->prepare($query);
@@ -135,13 +135,13 @@ class Database extends AbstractDatabase
 	}
 
 	/**
-	* Create table in database(MySQL specific).
-	*
-	* @param string $name
-	* @param array $fields Fields array example ['id'=>'INT AUTO_INCREMENT PRIMARY KEY', 'value'=>'varchar(10)']
-	* @param string $options (additional options for table like engine, UTF etc)
-    * @return int
-	*/
+	 * Create table in database (MySQL specific).
+	 *
+	 * @param string $name
+	 * @param array $fields Fields array example ['id'=>'INT AUTO_INCREMENT PRIMARY KEY', 'value'=>'varchar(10)']
+	 * @param string $options (additional options for table like engine, UTF etc)
+     * @return int
+	 */
 	public function createTable($name, array $fields, $options = null)
 	{
 		// Make query
@@ -170,12 +170,12 @@ class Database extends AbstractDatabase
 	}
 
 	/**
-	* Add index to table column.
-	*
-	* @param string $table
-	* @param string $column
-	* @param string $name
-	*/
+	 * Add index to table column.
+	 *
+	 * @param string $table
+	 * @param string $column
+	 * @param string $name
+	 */
 	public function addIndex($table, $column, $name)
 	{
 		$sql = sprintf('ALTER TABLE %s ADD INDEX %s(%s)', $table, $name, $column);

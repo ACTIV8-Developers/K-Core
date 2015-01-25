@@ -12,7 +12,7 @@ abstract class Model extends ContainerProvider
      * Get database object.
      *
      * @param string $dbName
-     * @return object \Core\Database\Database
+     * @return \Core\Database\Database
      */
     protected function db($dbName = 'default')
     {

@@ -1,6 +1,5 @@
 <?php
-
-use \Core\Routing\Route;
+use Core\Routing\Route;
 
 class RouteTest extends PHPUnit_Framework_TestCase
 {

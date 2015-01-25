@@ -2,30 +2,30 @@
 namespace Core\Routing;
 
 /**
-* Router class.
-*
-* This class contains list of application routes,
-* also here are methods for adding things to list and
-* here is defined run method for routing requests.
-*
-* @author <milos@caenazzo.com>
-*/
+ * Router class.
+ *
+ * This class contains list of application routes,
+ * also here are methods for adding things to list and
+ * here is defined run method for routing requests.
+ *
+ * @author <milos@caenazzo.com>
+ */
 class Router
 {
 	/**
-	* Collection of routes.
-    *
-	* @var array (\Core\Routing\Route)
-	**/
+	 * Collection of routes.
+     *
+	 * @var \Core\Routing\Route[]
+	 */
 	protected $routes = [];
 
 	/**
-	* Check routes and return matching one.
-    *
-	* @var string $uri
-    * @var string $requestMethod
-	* @return bool|object \Core\Routing\Route
-	*/
+	 * Check routes and return matching one.
+     *
+	 * @var string $uri
+     * @var string $requestMethod
+	 * @return bool|\Core\Routing\Route
+	 */
 	public function run($uri, $requestMethod)
 	{
 		// Find correct route.
@@ -38,12 +38,12 @@ class Router
 	}
 
     /**
-	* Add a route object to the router accepting GET request method.
-    *
-	* @param string $url
-	* @param array
-    * @return object \Core\Routing\Route
-    */
+	 * Add a route object to the router accepting GET request method.
+     *
+	 * @param string $url
+	 * @param array
+     * @return \Core\Routing\Route
+     */
     public function get($url, array $callable)
     {
     	$route = new Route($url, $callable, 'GET');
@@ -52,12 +52,12 @@ class Router
     }
 
     /**
-	* Add a route object to the router accepting POST request method.
-    *
-	* @param string $url
-	* @param array $callable,
-    * @return object \Core\Routing\Route
-    */
+	 * Add a route object to the router accepting POST request method.
+     *
+	 * @param string $url
+	 * @param array $callable,
+     * @return \Core\Routing\Route
+     */
     public function post($url, array $callable)
     {
     	$route = new Route($url, $callable, 'POST');
@@ -66,12 +66,12 @@ class Router
     }
 
     /**
-	* Add a route object to the router accepting PUT request method.
-    *
-	* @param string $url
-	* @param array $callable,
-    * @return object \Core\Core\Route
-	*/
+	 * Add a route object to the router accepting PUT request method.
+     *
+	 * @param string $url
+	 * @param array $callable,
+     * @return \Core\Core\Route
+	 */
     public function put($url, array $callable)
     {
     	$route = new Route($url, $callable, 'PUT');
@@ -80,12 +80,12 @@ class Router
     }
 
     /**
-	* Add a route object to the router accepting DELETE request method.
-    *
-	* @param string $url
-	* @param array $callable,
-    * @return object \Core\Core\Route
-	*/
+	 * Add a route object to the router accepting DELETE request method.
+     *
+	 * @param string $url
+	 * @param array $callable,
+     * @return \Core\Core\Route
+	 */
     public function delete($url, array $callable)
     {
     	$route = new Route($url, $callable, 'DELETE');
@@ -94,10 +94,10 @@ class Router
     }
 
     /**
-    * Add custom route object to routes array.
-    *
-    * @var object \Core\Core\Route
-    */
+     * Add custom route object to routes array.
+     *
+     * @var \Core\Core\Route
+     */
     public function addRoute(Route $route)
     {
     	$this->routes[] = $route;
@@ -106,7 +106,7 @@ class Router
     /**
      * Get list of routes.
      *
-     * @return array
+     * @return \Core\Core\Route[]
      */
     public function getRoutes()
     {
@@ -114,8 +114,8 @@ class Router
     }
 
     /**
-    * Clear all routes.
-    */
+     * Clear all routes.
+     */
     public function clearRoutes()
     {
         unset($this->routes);

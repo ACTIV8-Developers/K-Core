@@ -4,12 +4,8 @@ class CoreTest extends PHPUnit_Framework_TestCase
 {
     public function testConstruct()
     {
-        // Minimal request needed information.
-        $_SERVER['REQUEST_METHOD'] = 'GET';
-        $_SERVER['REQUEST_URI'] = '';
-
         // Make instance of app.
-        $app = Core\Core\Core::getInstance();
+        $app = Core\Core\Core::getNew();
 
         // Check if construct made all required things.
         $this->assertInstanceOf('Core\Core\Core', $app);
@@ -18,10 +14,43 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Core\Session\Session', $app['session']);
     }
 
+    public function testRouteRequest()
+    {
+        // Make instance of app.
+        $app = Core\Core\Core::getNew();      
+
+        $this->expectOutputString('<p>Working</p>');
+        $app->routeRequest();
+    }
+
+    public function testSendReponse()
+    {
+        // Make instance of app.
+        $app = Core\Core\Core::getNew();
+
+        $app['response']->setContent('<div>Test</div>');
+
+        $this->expectOutputString('<div>Test</div>');
+
+        $app->sendResponse();
+    }
+
+    public function testNotFound()
+    {
+        // Make instance of app.
+        $app = Core\Core\Core::getNew();
+
+        $ex = new \Core\Core\NotFoundException('Test');
+
+        $app->notFound($ex);
+
+        $this->assertEquals($app['response']->getContent(), '<h1>404 Not Found</h1>The page that you have requested could not be found.');
+    }
+    
     public function testHooks()
     {
         // Make instance of app.
-        $app = Core\Core\Core::getInstance();
+        $app = Core\Core\Core::getNew();
 
         // Make some functions.
         $function1 = function($app) {
@@ -40,35 +69,12 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($app->getHook('before.routing'), $function1);
         $this->assertEquals($app->getHook('after.routing'), $function2);
     }
+}
 
-    public function testSendReponse()
+class TestController
+{
+    public function index()
     {
-        // Make instance of app.
-        $app = Core\Core\Core::getInstance();
-
-        $app['response']->setContent('<div>Test</div>');
-
-        $this->expectOutputString('<div>Test</div>');
-
-        $app->sendResponse();
-    }
-
-    public function testRouteRequest()
-    {
-        // Make instance of app.
-        $app = Core\Core\Core::getInstance();
-        // TO DO
-    }
-
-    public function testNotFound()
-    {
-        // Make instance of app.
-        $app = Core\Core\Core::getInstance();
-
-        $ex = new \Core\Core\NotFoundException('Test');
-
-        $app->notFound($ex);
-
-        $this->assertEquals($app['response']->getContent(), '<h1>404 Not Found</h1>The page that you have requested could not be found.');
+        echo '<p>Working</p>';
     }
 }

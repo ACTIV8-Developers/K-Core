@@ -2,16 +2,16 @@
 namespace Core\Http;
 
 /**
-* HTTP request class.
-* This class provides interface for common request parameters.
-*
-* @author <milos@caenazzo.com>
-*/
+ * HTTP request class.
+ * This class provides interface for common request parameters.
+ *
+ * @author <milos@caenazzo.com>
+ */
 class Request
 {
     /**
-    * List of possible HTTP request methods.
-    */
+     * List of possible HTTP request methods.
+     */
     const METHOD_HEAD = 'HEAD';
     const METHOD_GET = 'GET';
     const METHOD_POST = 'POST';
@@ -21,72 +21,65 @@ class Request
     const METHOD_OPTIONS = 'OPTIONS';
 
     /**
-    * Server and execution environment parameters (parsed from $_SERVER).
-    *
-    * @var object HttpBag
-    */
+     * Server and execution environment parameters (parsed from $_SERVER).
+     *
+     * @var \Core\Http\HttpBag
+     */
     public $server;
 
     /**
-    * Request headers (parsed from the $_SERVER).
-    *
-    * @var object HttpBag
-    * @see http://en.wikipedia.org/wiki/List_of_HTTP_header_fields
-    */
+     * Request headers (parsed from the $_SERVER).
+     *
+     * @var \Core\Http\HttpBag
+     * @see http://en.wikipedia.org/wiki/List_of_HTTP_header_fields
+     */
     public $headers;
 
     /**
-    * Request parameters (parsed from the $_GET).
-    *
-    * @var object HttpBag
-    */
+     * Request parameters (parsed from the $_GET).
+     *
+     * @var \Core\Http\HttpBag
+     */
     public $get;
 
     /**
-    * Request parameters (parsed from the $_POST).
-    *
-    * @var object HttpBag
-    */
+     * Request parameters (parsed from the $_POST).
+     *
+     * @var \Core\Http\HttpBag
+     */
     public $post;
 
     /**
-    * Request cookies (parsed from the $_COOKIE).
-    *
-    * @var object HttpBag
-    */
+     * Request cookies (parsed from the $_COOKIE).
+     *
+     * @var \Core\Http\HttpBag
+     */
     public $cookies;
 
     /**
-    * Request files (parsed from the $_FILES).
-    *
-    * @var object HttpBag
-    */
+     * Request files (parsed from the $_FILES).
+     *
+     * @var \Core\Http\HttpBag
+     */
     public $files;
 
     /**
-    * Raw request content.
-    *
-    * @var string
-    */
+     * Raw request content.
+     *
+     * @var string
+     */
     protected $content = null;
-
-    /**
-    * Request method.
-    *
-    * @var string
-    */
-    protected $method = null;
     
     /**
-    * Class constructor.
-    *
-    * @param array $_SERVER
-    * @param array $_GET
-    * @param array $_POST
-    * @param array $_COOKIES
-    * @param array $_FILES
-    * @throws \InvalidArgumentException
-    */
+     * Class constructor.
+     *
+     * @param array $_SERVER
+     * @param array $_GET
+     * @param array $_POST
+     * @param array $_COOKIES
+     * @param array $_FILES
+     * @throws \InvalidArgumentException
+     */
     public function __construct(array $server = [], array $get = [], array $post = [], array $cookies = [], array $files = [])
     {
         // Check if request is valid, need URI and method set at least.
@@ -104,9 +97,6 @@ class Request
             $server['REQUEST_URI'] = str_replace('?'.$_SERVER['QUERY_STRING'], '', $server['REQUEST_URI']);
         }
         $server['REQUEST_URI'] = trim($server['REQUEST_URI'], '/');
-
-        // Get request method.
-        $this->method = $server['REQUEST_METHOD'];
 
         // Parse request headers and enviroment variables.
         $this->headers = new HttpBag();
@@ -127,7 +117,7 @@ class Request
 
         // Since PHP doesn't support PUT, DELETE, PATCH naturally for these methods we will parse data directly from source.
         if (0 === strpos($this->headers->get('CONTENT_TYPE'), 'application/x-www-form-urlencoded')
-            && in_array($this->method, array('PUT', 'DELETE', 'PATCH'))) {
+            && in_array($this->server->get('REQUEST_METHOD'), array('PUT', 'DELETE', 'PATCH'))) {
             parse_str($this->getContent(), $data);
             $this->post = new HttpBag($data);
         } else {
@@ -141,10 +131,10 @@ class Request
     }
 
     /**
-    * Get raw request input.
-    *
-    * @return string
-    */
+     * Get raw request input.
+     *
+     * @return string
+     */
     public function getContent()
     {
         if (null === $this->content) {
@@ -154,21 +144,21 @@ class Request
     }
 
     /**
-    * Get request uri.
-    *
-    * @return string
-    */
+     * Get request uri.
+     *
+     * @return string
+     */
     public function getUri()
     {
         return $this->server->get('REQUEST_URI');
     }
 
     /**
-    * Get request URI segment.
-    *
-    * @param int $index
-    * @return string|bool
-    */
+     * Get request URI segment.
+     *
+     * @param int $index
+     * @return string|bool
+     */
     public function getUriSegment($index)
     {
         $segments = explode('/', $this->server->get('REQUEST_URI'));
@@ -189,10 +179,10 @@ class Request
     }
 
     /**
-    * Check if it is AJAX request.
-    *  
-    * @return bool
-    */
+     * Check if it is AJAX request.
+     *  
+     * @return bool
+     */
     public function isAjax()
     {
         if ($this->headers->get('HTTP_X_REQUESTED_WITH') !== null
@@ -203,34 +193,34 @@ class Request
     }
 
     /**
-    * Get request method.
-    * (GET, POST, PUT, DELETE etc.)
-    *
-    * @return string
-    */
+     * Get request method.
+     * (GET, POST, PUT, DELETE etc.)
+     *
+     * @return string
+     */
     public function getMethod()
     {
-        return $this->method;
+        return $this->server->get('REQUEST_METHOD');
     }
 
     /**
-    * Check if it is HEAD request.
-    *
-    * @return bool
-    */
+     * Check if it is HEAD request.
+     *
+     * @return bool
+     */
     public function isHead()
     {
-        return self::METHOD_HEAD === $this->method;
+        return self::METHOD_HEAD === $this->server->get('REQUEST_METHOD');
     }
 
     /**
-    * Check if it is GET request.
-    *
-    * @return bool
-    */
+     * Check if it is GET request.
+     *
+     * @return bool
+     */
     public function isGet()
     {
-        return self::METHOD_GET === $this->method;
+        return self::METHOD_GET === $this->server->get('REQUEST_METHOD');
     }
 
     /**
@@ -240,7 +230,7 @@ class Request
      */
     public function isPost()
     {
-        return self::METHOD_POST === $this->method;
+        return self::METHOD_POST === $this->server->get('REQUEST_METHOD');
     }
 
     /**
@@ -250,7 +240,7 @@ class Request
      */
     public function isPut()
     {
-        return self::METHOD_PUT === $this->method;
+        return self::METHOD_PUT === $this->server->get('REQUEST_METHOD');
     }
 
     /**
@@ -260,7 +250,7 @@ class Request
      */
     public function isPatch()
     {
-        return self::METHOD_PATCH === $this->method;
+        return self::METHOD_PATCH === $this->server->get('REQUEST_METHOD');
     }
 
     /**
@@ -270,7 +260,7 @@ class Request
      */
     public function isDelete()
     {
-        return self::METHOD_DELETE === $this->method;
+        return self::METHOD_DELETE === $this->server->get('REQUEST_METHOD');
     }
 
     /**
@@ -280,7 +270,7 @@ class Request
      */
     public function isOptions()
     {
-        return self::METHOD_OPTIONS === $this->method;
+        return self::METHOD_OPTIONS === $this->server->get('REQUEST_METHOD');
     }
 
     /**

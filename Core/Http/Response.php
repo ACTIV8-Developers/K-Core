@@ -2,17 +2,17 @@
 namespace Core\Http;
 
 /**
-* HTTP response class.
-*
-* This class provides simple abstraction over top an HTTP response. 
-* This class provides methods to set the HTTP status, the HTTP headers,
-* the HTTP cookies and the HTTP body.
-*
-* @author <milos@caenazzo.com>
-*/
+ * HTTP response class.
+ *
+ * This class provides simple abstraction over top an HTTP response. 
+ * This class provides methods to set the HTTP status, the HTTP headers,
+ * the HTTP cookies and the HTTP body.
+ *
+ * @author <milos@caenazzo.com>
+ */
 class Response
 {
-     /**
+    /**
      * HTTP response codes and messages.
      *
      * @var array
@@ -71,130 +71,130 @@ class Response
     ];
     
     /**
-    * HTTP response protocol version.
-    *
-    * @var string
-    */
+     * HTTP response protocol version.
+     *
+     * @var string
+     */
     protected $protocolVersion = 'HTTP/1.1';
 
     /**
-    * HTTP response code.
-    *
-    * @var int
-    */
+     * HTTP response code.
+     *
+     * @var int
+     */
     protected $statusCode = 200;
 
     /**
      * List of HTTP headers to be sent.
      *
-     * @var object HttpBag
+     * @var \Core\Http\HttpBag
      */
     public $headers;
 
     /**
-    * Array of cookies to be sent.
-    *
-    * @var object HttpBag
-    */
+     * Array of cookies to be sent.
+     *
+     * @var \Core\Http\HttpBag
+     */
     public $cookies = [];
 
     /**
-    * HTTP response body.
-    *
-    * @var string 
-    */
+     * HTTP response body.
+     *
+     * @var string 
+     */
     protected $content = '';
 
     /**
-    * Class construct
-    */
+     * Class construct
+     */
     public function __construct()
     {
         $this->headers = new HttpBag();
     }
 
     /**
-    * Set HTTP response body.
-    *
-    * @param string $body
-    */
+     * Set HTTP response body.
+     *
+     * @param string $body
+     */
     public function setContent($body)
     {
         $this->content = $body;
     }
 
     /**
-    * Append to HTTP response body.
-    *
-    * @param string $part
-    */
+     * Append to HTTP response body.
+     *
+     * @param string $part
+     */
     public function addContent($part)
     {
         $this->content .= $part;
     }
 
     /**
-    * Get HTTP response body.
-    *
-    * @return string
-    */
+     * Get HTTP response body.
+     *
+     * @return string
+     */
     public function getContent()
     {
         return $this->content;
     }
 
     /**
-    * Set HTTP response code to be sent with headers.
-    *
-    * @param int $code
-    */
+     * Set HTTP response code to be sent with headers.
+     *
+     * @param int $code
+     */
     public function setStatusCode($code)
     {
         $this->statusCode = $code;
     }
 
     /**
-    * Get HTTP response code.
-    *
-    * @return int
-    */
+     * Get HTTP response code.
+     *
+     * @return int
+     */
     public function getStatusCode()
     {
         return $this->statusCode;
     }
 
     /**
-    * Get HTTP protocol version.
-    *
-    * @return string
-    */
+     * Get HTTP protocol version.
+     *
+     * @return string
+     */
     public function getProtocolVersion()
     {
         return $this->protocolVersion;
     }
 
     /**
-    * Set HTTP protocol version ("HTTP/1.1" or "HTTP/1.0").
-    *
-    * @param string $version
-    */
+     * Set HTTP protocol version ("HTTP/1.1" or "HTTP/1.0").
+     *
+     * @param string $version
+     */
     public function setProtocolVersion($version)
     {
         $this->protocolVersion = $version;
     }
 
     /**
-    * Send cookie with response.
-    *
-    * @param string $name  
-    * @param string $value 
-    * @param int|string|\DateTime $expire 
-    * @param string $path
-    * @param string $domain
-    * @param bool $secure                   
-    * @param bool $httpOnly
-    * @throws \InvalidArgumentException
-    */
+     * Send cookie with response.
+     *
+     * @param string $name  
+     * @param string $value 
+     * @param int|string|\DateTime $expire 
+     * @param string $path
+     * @param string $domain
+     * @param bool $secure                   
+     * @param bool $httpOnly
+     * @throws \InvalidArgumentException
+     */
     public function setCookie($name, $value = null, $expire = 7200, $path = '/', $domain = null, $secure = false, $httpOnly = true)
     {
         // As stated in PHP source code.
@@ -225,8 +225,8 @@ class Response
     }
 
     /**
-    * Send final headers, cookies and content.
-    */
+     * Send final headers, cookies and content.
+     */
     public function send()
     {
         // Check if headers are sent already.

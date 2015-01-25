@@ -6,15 +6,13 @@ class BaseControllerTest extends PHPUnit_Framework_TestCase
 {
 	public function testGet()
 	{
-		// Minimal request needed information.
-		$_SERVER['REQUEST_METHOD'] = 'GET';
-		$_SERVER['REQUEST_URI'] = '';
+		$app = \Core\Core\Core::getInstance();
 
 		$con = new MockController();
 
-		$this->assertSame(\Core\Core\Core::getInstance()['request'], $con->getRequest());
-		$this->assertSame(\Core\Core\Core::getInstance()['response'], $con->getResponse());
-		$this->assertSame(\Core\Core\Core::getInstance()['session'], $con->getSession());
+		$this->assertSame($app['request'], $con->getRequest());
+		$this->assertSame($app['response'], $con->getResponse());
+		$this->assertSame($app['session'], $con->getSession());
 	}
 
 	public function testRender()
@@ -26,8 +24,8 @@ class BaseControllerTest extends PHPUnit_Framework_TestCase
 		$result = $con->bufferIt($view);
 
 		// Output string should be same as content of MockView.php file
-		echo $result;
 		$this->expectOutputString(file_get_contents(APPVIEW.$view.'.php'));
+		echo $result;
 	}
 
 	public function testRenderDynamicPage()
@@ -44,10 +42,9 @@ class BaseControllerTest extends PHPUnit_Framework_TestCase
 		// Output main and nested view
 		$res = $con->bufferIt($view, $data);
 
-		echo $res;
-
 		// Output string shoudl be same as content of MockNestedViewTest.php file
 		$this->expectOutputString(file_get_contents(APPVIEW.$compareView.'.php'));
+		echo $res;
 	}
 }
 

@@ -9,14 +9,14 @@ namespace Core\Core;
 abstract class ServiceProvider 
 {
 	/**
-	 * @var object Core
+	 * @var \Core\Core\Core
 	 */
 	protected $app = null;
 
 	/**
 	 * Create a new service provider instance.
 	 *
-	 * @param Core $app
+	 * @param \Core\Core\Core $app
 	 */
 	public function __construct($app)
 	{

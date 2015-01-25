@@ -26,7 +26,7 @@ class Core extends \Pimple\Container
     /**
      * Singleton instance of Core.
      *
-     * @var object
+     * @var \Core\Core\Core
      */
     protected static $instance = null;
 
@@ -200,12 +200,12 @@ class Core extends \Pimple\Container
 
         // Route requests
         $matchedRoute = $route->run($this['request']->getUri(), $this['request']->getMethod());
-        
+
         // Execute route if found.
         if (false !== $matchedRoute) {
             // Write passed params to GET array.
             $this['request']->get->add($matchedRoute->params);
-
+   
             // Get controller name with namespace prefix.
             $matchedRoute->controller = CONTROLERS.'\\'.$matchedRoute->controller;
 
@@ -244,7 +244,7 @@ class Core extends \Pimple\Container
     /**
      * Default handler for 404 error.
      *
-     * @param object NotFoundException
+     * @param \Core\Core\NotFoundException
      */
     public function notFound(NotFoundException $e = null)
     {
@@ -258,9 +258,9 @@ class Core extends \Pimple\Container
     }
 
     /**
-     * Handle error.
+     * Handle exception.
      *
-     * @param object \Exception
+     * @param \Exception
      */
     protected function internalError(\Exception $e)
     {
@@ -278,7 +278,7 @@ class Core extends \Pimple\Container
     /**
      * Get singleton instance of Core class.
      *
-     * @return object Core
+     * @return \Core\Core\Core
      */
     public static function getInstance()
     {
@@ -286,6 +286,16 @@ class Core extends \Pimple\Container
             self::$instance = new Core();
         }
         return self::$instance;
+    }
+
+    /**
+     * Get new instance of Core class.
+     *
+     * @return \Core\Core\Core
+     */
+    public static function getNew()
+    {
+        return new Core();
     }
 
     /**

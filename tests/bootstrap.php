@@ -12,7 +12,7 @@ define('APP', __DIR__.'/MockApp');
 | This needs to match structure defined in composer.json file, usually
 | controllers are stored in App/Controllers.
 */
-define('CONTROLERS', 'Controllers');
+define('CONTROLERS', '');
 /*
 |--------------------------------------------------------------------------
 | Set name of directory and namespace where models are stored.
@@ -57,3 +57,10 @@ require __DIR__.'/../vendor/autoload.php';
 | Additional auto loader for prettier class names.
 */
 Core\Util\AliasLoader::getInstance(require(APP.'/Config/Aliases.php'))->register();
+/*
+|--------------------------------------------------------------------------
+| Mockup request
+|--------------------------------------------------------------------------
+*/
+$_SERVER['REQUEST_METHOD'] = 'GET';
+$_SERVER['REQUEST_URI'] = '/test';

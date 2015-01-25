@@ -16,63 +16,63 @@ class Session
     protected $hashKey = 'super_secret';
 
 	/**
-	* Lifetime of the session cookie and session duration, defined in seconds.
-	*
-	* @var int
-	*/
+	 * Lifetime of the session cookie and session duration, defined in seconds.
+	 *
+	 * @var int
+	 */
 	protected $expiration = 7200;
 
 	/**
-	* Cookie domain, for example 'www.php.net'. 
-	* To make cookies visible on all sub domains then the domain must be prefixed with a dot like '.php.net'.
-	*
-	* @var string|null
-	*/
+	 * Cookie domain, for example 'www.php.net'. 
+	 * To make cookies visible on all sub domains then the domain must be prefixed with a dot like '.php.net'.
+	 *
+	 * @var string|null
+	 */
 	protected $domain = '';
 
 	/**
-	* If true the browser only sends the cookie over HTTPS.
-	* Null denotes class will decide.
-	*
-	* @var bool|null
-	*/
+	 * If true the browser only sends the cookie over HTTPS.
+	 * Null denotes class will decide.
+	 *
+	 * @var bool|null
+	 */
 	protected $secure = null;
 
 	/**
-	* Session name.
-	*
-	* @var string
-	*/
+	 * Session name.
+	 *
+	 * @var string
+	 */
 	protected $name = 'PHPSESS';
 
 	/**
-	* Match user agent across session requests.
-	*
-	* @var bool
-	*/
+	 * Match user agent across session requests.
+	 *
+	 * @var bool
+	 */
 	protected $matchUserAgent = false;
 
 	/**
-	* Period of refreshing session ID.
-	*
-	* @var int
-	*/
+	 * Period of refreshing session ID.
+	 *
+	 * @var int
+	 */
 	protected $updateFrequency = 10;
 
 	/**
-	* Hashing algorithm used for creating security tokens.
-	*
-	* @var string
-	*/
+	 * Hashing algorithm used for creating security tokens.
+	 *
+	 * @var string
+	 */
 	protected $hashAlgo = 'md5';
 	
 	/**
-	* Class construct.
-	* Register handler and start session here.
-	*
-	* @param array $params
-	* @param object \SessionHandlerInterface
-	*/
+	 * Class construct.
+	 * Register handler and start session here.
+	 *
+	 * @param array $params
+	 * @param \SessionHandlerInterface
+	 */
 	public function __construct(array $params = [], \SessionHandlerInterface $handler = null)
 	{
 		// Load configuration parameters.
@@ -102,8 +102,8 @@ class Session
 	}
 
 	/**
-	* Start session.
-	*/
+	 * Start session.
+	 */
 	public function start()
 	{
 		// If no active session start one.
@@ -124,10 +124,10 @@ class Session
 	}
 
 	/**
-	* Validate session.
-	*
-	* @return bool
-	*/
+	 * Validate session.
+	 *
+	 * @return bool
+	 */
 	protected function validate()
 	{
 		// Are needed session variables set ?
@@ -173,61 +173,60 @@ class Session
     }
 
     /**
-    * @param string $key
-    * @return mixed
-    */
+     * @param string $key
+     * @return mixed
+     */
     public function get($key)
     {
     	return isset($_SESSION[$key])?$_SESSION[$key]:null;
     }
 
     /**
-    * @param string $key
-    * @param mixed $value
-    */
+     * @param string $key
+     * @param mixed $value
+     */
     public function set($key, $value)
     {
     	$_SESSION[$key] = $value;
     }
 
     /**
-    * @return array
-    */
+     * @return array
+     */
     public function all()
     {
     	return $_SESSION;
     }
 
     /**
-    * Clear session values.
-    */
+     * Clear session values.
+     */
     public function flush()
     {
     	$_SESSION = [];
     }
 
     /**
-    * @param string $key
-    */
+     * @param string $key
+     */
     public function forget($key)
     {
     	unset($_SESSION[$key]);
     }
 
     /**
-    * @param string $key
-    */
+     * @param string $key
+     */
     public function has($key)
     {
     	return isset($_SESSION[$key]);
     }
 
     /**
-    * @param string $hashKey
-    */
+     * @param string $hashKey
+     */
     public function setHashKey($hashKey)
     {
     	$this->hashKey = $hashKey;
     }
-
 }

@@ -2,68 +2,68 @@
 namespace Core\Pagination;
 
 /**
-* Pagination class.
-*
-* @author <ndelevic@ymail.com>
-* @author <milos@caenazzo.com>
-*/
+ * Pagination class.
+ *
+ * @author <ndelevic@ymail.com>
+ * @author <milos@caenazzo.com>
+ */
 class Pagination
 {
     /**
-    * Number of products to display per page.
-    *
-    * @var int
-    */
+     * Number of products to display per page.
+     *
+     * @var int
+     */
     protected $perPage = 12;
     
     /**
-    * Total number of rows.
-    *
-    * @var int
-    */
+     * Total number of rows.
+     *
+     * @var int
+     */
     protected $totalRows = 0; 
 
     /**
-    * Current displaying offset.
-    *
-    * @var int
-    */
+     * Current displaying offset.
+     *
+     * @var int
+     */
     protected $curOffset = 0;
     
     /**
-    * Number of links to display at once.
-    * NumLinks must be odd number in order to class function properly.
-    *
-    * @var int
-    */
+     * Number of links to display at once.
+     * NumLinks must be odd number in order to class function properly.
+     *
+     * @var int
+     */
     protected $numLinks = 9;
 
     /**
-    * Class to add to <li> tag.
-    *
-    * @var string
-    */
+     * Class to add to <li> tag.
+     *
+     * @var string
+     */
     protected $liClass = 'pagi';
 
     /**
-    * Base added to all links.
-    *
-    * @var string
-    */
+     * Base added to all links.
+     *
+     * @var string
+     */
     protected $baseUrl = '';
 
     /**
-    * Added at end of every link.
-    *
-    * @var string
-    */
+     * Added at end of every link.
+     *
+     * @var string
+     */
     protected $extraParams = '';
     
     /**
-    * Class constructor
-    *
-    * @param array $params
-    */
+     * Class constructor
+     *
+     * @param array $params
+     */
     public function __construct(array $params = [])
     {
         foreach ($params as $key => $val) {
@@ -78,11 +78,11 @@ class Pagination
     }
 
     /**
-    * Shortcut static function, makes new Pagination object
-    * and calls createLinks method.
-    *
-    * @param array $config
-    */
+     * Shortcut static function, makes new Pagination object
+     * and calls createLinks method.
+     *
+     * @param array $config
+     */
     public static function make($config)
     {
         $pagi = new Pagination($config);
@@ -90,10 +90,10 @@ class Pagination
     }
 
     /**
-    * Generate the pagination links.
-    *
-    * @return string (HTML of pagination menu)
-    */
+     * Generate the pagination links.
+     *
+     * @return string (HTML of pagination menu)
+     */
     public function createLinks()
     {
         $r = '';// Variable to hold result

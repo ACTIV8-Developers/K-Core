@@ -51,7 +51,7 @@ abstract class PDOConnection
     /**
      * Connect to database and return PDO object connection variable
      *
-     * @return object \PDO
+     * @return \PDO
      */
     abstract public function connect();
 }

@@ -2,17 +2,17 @@
 namespace Core\Util;
 
 /**
-* Utility class.
-*
-* @author <milos@caenazzo.com>
-*/
+ * Utility class.
+ *
+ * @author <milos@caenazzo.com>
+ */
 class Util
 {
 	/**
-	* Variable for caching base() call, since often it is called multiple times.
-	*
-	* @var string
-	*/
+	 * Variable for caching base() call, since often it is called multiple times.
+	 *
+	 * @var string
+	 */
 	protected static $base = null;
 
     /**

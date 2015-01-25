@@ -2,60 +2,60 @@
 namespace Core\Routing;
 
 /**
-* Route class. 
-* This class represents single application route.
-*
-* @author <milos@caenazzo.com>
-*/
+ * Route class. 
+ * This class represents single application route.
+ *
+ * @author <milos@caenazzo.com>
+ */
 class Route
 {
   	/**
-    * The route pattern (The URL pattern (e.g. "article/:year/:category")).
-    *
-	* @var string 
-	*/
+     * The route pattern (The URL pattern (e.g. "article/:year/:category")).
+     *
+	 * @var string 
+	 */
 	public $url = '';
 
     /**
-    * The route controller.
-    *
-	* @var string
-	*/
+     * The route controller.
+     *
+	 * @var string
+	 */
     public $controller = '';
 
     /**
-    * The route method.
-    *
-    * @var string
-    */
+     * The route method.
+     *
+     * @var string
+     */
     public $method = '';
 
     /**
-    * List of parameters to be passed if URL is matched.
-    *
-    * @var array
-    */
+     * List of parameters to be passed if URL is matched.
+     *
+     * @var array
+     */
     public $params = [];
 
     /**
-    * List of supported HTTP methods for this route.
-    *
-    * @var array
-    */
+     * List of supported HTTP methods for this route.
+     *
+     * @var array
+     */
     protected $methods = [];
     
     /**
-    * List of parameters conditions.
-    *
-    * @var array
-    */
+     * List of parameters conditions.
+     *
+     * @var array
+     */
     protected $conditions = [];
 
     /**
-    * List of regex to use when matching conditions.
-    *
-    * @param array
-    */
+     * List of regex to use when matching conditions.
+     *
+     * @param array
+     */
     protected static $conditionRegex = [
                         'default'           => '[a-zA-Z0-9_\-]+', // Default allows letters, numbers, underscores and dashes.
                         'alpha-numeric'     => '[a-zA-Z0-9]+', // Numbers and letters.
@@ -66,19 +66,19 @@ class Route
                     ];
 
     /**
-    * Regex used to parse routes.
-    *
-    * @var string
-    */
+     * Regex used to parse routes.
+     *
+     * @var string
+     */
     const MATCHES_REGEX = '@:([\w]+)@';
 
     /**
-	* Class constructor.
-    *
-	* @param string $url
-    * @param array $callable
-	* @param string $requestMethod
-	*/
+	 * Class constructor.
+     *
+	 * @param string $url
+     * @param array $callable
+	 * @param string $requestMethod
+	 */
 	public function __construct($url, array $callable, $requestMethod = 'GET')
 	{
         $this->url = $url;
@@ -88,13 +88,13 @@ class Route
 	}
 
     /**
-    * Check if requested URI matches this route.
-    * Inspired by: http://blog.sosedoff.com/2009/09/20/rails-like-php-url-router/
-    *
-    * @param string $uri
-    * @param string method
-    * @return bool
-    */
+     * Check if requested URI matches this route.
+     * Inspired by: http://blog.sosedoff.com/2009/09/20/rails-like-php-url-router/
+     *
+     * @param string $uri
+     * @param string method
+     * @return bool
+     */
     public function matches($uri, $method)
     {
         // Check if request method matches.
@@ -123,11 +123,11 @@ class Route
     }
 
     /**
-    * Helper regex for matches function.
-    *
-    * @param string $matches
-    * @return string
-    **/
+     * Helper regex for matches function.
+     *
+     * @param string $matches
+     * @return string
+     */
     protected function regexUrl($matches) 
     {
         $key = substr($matches[0], 1);
@@ -139,12 +139,12 @@ class Route
     }
 
     /**
-    * Set route parameter condition.
-    *
-    * @param string $key
-    * @param string $condition
-    * @return object \Core\Core\Route (for method chaining)
-    */
+     * Set route parameter condition.
+     *
+     * @param string $key
+     * @param string $condition
+     * @return \Core\Core\Route (for method chaining)
+     */
     public function where($key, $condition)
     {
         $this->conditions[$key] = self::$conditionRegex[$condition];
@@ -152,12 +152,12 @@ class Route
     }
 
     /**
-    * Set route custom parameter condition.
-    *
-    * @param string $key
-    * @param string $pattern
-    * @return object \Core\Core\Route (for method chaining)
-    */
+     * Set route custom parameter condition.
+     *
+     * @param string $key
+     * @param string $pattern
+     * @return \Core\Core\Route (for method chaining)
+     */
     public function whereRegex($key, $pattern)
     {
         $this->conditions[$key] = $pattern;
@@ -165,10 +165,10 @@ class Route
     }
 
     /**
-    * Add GET as acceptable method.
-    *
-    * @return object \Core\Core\Route (for method chaining)
-    */
+     * Add GET as acceptable method.
+     *
+     * @return \Core\Core\Route (for method chaining)
+     */
     public function viaGet()
     {
         $this->methods[] = 'GET';
@@ -176,10 +176,10 @@ class Route
     }
 
     /**
-    * Add POST as acceptable method.
-    *
-    * @return object \Core\Core\Route (for method chaining)
-    */
+     * Add POST as acceptable method.
+     *
+     * @return \Core\Core\Route (for method chaining)
+     */
     public function viaPost()
     {
         $this->methods[] = 'POST';
@@ -187,10 +187,10 @@ class Route
     }
 
     /**
-    * Get supported HTTP method(s).
-    *
-    * @return array
-    */
+     * Get supported HTTP method(s).
+     *
+     * @return array
+     */
     public function getHttpMethods()
     {
         return $this->methods;

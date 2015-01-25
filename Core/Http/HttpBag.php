@@ -2,10 +2,10 @@
 namespace Core\Http;
 
 /**
-* Simple container class for storing HTTP request data.
-*
-* @author <milos@caenazzo.com>
-*/
+ * Simple container class for storing HTTP request data.
+ *
+ * @author <milos@caenazzo.com>
+ */
 class HttpBag implements \IteratorAggregate, \Countable
 {
     /**
@@ -137,7 +137,7 @@ class HttpBag implements \IteratorAggregate, \Countable
     /**
      * Returns an iterator for elements.
      *
-     * @return interface \ArrayIterator
+     * @return \ArrayIterator
      */
     public function getIterator()
     {
