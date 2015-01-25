@@ -20,7 +20,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $app = Core\Core\Core::getNew();      
 
         $this->expectOutputString('<p>Working</p>');
-        $app->routeRequest();
+        //$app->routeRequest();
     }
 
     public function testSendReponse()
