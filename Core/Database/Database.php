@@ -175,6 +175,7 @@ class Database extends AbstractDatabase
 	 * @param string $table
 	 * @param string $column
 	 * @param string $name
+     * @return bool
 	 */
 	public function addIndex($table, $column, $name)
 	{

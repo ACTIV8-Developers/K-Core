@@ -89,14 +89,14 @@ class Response
      *
      * @var \Core\Http\HttpBag
      */
-    public $headers;
+    public $headers = null;
 
     /**
      * Array of cookies to be sent.
      *
      * @var \Core\Http\HttpBag
      */
-    public $cookies = [];
+    public $cookies = null;
 
     /**
      * HTTP response body.
@@ -111,6 +111,7 @@ class Response
     public function __construct()
     {
         $this->headers = new HttpBag();
+        $this->cookies = new HttpBag();
     }
 
     /**
@@ -134,7 +135,7 @@ class Response
     }
 
     /**
-     * Get HTTP response body.
+     * Get current HTTP response body.
      *
      * @return string
      */
@@ -164,7 +165,7 @@ class Response
     }
 
     /**
-     * Get HTTP protocol version.
+     * Get HTTP protocol version ("HTTP/1.1" or "HTTP/1.0").
      *
      * @return string
      */
@@ -197,31 +198,17 @@ class Response
      */
     public function setCookie($name, $value = null, $expire = 7200, $path = '/', $domain = null, $secure = false, $httpOnly = true)
     {
-        // As stated in PHP source code.
-        if (preg_match("/[=,; \t\r\n\013\014]/", $name)) {
-            throw new \InvalidArgumentException(sprintf('The cookie name "%s" contains invalid characters.', $name));
-        }
+        $this->cookies->set($name, new Cookie($name, $value, $expire, $path, $domain, $secure, $httpOnly));
+    }
 
-        // Convert expiration time to a Unix timestamp.
-        if ($expire instanceof \DateTime) {
-            $expire = $expire->format('U');
-        } elseif (!is_numeric($expire)) {
-            $expire = strtotime($expire);
-            if (false === $expire || -1 === $expire) {
-                throw new \InvalidArgumentException('The cookie expiration time is not valid.');
-            }
-        } else {
-            $expire = time() + $expire;
-        }
-
-        $this->cookies[] = ['name'     => $name, 
-                            'value'    => $value, 
-                            'expire'   => $expire, 
-                            'path'     => $path, 
-                            'domain'   => $domain, 
-                            'secure'   => (bool)$secure, 
-                            'httponly' => (bool)$httpOnly
-                            ];
+    /**
+     * Clear cookie.
+     *
+     * @param string $name
+     */
+    public function clearCookie($name)
+    {
+        $this->cookies->delete($name);
     }
 
     /**

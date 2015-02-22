@@ -38,7 +38,7 @@ class Route
     public $params = [];
 
     /**
-     * List of supported HTTP methods for this route.
+     * List of supported HTTP methods for this route (GET, POST etc.).
      *
      * @var array
      */

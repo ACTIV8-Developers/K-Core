@@ -6,22 +6,23 @@ use Core\Http\Response;
 use Core\Routing\Router;
 use Core\Session\Session;
 use Core\Database\Database;
+use \Pimple\Container;
 
 /**
  * Core class.
  * This is the heart of whole framework. It is a singleton container for all main 
- * objects of application. This class containes main run method which handles life cycle of application.
+ * objects. This class contains main run method which handles life cycle of application.
  * 
  * @author <milos@caenazzo.com>
  */
-class Core extends \Pimple\Container
+class Core extends Container
 {
     /**
      * Core version.
      *
      * @var string
      */
-    const VERSION = '1.39b';
+    const VERSION = '1.40b';
 
     /**
      * Singleton instance of Core.

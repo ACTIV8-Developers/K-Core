@@ -115,7 +115,7 @@ abstract class Controller extends ContainerProvider
      */
     protected function language($lang, $file = 'default')
     {
-        return APP.'Languages/'.$lang.'/'.$file.'.php';
+        return APP.'/Languages/'.$lang.'/'.$file.'.php';
     }
 
     /**

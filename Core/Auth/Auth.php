@@ -22,7 +22,7 @@ class Auth
 	 * Connections variable to use work with database,
 	 * loaded in class constructor.
 	 *
-	 * @var object \PDO
+	 * @var object PDO
 	 */
 	protected $conn = null;
 
@@ -34,23 +34,23 @@ class Auth
 	protected $hasher = null;
 
 	/**
-	* @var object \Core\Session\Session
+	* @var object Core\Session\Session
 	*/
 	protected $session = null;
 
 	/**
 	 * Class constructor.
 	 *
-     * @param object \Core\Database\AbstractDatabase
-     * @param object \Core\Session\Session
+     * @param AbstractDatabase $db
+     * @param Session $session
 	 */
-	public function __construct(AbstractDatabase $db = null, Session $sess)
+	public function __construct(AbstractDatabase $db = null, Session $session)
 	{		
 		// Set database connection link.
         $this->conn = $db->getConnection();
 
         // Set session link.
-        $this->session = $sess;
+        $this->session = $session;
 
 		// Create hasher tool
 		$this->hasher = new PasswordHash(8, FALSE);
@@ -59,7 +59,8 @@ class Auth
 	/**
 	 * Set table to work with.
 	 *
-	 * @param string 
+	 * @param string
+     * @return Auth
 	 */
 	public function setTable($table)
 	{
@@ -78,7 +79,7 @@ class Auth
 	{
 		// Check if user exists
 		$stmt = $this->conn->prepare("SELECT user_name FROM $this->table WHERE user_name = :name");
-		$stmt->execute([':name'=>$username]);
+		$stmt->execute(['name' => $username]);
 		$result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
 		// If username already exists return false.
@@ -90,12 +91,13 @@ class Auth
 		$password = $this->hasher->HashPassword($password);
 
 		// Insert into database
-		$stmt = $this->conn->prepare("INSERT INTO $this->table (user_name, user_pass, user_date) VALUES (:name, :pass, now())");
-		$stmt->execute([':name'=>$username,':pass'=>$password]);
+		$stmt = $this->conn->prepare("INSERT INTO $this->table (user_name, user_pass, user_date)
+                                                              VALUES (:name, :pass, now())");
+		$stmt->execute(['name' => $username, 'pass' => $password]);
 
-		// Return sucess status
+		// Return success status
 		if ($stmt->rowCount() === 1) {
-			return $this->conn->lastInsertId();;
+			return $this->conn->lastInsertId();
 		}
 		return false;
 	}
@@ -111,7 +113,7 @@ class Auth
 	{
 		$password = $this->hasher->HashPassword($newPass);
         $stmt = $this->conn->prepare("UPDATE $this->table SET user_pass=:newPass WHERE user_name = :username");
-        return $stmt->execute([':newPass'=>$password, ':username'=>$username]);
+        return $stmt->execute(['newPass' => $password, 'username' => $username]);
 	}
 
 	/**
@@ -123,7 +125,7 @@ class Auth
 	public function deleteUser($username)
 	{
         $stmt = $this->conn->prepare("DELETE * FROM $this->table WHERE user_name = :name");
-        $stmt->execute([':name' => $username]);
+        $stmt->execute(['name' => $username]);
         return $stmt->rowCount();
 	}
 
@@ -138,11 +140,11 @@ class Auth
 	{
 		$stmt = $this->conn->prepare("SELECT user_id, user_name, user_pass 
 			FROM $this->table WHERE user_name = :name LIMIT 1");
-		$stmt->execute([':name'=>$username]);
+		$stmt->execute(['name' => $username]);
 		
 		$result = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-		if ($result['user_name']!=$username) {
+		if ($result['user_name'] !== $username) {
 			return false;
 		}
 
@@ -150,8 +152,11 @@ class Auth
 			// Clear previous session
             $this->session->regenerate();
 			// Write new data to session
-            $_SESSION['user']['id'] = $result['user_id'];
-			$_SESSION['user']['logged_'.$this->table] = true;
+            $data = [
+                     'id' => $result['user_id'],
+                     'logged_'.$this->table => true
+                    ];
+            $this->session->set('user', $data);
 			return true;
 		}
 		return false;
@@ -185,14 +190,14 @@ class Auth
     /**
      * Get id of current logged user, returns false if no user logged.
      *
-     * @return int|bool
+     * @return int|null
      */
     public function getUserId()
     {
         if ($this->isLogged()) {
-            return $_SESSION['user']['id'];
+            return $this->session->get('user')['id'];
         } else {
-            return false;
+            return null;
         }
     }
         
@@ -203,8 +208,9 @@ class Auth
 	 */
 	public function isLogged()
 	{
-        if (isset($_SESSION['user']['logged_'.$this->table])
-            && $_SESSION['user']['logged_'.$this->table] === true) {
+        $user = $this->session->get('user');
+        if (isset($user['logged_'.$this->table])
+            && $user['logged_'.$this->table] === true) {
         	return true;
         }
         return false;
@@ -215,7 +221,6 @@ class Auth
 	 */
 	public function logout()
 	{
-		session_unset();
-		session_destroy();
+		$this->session->forget('user');
 	}
 }

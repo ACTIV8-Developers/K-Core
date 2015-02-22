@@ -69,25 +69,25 @@ class Request
      * @var string
      */
     protected $content = null;
-    
+
     /**
      * Class constructor.
      *
-     * @param array $_SERVER
-     * @param array $_GET
-     * @param array $_POST
-     * @param array $_COOKIES
-     * @param array $_FILES
+     * @param array $server
+     * @param array $get
+     * @param array $post
+     * @param array $cookies
+     * @param array $files
      * @throws \InvalidArgumentException
      */
     public function __construct(array $server = [], array $get = [], array $post = [], array $cookies = [], array $files = [])
     {
         // Check if request is valid, need URI and method set at least.
         if (!isset($server['REQUEST_URI']) || !isset($server['REQUEST_METHOD'])) {
-            throw new \InvalidArgumentException('HTTP request must have associated URI and method.');
+            throw new \InvalidArgumentException('HTTP request must have URI and method set.');
         }
         
-        // Fix URI if neeeded.
+        // Fix URI if needed.
         if (strpos($server['REQUEST_URI'], $server['SCRIPT_NAME']) === 0) {
             $server['REQUEST_URI'] = substr($server['REQUEST_URI'], strlen($server['SCRIPT_NAME']));
         } elseif (strpos($server['REQUEST_URI'], dirname($server['SCRIPT_NAME'])) === 0) {
@@ -98,7 +98,7 @@ class Request
         }
         $server['REQUEST_URI'] = trim($server['REQUEST_URI'], '/');
 
-        // Parse request headers and enviroment variables.
+        // Parse request headers and environment variables.
         $this->headers = new HttpBag();
         $this->server = new HttpBag();
 
@@ -144,7 +144,7 @@ class Request
     }
 
     /**
-     * Get request uri.
+     * Get request URI.
      *
      * @return string
      */
@@ -284,7 +284,7 @@ class Request
     }
 
     /**
-     * Get HTTP referer.
+     * Get HTTP referrer.
      *
      * @return string|null
      */

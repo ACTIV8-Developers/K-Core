@@ -1,6 +1,6 @@
 {
     "name": "kajna/core",
-    "description": "Simple and Lightweight yet powerfull MVC framework",
+    "description": "Simple and Lightweight yet powerful MVC framework",
     "keywords": ["framework", "k"],
     "homepage": "http://kframework.info/",
     "authors": [
@@ -24,7 +24,7 @@
         "gregwar/image": "Image handling",
         "nesbot/carbon": "A simple API extension for DateTime.",
         "patchwork/utf8": "Portable and performant UTF-8, Unicode and Grapheme Clusters for PHP",
-        "tecnick.com/tcpdf": "PDF creation library"
+        "mpdf/mpdf": "PDF creation library"
     },
     "minimum-stability": "dev",
     "autoload": {

@@ -82,6 +82,7 @@ class Pagination
      * and calls createLinks method.
      *
      * @param array $config
+     * @return string
      */
     public static function make($config)
     {

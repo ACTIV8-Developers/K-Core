@@ -12,7 +12,7 @@ class Date
 	 * Converts from ISO 8601 (yy-mm-dd) to dd-mm-yy format and vice-versa.
 	 *
 	 * @param  string
-	 * @param char
+	 * @param string
 	 * @return string
 	 */
 	public static function convertDate($date, $delimiter = '-')
@@ -25,7 +25,7 @@ class Date
 	 * Converts from ISO 8601 (yy-mm-dd) to serbian display date.
 	 *
 	 * @param  string
-	 * @param char
+	 * @param string
 	 * @return string
 	 */
 	public static function convertSrbDate($date, $delimiter = '-')

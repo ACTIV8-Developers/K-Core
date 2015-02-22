@@ -4,7 +4,7 @@ namespace Core\Core;
 use Core\Core\Core;
 
 /**
- * Abstract class ContainerProvider. Extend to gain acess to core container.
+ * Abstract class ContainerProvider. Extend to gain access to core container.
  *
  * @author <milos@caenazzo.com>
  */

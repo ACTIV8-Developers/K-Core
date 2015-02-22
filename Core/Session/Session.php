@@ -216,6 +216,7 @@ class Session
 
     /**
      * @param string $key
+     * @return bool
      */
     public function has($key)
     {
