@@ -79,8 +79,8 @@ class DatabaseSessionHandler implements \SessionHandlerInterface
 	/**
 	 * Read the session
 	 *
-	 * @param int session id
-	 * @return string string of the sessoin
+	 * @param int $id
+	 * @return string string of the session
 	 */
 	public function read($id) 
 	{
@@ -101,8 +101,9 @@ class DatabaseSessionHandler implements \SessionHandlerInterface
 	/**
 	 * Write the session
 	 *
-	 * @param int session id
-	 * @param string data of the session
+	 * @param int $id
+	 * @param string $data
+     * @return array
 	 */
 	public function write($id, $data) 
 	{
@@ -115,7 +116,7 @@ class DatabaseSessionHandler implements \SessionHandlerInterface
 	}
 
 	/**
-	 * Destoroy the session
+	 * Destroy the session
 	 *
 	 * @param int session id
 	 * @return bool

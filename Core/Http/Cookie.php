@@ -2,9 +2,9 @@
 namespace Core\Http;
 
 /**
- * Class Cookie
+ * Class Cookie. Inspired by Symfony framework cookie.
  *
- * @author <milos@caenazzo.com>
+ * @see http://api.symfony.com/2.0/Symfony/Component/HttpFoundation/Cookie.html
  */
 class Cookie implements \ArrayAccess
 {

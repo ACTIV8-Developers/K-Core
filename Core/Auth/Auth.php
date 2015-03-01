@@ -166,10 +166,9 @@ class Auth
      * Create users table.
      *
      * @param string $name
-     * @param array $additionalColumns
      * @return bool
      */
-	public function createTable($name = null, array $additionalColumns = [])
+	public function createTable($name = null)
 	{
 		if ($name === null) {
 			$name = $this->table;

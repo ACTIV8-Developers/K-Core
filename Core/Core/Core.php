@@ -22,7 +22,7 @@ class Core extends Container
      *
      * @var string
      */
-    const VERSION = '1.40b';
+    const VERSION = '1.40rc';
 
     /**
      * Singleton instance of Core.
@@ -103,7 +103,7 @@ class Core extends Container
 
         // For each needed database create database class closure.
         foreach ($this['config.database'] as $name => $dbConfig) {
-            $this['db.'.$name] = function($c) use ($dbConfig) {
+            $this['db.'.$name] = function() use ($dbConfig) {
                 $db = null;
                 switch ($dbConfig['driver']) { // Choose connection and create it.
                     case 'mysql':               
@@ -130,16 +130,7 @@ class Core extends Container
                 case 'database':
                     $name = $c['config']['session']['connName'];
                     $conn = $this['db.'.$name]->getConnection();
-                    $handler = new \Core\Session\Handlers\DatabaseSessionHandler();
-                    break;
-                case 'redis':
-                    try {                       
-                        $handler = new \Core\Session\Handlers\RedisSessionHandler($c['redis']);
-                        $handler->prefix = $c['config']['session']['name'];
-                        $handler->expire = $c['config']['session']['expiration'];
-                    } catch(\Exception $e) {
-                        throw new \InvalidArgumentException('Error!'.$e->getMessage());
-                    }
+                    $handler = new \Core\Session\Handlers\DatabaseSessionHandler($conn);
                     break;
             }
             $session = new Session($c['config']['session'], $handler);

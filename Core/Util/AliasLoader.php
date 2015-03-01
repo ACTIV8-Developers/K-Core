@@ -2,9 +2,9 @@
 namespace Core\Util;
 
 /**
-* Class AliasLoader.
+* Class AliasLoader. Inspired by Laravel framework AliasLoader
 *
-* @author milos@caenazzo.com
+* @see http://laravel.com/api/4.2/Illuminate/Foundation/AliasLoader.html
 */
 class AliasLoader {
 
