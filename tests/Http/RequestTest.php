@@ -47,8 +47,8 @@ class RequestTest extends PHPUnit_Framework_TestCase
 	public function testGetAndIs()
 	{
 		// Mock random request
-		$_SERVER['REQUEST_URI'] = '/public/foo/bar/';
-		$_SERVER['SCRIPT_NAME'] = '/public/index.php';
+		$_SERVER['REQUEST_URI'] = '/foo/bar/';
+		$_SERVER['SCRIPT_NAME'] = '/index.php';
 		$_SERVER['QUERY_STRING'] = '?foo=2&bar=3';
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 

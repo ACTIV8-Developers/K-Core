@@ -1,4 +1,5 @@
 <?php
+ob_start();
 /*
 |--------------------------------------------------------------------------
 | Set application path.
@@ -13,13 +14,6 @@ define('APP', __DIR__.'/MockApp');
 | controllers are stored in App/Controllers.
 */
 define('CONTROLERS', '');
-/*
-|--------------------------------------------------------------------------
-| Set name of directory and namespace where models are stored.
-|--------------------------------------------------------------------------
-| This needs to match structure defined in composer.json file.
-*/
-define('MODELS', 'Models');
 /*
 |--------------------------------------------------------------------------
 | Set path to directory where views are stored.

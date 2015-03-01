@@ -1,5 +1,5 @@
 <?php
-use Core\Http\HttpBag as HttpBag;
+use Core\Http\HttpBag;
 
 class HttpBagTest extends PHPUnit_Framework_TestCase
 {

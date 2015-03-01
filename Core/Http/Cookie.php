@@ -153,9 +153,8 @@ class Cookie implements \ArrayAccess
     }
 
     /**
-     * @link http://php.net/manual/en/arrayaccess.offsetget.php
-     * @param mixed $offset <p>
-     * @return mixed Can return all value types.
+     * @param mixed $offset
+     * @return mixed
      */
     public function offsetGet($offset)
     {
@@ -166,21 +165,17 @@ class Cookie implements \ArrayAccess
      * Offset to set
      * @link http://php.net/manual/en/arrayaccess.offsetset.php
      * @param mixed $offset
-     * @param mixed $value <p>
+     * @param mixed $value
      * @return void
      */
     public function offsetSet($offset, $value)
     {
-        return $this->$offset = $value;
+        $this->$offset = $value;
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
      * Offset to unset
-     * @link http://php.net/manual/en/arrayaccess.offsetunset.php
-     * @param mixed $offset <p>
-     * The offset to unset.
-     * </p>
+     * @param mixed $offset
      * @return void
      */
     public function offsetUnset($offset)
