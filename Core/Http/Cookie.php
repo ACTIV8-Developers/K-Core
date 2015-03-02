@@ -8,12 +8,39 @@ namespace Core\Http;
  */
 class Cookie implements \ArrayAccess
 {
+    /**
+     * @var string
+     */
     protected $name;
+
+    /**
+     * @var null|string
+     */
     protected $value;
+
+    /**
+     * @var null|string
+     */
     protected $domain;
+
+    /**
+     * @var int|string
+     */
     protected $expire;
+
+    /**
+     * @var string
+     */
     protected $path;
+
+    /**
+     * @var bool
+     */
     protected $secure;
+
+    /**
+     * @var bool
+     */
     protected $httpOnly;
 
     /**
@@ -158,7 +185,10 @@ class Cookie implements \ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return $this->$offset;
+        if (isset($this->$offset)) {
+            return $this->$offset;
+        }
+        return null;
     }
 
     /**

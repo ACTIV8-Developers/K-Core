@@ -195,14 +195,13 @@ class Core extends Container
 
         // Execute route if found.
         if (false !== $matchedRoute) {
-            // Write passed params to GET array.
+            // Append passed params to GET array.
             $this['request']->get->add($matchedRoute->params);
-   
-            // Get controller name with namespace prefix.
-            $matchedRoute->controller = CONTROLERS.'\\'.$matchedRoute->controller;
 
-            // Call controller method.
-            call_user_func_array([new $matchedRoute->controller, $matchedRoute->method], $matchedRoute->params);
+            // Execute matched route.
+            $matchedRoute->action->setNamespacePrefix(CONTROLERS);
+            $matchedRoute->action->execute();
+
         } else {
             // If page not found display 404 error.
             $this->notFound();

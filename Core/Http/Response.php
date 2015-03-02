@@ -117,11 +117,11 @@ class Response
     /**
      * Set HTTP response body.
      *
-     * @param string $body
+     * @param string $content
      */
-    public function setContent($body)
+    public function setContent($content)
     {
-        $this->content = $body;
+        $this->content = $content;
     }
 
     /**
@@ -206,9 +206,9 @@ class Response
      *
      * @param string $name
      */
-    public function clearCookie($name)
+    public function removeCookie($name)
     {
-        $this->cookies->delete($name);
+        $this->cookies->remove($name);
     }
 
     /**

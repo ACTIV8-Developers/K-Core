@@ -25,7 +25,7 @@ class Request
      *
      * @var \Core\Http\HttpBag
      */
-    public $server;
+    public $server = null;
 
     /**
      * Request headers (parsed from the $_SERVER).
@@ -33,42 +33,42 @@ class Request
      * @var \Core\Http\HttpBag
      * @see http://en.wikipedia.org/wiki/List_of_HTTP_header_fields
      */
-    public $headers;
+    public $headers = null;
 
     /**
      * Request parameters (parsed from the $_GET).
      *
      * @var \Core\Http\HttpBag
      */
-    public $get;
+    public $get = null;
 
     /**
      * Request parameters (parsed from the $_POST).
      *
      * @var \Core\Http\HttpBag
      */
-    public $post;
+    public $post = null;
 
     /**
      * Request cookies (parsed from the $_COOKIE).
      *
      * @var \Core\Http\HttpBag
      */
-    public $cookies;
+    public $cookies = null;
 
     /**
      * Request files (parsed from the $_FILES).
      *
      * @var \Core\Http\HttpBag
      */
-    public $files;
+    public $files = null;
 
     /**
      * Raw request content.
      *
      * @var string
      */
-    protected $content = null;
+    protected $content = '';
 
     /**
      * Class constructor.

@@ -20,7 +20,8 @@ class Router
 	protected $routes = [];
 
 	/**
-	 * Check routes and return matching one.
+	 * Check routes and returns matching one if found,
+     * otherwise return false.
      *
 	 * @var string $uri
      * @var string $requestMethod
@@ -44,7 +45,7 @@ class Router
 	 * @param array
      * @return \Core\Routing\Route
      */
-    public function get($url, array $callable)
+    public function get($url, $callable)
     {
     	$route = new Route($url, $callable, 'GET');
 		$this->routes[] = $route;
@@ -55,10 +56,10 @@ class Router
 	 * Add a route object to the router accepting POST request method.
      *
 	 * @param string $url
-	 * @param array $callable,
+	 * @param $callable,
      * @return \Core\Routing\Route
      */
-    public function post($url, array $callable)
+    public function post($url, $callable)
     {
     	$route = new Route($url, $callable, 'POST');
 		$this->routes[] = $route;
@@ -69,10 +70,10 @@ class Router
 	 * Add a route object to the router accepting PUT request method.
      *
 	 * @param string $url
-	 * @param array $callable,
+	 * @param $callable,
      * @return \Core\Core\Route
 	 */
-    public function put($url, array $callable)
+    public function put($url, $callable)
     {
     	$route = new Route($url, $callable, 'PUT');
 		$this->routes[] = $route;
@@ -83,10 +84,10 @@ class Router
 	 * Add a route object to the router accepting DELETE request method.
      *
 	 * @param string $url
-	 * @param array $callable,
+	 * @param $callable,
      * @return \Core\Core\Route
 	 */
-    public function delete($url, array $callable)
+    public function delete($url, $callable)
     {
     	$route = new Route($url, $callable, 'DELETE');
 		$this->routes[] = $route;

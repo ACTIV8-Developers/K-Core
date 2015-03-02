@@ -2,36 +2,29 @@
 namespace Core\Routing;
 
 /**
- * Route class. 
+ * Route class.
  * This class represents single application route.
  *
  * @author <milos@caenazzo.com>
  */
 class Route
 {
-  	/**
+    /**
      * The route pattern (The URL pattern (e.g. "article/:year/:category")).
-     *
-	 * @var string 
-	 */
-	public $url = '';
-
-    /**
-     * The route controller.
-     *
-	 * @var string
-	 */
-    public $controller = '';
-
-    /**
-     * The route method.
      *
      * @var string
      */
-    public $method = '';
+    public $url = '';
 
     /**
-     * List of parameters to be passed if URL is matched.
+     * Controller/method assigned to be executed when route is matched.
+     *
+     * @var Action
+     */
+    public $action = null;
+
+    /**
+     * List of parameters extracted from passed URI.
      *
      * @var array
      */
@@ -43,7 +36,7 @@ class Route
      * @var array
      */
     protected $methods = [];
-    
+
     /**
      * List of parameters conditions.
      *
@@ -57,13 +50,13 @@ class Route
      * @param array
      */
     protected static $conditionRegex = [
-                        'default'           => '[a-zA-Z0-9_\-]+', // Default allows letters, numbers, underscores and dashes.
-                        'alpha-numeric'     => '[a-zA-Z0-9]+', // Numbers and letters.
-                        'numeric'           => '[0-9]+', // Numbers only.
-                        'alpha'             => '[a-zA-Z]+', // Letters only.
-                        'alpha-lowercase'   => '[a-z]+',  // All lowercase letter.
-                        'real-numeric'      => '[0-9\.\-]+' // Numbers, dots or minus signs.
-                    ];
+        'default'           => '[a-zA-Z0-9_\-]+', // Default allows letters, numbers, underscores and dashes.
+        'alpha-numeric'     => '[a-zA-Z0-9]+', // Numbers and letters.
+        'numeric'           => '[0-9]+', // Numbers only.
+        'alpha'             => '[a-zA-Z]+', // Letters only.
+        'alpha-lowercase'   => '[a-z]+',  // All lowercase letter.
+        'real-numeric'      => '[0-9\.\-]+' // Numbers, dots or minus signs.
+    ];
 
     /**
      * Regex used to parse routes.
@@ -73,19 +66,22 @@ class Route
     const MATCHES_REGEX = '@:([\w]+)@';
 
     /**
-	 * Class constructor.
+     * Class constructor.
      *
-	 * @param string $url
+     * @param string $url
      * @param array $callable
-	 * @param string $requestMethod
-	 */
-	public function __construct($url, array $callable, $requestMethod = 'GET')
-	{
+     * @param string $requestMethod
+     */
+    public function __construct($url, $callable, $requestMethod = 'GET')
+    {
         $this->url = $url;
-        $this->controller = $callable[0];
-        $this->method = $callable[1];
+        if (is_array($callable)) {
+            $this->action = new Action($callable[0], $callable[1]);
+        } elseif($callable instanceof Action) {
+            $this->action = $callable;
+        }
         $this->methods[] = $requestMethod;
-	}
+    }
 
     /**
      * Check if requested URI matches this route.
@@ -98,7 +94,7 @@ class Route
     public function matches($uri, $method)
     {
         // Check if request method matches.
-        if (in_array($method, $this->methods)) {        
+        if (in_array($method, $this->methods)) {
             $paramValues = [];
 
             // Replace parameters with proper regex patterns.
@@ -107,7 +103,7 @@ class Route
             // Check if URI matches and if it matches put results in values array.
             if (preg_match('@^'.$urlRegex.'/?$@', $uri, $paramValues) === 1) {// There is a match.
                 // Extract parameter names.
-                $paramNames = []; 
+                $paramNames = [];
                 preg_match_all(self::MATCHES_REGEX, $this->url, $paramNames, PREG_PATTERN_ORDER);
 
                 // Put parameters to array to be passed to controller/function later.
@@ -128,7 +124,7 @@ class Route
      * @param string $matches
      * @return string
      */
-    protected function regexUrl($matches) 
+    protected function regexUrl($matches)
     {
         $key = substr($matches[0], 1);
         if (isset($this->conditions[$key])) {
@@ -184,6 +180,16 @@ class Route
     {
         $this->methods[] = 'POST';
         return $this;
+    }
+
+    /**
+     * Set supported HTTP method(s).
+     *
+     * @param array
+     */
+    public function setHttpMethods($methods)
+    {
+        $this->methods = $methods;
     }
 
     /**
