@@ -1,8 +1,8 @@
 {
     "name": "kajna/core",
-    "description": "Simple and Lightweight yet powerful PHP MVC framework",
-    "keywords": ["framework", "k", "MVC", "lightweight", "simple", "router"],
-    "homepage": "http://kframework.info/",
+    "description": "Simple and Lightweight yet powerful PHP framework",
+    "keywords": ["framework", "k", "PHP", "lightweight", "simple", "router"],
+    "homepage": "http://kframework.co",
     "authors": [
         {
         "name": "Milos Kajnaco",
