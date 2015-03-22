@@ -200,6 +200,7 @@ class Core extends Container
 
             // Execute matched route.
             $matchedRoute->action->setNamespacePrefix(CONTROLERS);
+            $matchedRoute->action->setParams($matchedRoute->params);
             $matchedRoute->action->execute();
 
         } else {
