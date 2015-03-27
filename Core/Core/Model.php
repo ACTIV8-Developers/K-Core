@@ -1,6 +1,8 @@
 <?php 
 namespace Core\Core;
 
+use Core\Container\ContainerProvider;
+
 /**
  * Base model abstract class.
  * 
@@ -16,7 +18,7 @@ abstract class Model extends ContainerProvider
      */
     protected function db($dbName = 'default')
     {
-        return $this->app['db.'.$dbName];
+        return $this->container['db.'.$dbName];
     }
 
     /**
@@ -28,10 +30,10 @@ abstract class Model extends ContainerProvider
     protected function getValue($key)
     {
         if ($key === 'db') {
-            return $this->app['db.default'];
+            return $this->container['db.default'];
         }
-        if (isset($this->app[$key])) {
-            return $this->app[$key];
+        if (isset($this->container[$key])) {
+            return $this->container[$key];
         }
         return null;
     }

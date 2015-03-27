@@ -1,13 +1,13 @@
 <?php
 namespace Core\Auth;
 
-use Core\Core\ServiceProvider;
+use Core\Container\ServiceProvider;
 
 /**
-* Class AuthServiceProvider.
-*
-* @author <milos@caenazzo.com>
-*/
+ * Class AuthServiceProvider.
+ *
+ * @author <milos@caenazzo.com>
+ */
 class AuthServiceProvider extends ServiceProvider
 {
 	/**
@@ -15,7 +15,7 @@ class AuthServiceProvider extends ServiceProvider
 	*/
 	public function register()
 	{
-		$this->app['auth'] = function($c) {
+		$this->container['auth'] = function($c) {
 			return new Auth($c['db.default'], $c['session']);
 		};
 	}

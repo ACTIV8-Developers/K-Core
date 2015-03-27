@@ -13,12 +13,12 @@ class ResponseTest extends PHPUnit_Framework_TestCase
 		$test = '<h1>Test</h2>';
 		$append = '<div>Message</div>';
 
-		// Set Content
-		$response->setContent($test);
+		// Set Body
+		$response->setBody($test);
 
-		// Append Content
-		$response->addContent($append);
+		// Append Body
+		$response->addBody($append);
 
-		$this->assertEquals($response->getContent(), $test.$append);
+		$this->assertEquals($response->getBody(), $test.$append);
 	}
 }

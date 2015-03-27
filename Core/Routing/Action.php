@@ -1,13 +1,15 @@
 <?php
 namespace Core\Routing;
 
+use Core\Routing\Interfaces\ActionInterface;
+
 /**
  * Action class.
  * Class contains information about action to be executed when route is matched.
  *
  * @author <milos@caenazzo.com>
  */
-class Action
+class Action implements ActionInterface
 {
     /**
      * @var string
@@ -45,11 +47,13 @@ class Action
 
     /**
      * Execute action
+     * @return self
      */
     public function execute()
     {
         $this->class = $this->namespacePrefix.'\\'.$this->class;
         call_user_func_array([new $this->class, $this->method], $this->params);
+        return $this;
     }
 
     /**
@@ -62,10 +66,12 @@ class Action
 
     /**
      * @param string $class
+     * @return self
      */
     public function setClass($class)
     {
         $this->class = $class;
+        return $this;
     }
 
     /**
@@ -78,10 +84,12 @@ class Action
 
     /**
      * @param string $method
+     * @return self
      */
     public function setMethod($method)
     {
         $this->method = $method;
+        return $this;
     }
 
     /**
@@ -94,10 +102,12 @@ class Action
 
     /**
      * @param array $params
+     * @return self
      */
     public function setParams($params)
     {
         $this->params = $params;
+        return $this;
     }
 
     /**
@@ -110,9 +120,11 @@ class Action
 
     /**
      * @param string $namespacePrefix
+     * @return self
      */
     public function setNamespacePrefix($namespacePrefix)
     {
         $this->namespacePrefix = $namespacePrefix;
+        return $this;
     }
 }

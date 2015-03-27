@@ -1,6 +1,8 @@
 <?php
 namespace Core\Core;
 
+use Core\Container\ContainerProvider;
+
 /**
  * Base controller abstract class.
  * Extend to get access to app main container and common functions.
@@ -18,9 +20,9 @@ abstract class Controller extends ContainerProvider
     protected function get($key = null)
     {
         if ($key === null) {
-            return $this->app['request']->get->all();
+            return $this->container['request']->get->all();
         }
-        return $this->app['request']->get->get($key);
+        return $this->container['request']->get->get($key);
     }
 
 
@@ -33,9 +35,9 @@ abstract class Controller extends ContainerProvider
     protected function post($key = null)
     {
         if ($key === null) {
-            return $this->app['request']->post->all();
+            return $this->container['request']->post->all();
         }
-        return $this->app['request']->post->get($key);
+        return $this->container['request']->post->get($key);
     }
 
     /**
@@ -55,8 +57,8 @@ abstract class Controller extends ContainerProvider
         // Load view file (root location is declared in APPVIEW constant).
         include APPVIEW.$view.'.php';
 
-        // Append to output body.
-        $this->app['response']->addContent(ob_get_contents());
+        // containerend to output body.
+        $this->container['response']->addContent(ob_get_contents());
         ob_end_clean();
     }
 
@@ -92,8 +94,8 @@ abstract class Controller extends ContainerProvider
      */
     public function json($data, $options = 0)
     {
-        $this->app['response']->headers->set('Content-Type', 'application/json');
-        $this->app['response']->setContent(json_encode($data, $options));
+        $this->container['response']->headers->set('Content-Type', 'containerlication/json');
+        $this->container['response']->setContent(json_encode($data, $options));
     }
 
     /**

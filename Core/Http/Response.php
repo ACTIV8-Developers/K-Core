@@ -1,6 +1,8 @@
 <?php 
 namespace Core\Http;
 
+use Core\Http\Interfaces\ResponseInterface;
+
 /**
  * HTTP response class.
  *
@@ -10,7 +12,7 @@ namespace Core\Http;
  *
  * @author <milos@caenazzo.com>
  */
-class Response
+class Response implements ResponseInterface
 {
     /**
      * HTTP response codes and messages.
@@ -85,6 +87,13 @@ class Response
     protected $statusCode = 200;
 
     /**
+     * HTTP reason phrase.
+     *
+     * @var string|null
+     */
+    protected $reasonPhrase = null;
+
+    /**
      * List of HTTP headers to be sent.
      *
      * @var \Core\Http\HttpBag
@@ -103,7 +112,7 @@ class Response
      *
      * @var string 
      */
-    protected $content = '';
+    protected $body = '';
 
     /**
      * Class construct
@@ -115,49 +124,58 @@ class Response
     }
 
     /**
-     * Set HTTP response body.
+     * Set request body
      *
-     * @param string $content
+     * @param $body Body
+     * @return self
      */
-    public function setContent($content)
+    public function setBody($body)
     {
-        $this->content = $content;
+        $this->body = $body;
+        return $this;
     }
 
     /**
      * Append to HTTP response body.
      *
      * @param string $part
+     * @return self
      */
-    public function addContent($part)
+    public function addBody($part)
     {
-        $this->content .= $part;
+        $this->body .= $part;
+        return $this;
     }
 
     /**
-     * Get current HTTP response body.
+     * Get the body of the request
      *
      * @return string
      */
-    public function getContent()
+    public function getBody()
     {
-        return $this->content;
+        return $this->body;
     }
 
     /**
-     * Set HTTP response code to be sent with headers.
+     * Set the response Status-Code
      *
-     * @param int $code
+     * @param integer $code The 3-digit integer result code to set.
+     * @param null|string $reasonPhrase The reason phrase to use with the
+     *     provided status code; if none is provided default one associated with code will be used
+     * @return self
      */
-    public function setStatusCode($code)
+    public function setStatusCode($code, $reasonPhrase = null)
     {
         $this->statusCode = $code;
+        $this->reasonPhrase = $reasonPhrase;
+        return $this;
     }
 
     /**
-     * Get HTTP response code.
+     * Get the response Status-Code
      *
-     * @return int
+     * @return integer Status code
      */
     public function getStatusCode()
     {
@@ -178,10 +196,49 @@ class Response
      * Set HTTP protocol version ("HTTP/1.1" or "HTTP/1.0").
      *
      * @param string $version
+     * @return self
      */
     public function setProtocolVersion($version)
     {
         $this->protocolVersion = $version;
+        return $this;
+    }
+
+    /**
+     * Returns an associative array of all current headers 
+     *
+     * Each key will be a header name with it's value
+     *
+     * @return array 
+     */
+    public function getHeaders()
+    {
+        return $this->headers->all();
+    }
+
+    /**
+     * Set new header, replacing any existing values 
+     * of any headers with the same case-insensitive name
+     *
+     * @param string $key Case-insensitive header field name
+     * @param string $value Header value
+     * @return self
+     */
+    public function setHeader($key, $value)
+    {
+        $this->headers->set($key, $value);
+        return $this;
+    }
+
+    /**
+     * Get header with passed key
+     *
+     * @param string $key Case-insensitive header field name
+     * @return string
+     */
+    public function getHeader($key)
+    {
+        return $this->headers->get($key);
     }
 
     /**
@@ -195,32 +252,31 @@ class Response
      * @param bool $secure                   
      * @param bool $httpOnly
      * @throws \InvalidArgumentException
+     * @return self
      */
     public function setCookie($name, $value = null, $expire = 7200, $path = '/', $domain = null, $secure = false, $httpOnly = true)
     {
         $this->cookies->set($name, new Cookie($name, $value, $expire, $path, $domain, $secure, $httpOnly));
+        return $this;
     }
 
     /**
-     * Clear cookie.
+     * Send final status, headers, cookies and body.
      *
-     * @param string $name
-     */
-    public function removeCookie($name)
-    {
-        $this->cookies->remove($name);
-    }
-
-    /**
-     * Send final headers, cookies and content.
+     * @return self
      */
     public function send()
     {
         // Check if headers are sent already.
         if (headers_sent() === false) {
 
+            // Determine reason phrase
+            if ($this->reasonPhrase === null) {
+                $this->reasonPhrase = self::$messages[$this->statusCode];
+            }
+
             // Send status code.
-            header(sprintf('%s %s', $this->protocolVersion, self::$messages[$this->statusCode]), true, $this->statusCode);
+            header(sprintf('%s %s', $this->protocolVersion, $this->reasonPhrase), true, $this->statusCode);
             
             // Send headers.
             foreach ($this->headers as $header => $value) {
@@ -234,7 +290,9 @@ class Response
             }
 
             // Send body.
-            echo $this->content;
+            echo $this->body;
         }
+
+        return $this;
     }
 }

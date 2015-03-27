@@ -1,5 +1,5 @@
 <?php
-namespace Core\Core;
+namespace Core\Core\Exceptions;
 
 /**
  * Class NotFoundException.

@@ -1,6 +1,8 @@
 <?php 
 namespace Core\Routing;
 
+use Core\Routing\Interfaces\RouterInterface;
+
 /**
  * Router class.
  *
@@ -10,7 +12,7 @@ namespace Core\Routing;
  *
  * @author <milos@caenazzo.com>
  */
-class Router
+class Router implements RouterInterface
 {
 	/**
 	 * Collection of routes.
@@ -56,7 +58,7 @@ class Router
 	 * Add a route object to the router accepting POST request method.
      *
 	 * @param string $url
-	 * @param $callable,
+	 * @param $callable
      * @return \Core\Routing\Route
      */
     public function post($url, $callable)
@@ -70,7 +72,7 @@ class Router
 	 * Add a route object to the router accepting PUT request method.
      *
 	 * @param string $url
-	 * @param $callable,
+	 * @param $callable
      * @return \Core\Core\Route
 	 */
     public function put($url, $callable)
@@ -84,7 +86,7 @@ class Router
 	 * Add a route object to the router accepting DELETE request method.
      *
 	 * @param string $url
-	 * @param $callable,
+	 * @param $callable
      * @return \Core\Core\Route
 	 */
     public function delete($url, $callable)
@@ -97,11 +99,13 @@ class Router
     /**
      * Add custom route object to routes array.
      *
-     * @var \Core\Core\Route
+     * @param \Core\Core\Route
+     * @return self
      */
     public function addRoute(Route $route)
     {
     	$this->routes[] = $route;
+        return $this;
     }
 
     /**
@@ -116,10 +120,13 @@ class Router
 
     /**
      * Clear all routes.
+     *
+     * @return self
      */
     public function clearRoutes()
     {
         unset($this->routes);
         $this->routes = [];
+        return $this;
     }
 }

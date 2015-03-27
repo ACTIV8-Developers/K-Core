@@ -1,5 +1,5 @@
 <?php
-namespace Core\Core;
+namespace Core\Container;
 
 /**
  * Abstract class ServiceProvider.
@@ -9,18 +9,18 @@ namespace Core\Core;
 abstract class ServiceProvider 
 {
 	/**
-	 * @var \Core\Core\Core
+	 * @var \Core\Container\Container
 	 */
-	protected $app = null;
+	protected $container = null;
 
 	/**
 	 * Create a new service provider instance.
 	 *
-	 * @param \Core\Core\Core $app
+	 * @param \Core\Container\Container
 	 */
-	public function __construct($app)
+	public function __construct($container)
 	{
-		$this->app = $app;
+		$this->container = $container;
 	}
 
 	/**

@@ -1,13 +1,16 @@
 <?php
 namespace Core\Http;
 
+use Core\Http\Interfaces\RequestInterface;
+
 /**
  * HTTP request class.
- * This class provides interface for common request parameters.
+ *
+ * This class provides processes common request parameters.
  *
  * @author <milos@caenazzo.com>
  */
-class Request
+class Request implements RequestInterface
 {
     /**
      * List of possible HTTP request methods.
@@ -64,11 +67,11 @@ class Request
     public $files = null;
 
     /**
-     * Raw request content.
+     * Raw request body.
      *
      * @var string
      */
-    protected $content = '';
+    protected $body = '';
 
     /**
      * Class constructor.
@@ -131,26 +134,50 @@ class Request
     }
 
     /**
-     * Get raw request input.
+     * Get the body of the request
      *
      * @return string
      */
-    public function getContent()
+    public function getBody()
     {
-        if (null === $this->content) {
-            $this->content = file_get_contents('php://input');
+        if (null === $this->body) {
+            $this->body = file_get_contents('php://input');
         }
-        return $this->content;
+        return $this->body;
     }
 
     /**
-     * Get request URI.
+     * Set request body
+     *
+     * @param $body Body
+     * @return self
+     */
+    public function setBody($body)
+    {
+        $this->body = $body;
+        return $this;
+    }
+
+    /**
+     * Retrieves the request URI
      *
      * @return string
      */
     public function getUri()
     {
         return $this->server->get('REQUEST_URI');
+    }
+
+    /**
+     * Sets the request URI
+     *
+     * @param string $uri New request URI to use
+     * @return self
+     */
+    public function setUri($uri)
+    {
+        $this->server->set('REQUEST_URI', $uri);
+        return $this;
     }
 
     /**
@@ -169,13 +196,25 @@ class Request
     }
 
     /**
-     * Get server protocol (eg. HTTP/1.1.).
+     * Get HTTP protocol version ("HTTP/1.1" or "HTTP/1.0").
      *
      * @return string
      */
     public function getProtocolVersion()
     {
         return $this->server->get('SERVER_PROTOCOL');
+    }
+
+    /**
+     * Set HTTP protocol version ("HTTP/1.1" or "HTTP/1.0").
+     *
+     * @param string $version
+     * @return self
+     */
+    public function setProtocolVersion($version)
+    {
+        $this->server->set('SERVER_PROTOCOL', $version);
+        return $this;
     }
 
     /**
@@ -193,14 +232,25 @@ class Request
     }
 
     /**
-     * Get request method.
-     * (GET, POST, PUT, DELETE etc.)
+     * Retrieves the HTTP method of the request
      *
      * @return string
      */
     public function getMethod()
     {
         return $this->server->get('REQUEST_METHOD');
+    }
+
+    /**
+     * Set HTTP request method
+     *
+     * @return string
+     * @return self
+     */
+    public function setMethod($method)
+    {
+        $this->server->set('REQUEST_METHOD', $method);
+        return $this;
     }
 
     /**
@@ -271,6 +321,43 @@ class Request
     public function isOptions()
     {
         return self::METHOD_OPTIONS === $this->server->get('REQUEST_METHOD');
+    }
+
+    /**
+     * Returns an associative array of all current headers 
+     *
+     * Each key will be a header name with it's value
+     *
+     * @return array 
+     */
+    public function getHeaders()
+    {
+        return $this->headers->all();
+    }
+
+    /**
+     * Set new header, replacing any existing values 
+     * of any headers with the same case-insensitive name
+     *
+     * @param string $key Case-insensitive header field name
+     * @param string $value Header value
+     * @return self
+     */
+    public function setHeader($key, $value)
+    {
+        $this->headers->set($key, $value);
+        return $this;
+    }
+
+    /**
+     * Get header with passed key
+     *
+     * @param string $key Case-insensitive header field name
+     * @return string
+     */
+    public function getHeader($key)
+    {
+        return $this->headers->get($key);
     }
 
     /**

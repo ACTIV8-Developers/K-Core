@@ -1,7 +1,5 @@
 <?php
-namespace Core\Core;
-
-use Core\Core\Core;
+namespace Core\Container;
 
 /**
  * Abstract class ContainerProvider. Extend to gain access to core container.
@@ -18,7 +16,7 @@ abstract class ContainerProvider
      */
     protected function setValue($key, $value)
     {
-        $this->app[$key] = $value;
+        $this->container[$key] = $value;
     }
 
     /**
@@ -29,8 +27,8 @@ abstract class ContainerProvider
      */
     protected function getValue($key)
     {
-        if (isset($this->app[$key])) {
-            return $this->app[$key];
+        if (isset($this->container[$key])) {
+            return $this->container[$key];
         }
         return null;
     }
@@ -39,13 +37,13 @@ abstract class ContainerProvider
      * @param string $var
      * @return mixed
      */
-	public function __get($var) 
+    public function __get($var) 
     {
-		if ($var === 'app') {
-			$this->app = Core::getInstance();
-			return $this->app;
-		} else {
-			return $this->getValue($var);
-		}
-	}
+        if ($var === 'container') {
+            $this->container = Container::getInstance();
+            return $this->container;
+        } else {
+            return $this->getValue($var);
+        }
+    }
 }

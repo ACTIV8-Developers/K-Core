@@ -1,13 +1,15 @@
 <?php
 namespace Core\Routing;
 
+use Core\Routing\Interfaces\RouteInterface;
+
 /**
  * Route class.
  * This class represents single application route.
  *
  * @author <milos@caenazzo.com>
  */
-class Route
+class Route implements RouteInterface
 {
     /**
      * The route pattern (The URL pattern (e.g. "article/:year/:category")).
@@ -139,7 +141,7 @@ class Route
      *
      * @param string $key
      * @param string $condition
-     * @return \Core\Core\Route (for method chaining)
+     * @return self
      */
     public function where($key, $condition)
     {
@@ -152,7 +154,7 @@ class Route
      *
      * @param string $key
      * @param string $pattern
-     * @return \Core\Core\Route (for method chaining)
+     * @return self
      */
     public function whereRegex($key, $pattern)
     {
@@ -163,7 +165,7 @@ class Route
     /**
      * Add GET as acceptable method.
      *
-     * @return \Core\Core\Route (for method chaining)
+     * @return self
      */
     public function viaGet()
     {
@@ -174,7 +176,7 @@ class Route
     /**
      * Add POST as acceptable method.
      *
-     * @return \Core\Core\Route (for method chaining)
+     * @return self
      */
     public function viaPost()
     {
@@ -186,10 +188,12 @@ class Route
      * Set supported HTTP method(s).
      *
      * @param array
+     * @return self
      */
     public function setHttpMethods($methods)
     {
         $this->methods = $methods;
+        return $this;
     }
 
     /**

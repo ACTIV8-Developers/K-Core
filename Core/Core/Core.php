@@ -6,30 +6,38 @@ use Core\Http\Response;
 use Core\Routing\Router;
 use Core\Session\Session;
 use Core\Database\Database;
-use \Pimple\Container;
+use Core\Container\Container;
+use Core\Core\Exceptions\NotFoundException;
 
 /**
  * Core class.
- * This is the heart of whole framework. It is a singleton container for all main 
- * objects. This class contains main run method which handles life cycle of application.
+ *
+ * This is the heart of whole framework.
  * 
  * @author <milos@caenazzo.com>
  */
-class Core extends Container
+class Core
 {
     /**
      * Core version.
      *
      * @var string
      */
-    const VERSION = '1.40rc';
+    const VERSION = '1.5rc';
 
     /**
-     * Singleton instance of Core.
+     * Is app container initialized
      *
-     * @var \Core\Core\Core
+     * @var bool
      */
-    protected static $instance = null;
+    protected static $boot = true;
+
+    /**
+     * Object container
+     *
+     * @var Container
+     */
+    protected $container = null;
 
     /**
      * Array of hooks to be applied.
@@ -54,56 +62,78 @@ class Core extends Container
      */
     public function __construct()
     {
-        // Call parent container constructor.
-        parent::__construct();
-
-        // Load application configuration.
-        $this['config'] = require APP.'/Config/Config.php';
-
-        // Set error reporting.
-        if ($this['config']['debug'] === true) {
-            ini_set('display_errors', 1);
-            error_reporting(E_ALL);
-            if ($this['config']['whoops'] === true) {
-                $this['whoops'] = function() {
-                    return new \Whoops\Run();
-                };
-                $this['whoops']->pushHandler(new \Whoops\Handler\PrettyPageHandler());
-                $this['whoops']->register();
-            }
-        } else {
-            ini_set('display_errors', 'Off');
-            error_reporting(0);
-        }
+        // Get object container instance
+        $this->container = Container::getInstance();
 
         // Pre system hook.
         if (isset($this->hooks['before.system'])) {
             call_user_func($this->hooks['before.system'], $this);
         }
 
+        // Fill container with required objects
+        if (self::$boot === true) {
+            $this->boot();
+        }
+        
+        // Register service providers.
+        foreach ($this->container['config']['services'] as $service) {
+            $s = new $service($this->container);
+            $s->register();
+        }
+
+        // After system hook
+        if (isset($this->hooks['after.system'])) {
+            call_user_func($this->hooks['after.system'], $this);
+        }
+    }
+
+    /**
+     * Fill container with required objects
+     */
+    protected function boot()
+    {
+        // Load application configuration.
+        $this->container['config'] = require APP.'/Config/Config.php';
+
+        // Set error reporting.
+        if ($this->container['config']['debug'] === true) {
+            ini_set('display_errors', 1);
+            error_reporting(E_ALL);
+            if ($this->container['config']['whoops'] === true) {
+                $this->container['whoops'] = function() {
+                    return new \Whoops\Run();
+                };
+                $this->container['whoops']->pushHandler(new \Whoops\Handler\PrettyPageHandler());
+                $this->container['whoops']->register();
+            }
+        } else {
+            ini_set('display_errors', 'Off');
+            error_reporting(0);
+        }
+
         // Set default timezone.
-        if (isset($this['config']['timezone'])) {
-            date_default_timezone_set($this['config']['timezone']);
+        if (isset($this->container['config']['timezone'])) {
+            date_default_timezone_set($this->container['config']['timezone']);
         }
         
         // Create request class closure.
-        $this['request'] = function() {
+        $this->container['request'] = function() {
             return new Request($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
         }; 
 
         // Create response class closure.
-        $this['response'] = function($c) {
+        $this->container['response'] = function($c) {
             $response = new Response();
             $response->setProtocolVersion($c['request']->getProtocolVersion());
             return $response;
         };
 
         // Load database configuration.
-        $this['config.database'] = require APP.'/Config/Database.php';
+        $this->container['config.database'] = require APP.'/Config/Database.php';
 
         // For each needed database create database class closure.
-        foreach ($this['config.database'] as $name => $dbConfig) {
-            $this['db.'.$name] = function() use ($dbConfig) {
+        foreach ($this->container['config.database'] as $name => $dbConfig) {
+            $this->container['db.'.$name] = function() use ($dbConfig) {
                 $db = null;
                 switch ($dbConfig['driver']) { // Choose connection and create it.
                     case 'mysql':               
@@ -120,7 +150,7 @@ class Core extends Container
         }
 
         // Create session class closure.
-        $this['session'] = function($c) {
+        $this->container['session'] = function($c) {
             // Select session handler.
             $handler = null;
             switch ($c['config']['sessionHandler']) {
@@ -129,7 +159,7 @@ class Core extends Container
                     break;
                 case 'database':
                     $name = $c['config']['session']['connName'];
-                    $conn = $this['db.'.$name]->getConnection();
+                    $conn = $this->container['db.'.$name]->getConnection();
                     $handler = new \Core\Session\Handlers\DatabaseSessionHandler($conn);
                     break;
             }
@@ -138,16 +168,8 @@ class Core extends Container
             return $session;
         };
 
-        // Register service providers.
-        foreach ($this['config']['services'] as $service) {
-            $s = new $service($this);
-            $s->register();
-        }
-
-        // After system hook
-        if (isset($this->hooks['after.system'])) {
-            call_user_func($this->hooks['after.system'], $this);
-        }
+        // Container is filled no need to do it again
+        self::$boot = false;
     }
     
     /**
@@ -157,8 +179,8 @@ class Core extends Container
     {
         try {
             // Load and start session if enabled in configuration.
-            if ($this['config']['sessionStart']) {
-                $this['session']->start();
+            if ($this->container['config']['sessionStart']) {
+                $this->container['session']->start();
             }
 
             // Execute routing.
@@ -191,17 +213,18 @@ class Core extends Container
         }
 
         // Route requests
-        $matchedRoute = $route->run($this['request']->getUri(), $this['request']->getMethod());
+        $matchedRoute = $route->run($this->container['request']->getUri(), $this->container['request']->getMethod());
 
         // Execute route if found.
         if (false !== $matchedRoute) {
             // Append passed params to GET array.
-            $this['request']->get->add($matchedRoute->params);
+            $this->container['request']->get->add($matchedRoute->params);
 
             // Execute matched route.
-            $matchedRoute->action->setNamespacePrefix(CONTROLERS);
-            $matchedRoute->action->setParams($matchedRoute->params);
-            $matchedRoute->action->execute();
+            $matchedRoute->action
+                        ->setNamespacePrefix(CONTROLERS)
+                        ->setParams($matchedRoute->params)
+                        ->execute();
 
         } else {
             // If page not found display 404 error.
@@ -220,7 +243,7 @@ class Core extends Container
     public function sendResponse()
     {
         // Send final response.
-        $this['response']->send();
+        $this->container['response']->send();
 
         // Post response hook.
         if (isset($this->hooks['after.response'])) {
@@ -228,7 +251,7 @@ class Core extends Container
         }
 
         // Display benchmark time if enabled.
-        if ($this['config']['benchmark']) {
+        if ($this->container['config']['benchmark']) {
             print '<!--'.\PHP_Timer::resourceUsage().'-->';
         }
     }
@@ -241,11 +264,11 @@ class Core extends Container
     public function notFound(NotFoundException $e = null)
     {
         if (isset($this->hooks['not.found'])) {
-            $this['error'] = $e;
+            $this->container['error'] = $e;
             call_user_func($this->hooks['not.found'], $this);
         } else {
-            $this['response']->setStatusCode(404);
-            $this['response']->setContent('<h1>404 Not Found</h1>The page that you have requested could not be found.');
+            $this->container['response']->setStatusCode(404);
+            $this->container['response']->setBody('<h1>404 Not Found</h1>The page that you have requested could not be found.');
         }
     }
 
@@ -257,37 +280,14 @@ class Core extends Container
     protected function internalError(\Exception $e)
     {
         if (isset($this->hooks['internal.error'])) {
-            $this['error'] = $e;
+            $this->container['error'] = $e;
             call_user_func($this->hooks['internal.error'], $this);
         } else {
-            $this['response']->setStatusCode(500);                
-            if ($this['config']['debug'] === true && $this['config']['whoops'] === true) {
-                $this['whoops']->handleException($e);
+            $this->container['response']->setStatusCode(500);                
+            if ($this->container['config']['debug'] === true && $this->container['config']['whoops'] === true) {
+                $this->container['whoops']->handleException($e);
             }
         }
-    }
-
-    /**
-     * Get singleton instance of Core class.
-     *
-     * @return \Core\Core\Core
-     */
-    public static function getInstance()
-    {
-        if (null === self::$instance) {
-            self::$instance = new Core();
-        }
-        return self::$instance;
-    }
-
-    /**
-     * Get new instance of Core class.
-     *
-     * @return \Core\Core\Core
-     */
-    public static function getNew()
-    {
-        return new Core();
     }
 
     /**
@@ -310,5 +310,25 @@ class Core extends Container
     public function getHook($key) 
     {
         return $this->hooks[$key];
+    }
+
+    /**
+     * Set container
+     *
+     * @param Container $container
+     */
+    public function setContainer($container) 
+    {
+        $this->container = $container;
+    }
+
+    /**
+     * Get container.
+     *
+     * @return Container
+     */
+    public function getContainer() 
+    {
+        return $this->container;
     }
 }
