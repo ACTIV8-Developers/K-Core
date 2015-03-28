@@ -13,9 +13,9 @@ class AuthServiceProvider extends ServiceProvider
 	/**
 	* Create Auth class.
 	*/
-	public function register()
+	public function register($container)
 	{
-		$this->container['auth'] = function($c) {
+		$container['auth'] = function($c) {
 			return new Auth($c['db.default'], $c['session']);
 		};
 	}

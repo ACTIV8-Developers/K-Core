@@ -9,22 +9,9 @@ namespace Core\Container;
 abstract class ServiceProvider 
 {
 	/**
-	 * @var \Core\Container\Container
-	 */
-	protected $container = null;
-
-	/**
-	 * Create a new service provider instance.
-	 *
-	 * @param \Core\Container\Container
-	 */
-	public function __construct($container)
-	{
-		$this->container = $container;
-	}
-
-	/**
 	 * Register the service provider(s).
+	 *
+	 * @var \Core\Container\Container $container
 	 */
-	abstract public function register();
+	abstract public function register($container);
 }

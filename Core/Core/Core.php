@@ -79,8 +79,8 @@ class Core
         
         // Register service providers.
         foreach ($this->container['config']['services'] as $service) {
-            $s = new $service($this->container);
-            $s->register();
+            $s = new $service();
+            $s->register($this->container);
         }
 
         // After system hook
