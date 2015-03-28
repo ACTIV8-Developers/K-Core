@@ -1,7 +1,7 @@
 <?php
 namespace Core\Auth;
 
-use Core\Container\ServiceProvider;
+use Container\ServiceProvider;
 
 /**
  * Class AuthServiceProvider.
