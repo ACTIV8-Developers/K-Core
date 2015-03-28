@@ -13,7 +13,7 @@ use Core\Container\Container;
 use Core\Core\Exceptions\NotFoundException;
 use Core\Database\Connections\MySQLConnection;
 use Core\Session\Handlers\DatabaseSessionHandler;
-use Core\Session\Handlers\EncryptedFileSessionHandler
+use Core\Session\Handlers\EncryptedFileSessionHandler;
 
 /**
  * Core class.
