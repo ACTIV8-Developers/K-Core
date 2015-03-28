@@ -5,7 +5,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
     public function testConstruct()
     {
         // Make instance of app.
-        $app = new Core\Core\Core();
+        $app = \Core\Core\Core::getInstance();
 
         // Check if construct made all required things.
         $this->assertInstanceOf('Core\Core\Core', $app);
@@ -17,7 +17,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
     public function testRouteRequest()
     {
         // Make instance of app.
-        $app = new Core\Core\Core();      
+        $app = \Core\Core\Core::getInstance();      
 
         $this->expectOutputString('<p>Working</p>');
         $app->routeRequest();
@@ -26,7 +26,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
     public function testSendReponse()
     {
         // Make instance of app.
-        $app = new Core\Core\Core();
+        $app = \Core\Core\Core::getInstance();
 
         $app->getContainer()['response']->setBody('<div>Test</div>');
 
@@ -37,7 +37,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
     public function testNotFound()
     {
         // Make instance of app.
-        $app = new Core\Core\Core();
+        $app = \Core\Core\Core::getInstance();
 
         $ex = new \Core\Core\Exceptions\NotFoundException('Test');
 
@@ -49,7 +49,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
     public function testHooks()
     {
         // Make instance of app.
-        $app = new Core\Core\Core();
+        $app = \Core\Core\Core::getInstance();
 
         // Make some functions.
         $function1 = function($app) {

@@ -3,6 +3,7 @@ namespace Core\Util;
 
 /**
  * Class Message.
+ *
  * Used for sending flash messages between requests.
  * (uses PHP session for storing data)
  *

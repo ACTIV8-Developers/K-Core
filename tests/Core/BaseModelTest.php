@@ -8,7 +8,7 @@ class BaseModelTest extends PHPUnit_Framework_TestCase
      */
 	public function testDb() // Will throw exception since it cant connect to db at this momment.
 	{
-        $app = new \Core\Core\Core();
+        $app = \Core\Core\Core::getInstance();
         
 		$mod = new MockModel();
 

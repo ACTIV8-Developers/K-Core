@@ -1,6 +1,8 @@
 <?php
 namespace Core\Container;
 
+use Core\Core\Core;
+
 /**
  * Abstract class ContainerProvider. Extend to gain access to core container.
  *
@@ -40,7 +42,7 @@ abstract class ContainerProvider
     public function __get($var) 
     {
         if ($var === 'container') {
-            $this->container = Container::getInstance();
+            $this->container = Core::getInstance()->getContainer();
             return $this->container;
         } else {
             return $this->getValue($var);

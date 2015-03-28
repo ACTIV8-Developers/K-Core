@@ -2,6 +2,7 @@
 namespace Core\Core;
 
 use Core\Container\ContainerProvider;
+use Core\Core\Exceptions\NotFoundException;
 
 /**
  * Base controller abstract class.
@@ -118,29 +119,5 @@ abstract class Controller extends ContainerProvider
     protected function language($lang, $file = 'default')
     {
         return APP.'/Languages/'.$lang.'/'.$file.'.php';
-    }
-
-    /**
-     * Redirect helper function.
-     *
-     * @var string $url
-     * @var int $statusCode
-     */
-    protected function redirect($url = '', $statusCode = 303)
-    {
-        header('Location: '.\Core\Util\Util::base($url), true, $statusCode);
-        die();
-    }
-
-    /**
-     * Redirect helper function.
-     *
-     * @var string $url
-     * @var int $statusCode
-     */
-    protected function redirectToUrl($url = '', $statusCode = 303)
-    {
-        header('Location: '.$url, true, $statusCode);
-        die();
     }
 }

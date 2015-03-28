@@ -6,8 +6,8 @@ namespace Core\Util;
 *
 * @see http://laravel.com/api/4.2/Illuminate/Foundation/AliasLoader.html
 */
-class AliasLoader {
-
+class AliasLoader 
+{
 	/**
 	 * The array of class aliases.
 	 *

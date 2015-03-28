@@ -1,6 +1,9 @@
 <?php 
 namespace Core\Core;
 
+use Exception;
+use InvalidArgumentException;
+use Whoops\Handler\PrettyPageHandler;
 use Core\Http\Request;
 use Core\Http\Response;
 use Core\Routing\Router;
@@ -8,6 +11,9 @@ use Core\Session\Session;
 use Core\Database\Database;
 use Core\Container\Container;
 use Core\Core\Exceptions\NotFoundException;
+use Core\Database\Connections\MySQLConnection;
+use Core\Session\Handlers\DatabaseSessionHandler;
+use Core\Session\Handlers\EncryptedFileSessionHandler
 
 /**
  * Core class.
@@ -26,11 +32,9 @@ class Core
     const VERSION = '1.5rc';
 
     /**
-     * Is app container initialized
-     *
-     * @var bool
+     * @var Core
      */
-    protected static $boot = true;
+    protected static $instance;
 
     /**
      * Object container
@@ -60,10 +64,10 @@ class Core
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct()
+    protected function __construct()
     {
         // Get object container instance
-        $this->container = Container::getInstance();
+        $this->container = new Container();
 
         // Pre system hook.
         if (isset($this->hooks['before.system'])) {
@@ -71,9 +75,7 @@ class Core
         }
 
         // Fill container with required objects
-        if (self::$boot === true) {
-            $this->boot();
-        }
+        $this->boot();
         
         // Register service providers.
         foreach ($this->container['config']['services'] as $service) {
@@ -103,7 +105,7 @@ class Core
                 $this->container['whoops'] = function() {
                     return new \Whoops\Run();
                 };
-                $this->container['whoops']->pushHandler(new \Whoops\Handler\PrettyPageHandler());
+                $this->container['whoops']->pushHandler(new PrettyPageHandler());
                 $this->container['whoops']->register();
             }
         } else {
@@ -137,10 +139,10 @@ class Core
                 $db = null;
                 switch ($dbConfig['driver']) { // Choose connection and create it.
                     case 'mysql':               
-                        $db = new \Core\Database\Connections\MySQLConnection($dbConfig);
+                        $db = new MySQLConnection($dbConfig);
                         break;
                     default:
-                        throw new \InvalidArgumentException('Error! Unsupported database connection type.');
+                        throw new InvalidArgumentException('Error! Unsupported database connection type.');
                 }
                 // Inject it into database class.
                 $database = new Database();
@@ -155,21 +157,18 @@ class Core
             $handler = null;
             switch ($c['config']['sessionHandler']) {
                 case 'encrypted-file':
-                    $handler = new \Core\Session\Handlers\EncryptedFileSessionHandler();
+                    $handler = new EncryptedFileSessionHandler();
                     break;
                 case 'database':
                     $name = $c['config']['session']['connName'];
                     $conn = $this->container['db.'.$name]->getConnection();
-                    $handler = new \Core\Session\Handlers\DatabaseSessionHandler($conn);
+                    $handler = new DatabaseSessionHandler($conn);
                     break;
             }
             $session = new Session($c['config']['session'], $handler);
             $session->setHashKey($c['config']['key']);
             return $session;
         };
-
-        // Container is filled no need to do it again
-        self::$boot = false;
     }
     
     /**
@@ -177,18 +176,17 @@ class Core
      */        
     public function run()
     {
+        // Load and start session if enabled in configuration.
+        if ($this->container['config']['sessionStart']) {
+            $this->container['session']->start();
+        }
+
+        // Execute routing.
         try {
-            // Load and start session if enabled in configuration.
-            if ($this->container['config']['sessionStart']) {
-                $this->container['session']->start();
-            }
-
-            // Execute routing.
             $this->routeRequest();
-
         } catch (NotFoundException $e) {
             $this->notFound($e);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->internalError($e);
         }
 
@@ -259,7 +257,7 @@ class Core
     /**
      * Default handler for 404 error.
      *
-     * @param \Core\Core\NotFoundException
+     * @param NotFoundException
      */
     public function notFound(NotFoundException $e = null)
     {
@@ -275,9 +273,9 @@ class Core
     /**
      * Handle exception.
      *
-     * @param \Exception
+     * @param Exception $e
      */
-    protected function internalError(\Exception $e)
+    protected function internalError(Exception $e)
     {
         if (isset($this->hooks['internal.error'])) {
             $this->container['error'] = $e;
@@ -330,5 +328,39 @@ class Core
     public function getContainer() 
     {
         return $this->container;
+    }
+
+    /**
+     * Get container content by key.
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public function container($key) 
+    {
+        return $this->container[$key];
+    }
+
+    /**
+     * Get singleton instance of Core class.
+     *
+     * @return Core
+     */
+    public static function getInstance()
+    {
+        if (null === self::$instance) {
+            self::$instance = new Core();
+        }
+        return self::$instance;
+    }
+
+    /**
+     * Get new instance of Container class.
+     *
+     * @return Container
+     */
+    public static function getNew()
+    {
+        return new Core();
     }
 }

@@ -6,11 +6,11 @@ class BaseControllerTest extends PHPUnit_Framework_TestCase
 {
 	public function testGet()
 	{
-		$app = new \Core\Core\Core();
+		$app = \Core\Core\Core::getInstance();
 
 		$con = new MockController();
 
-		$this->assertSame($app->getContainer()['request'], $con->getRequest());
+		$this->assertSame($app->container('request'), $con->getRequest());
 		$this->assertSame($app->getContainer()['response'], $con->getResponse());
 		$this->assertSame($app->getContainer()['session'], $con->getSession());
 	}
