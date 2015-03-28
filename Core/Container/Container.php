@@ -1,5 +1,5 @@
 <?php
-namespace Container;
+namespace Core\Container;
 
 use Pimple\Container as PimpleContainer;
 

@@ -1,7 +1,7 @@
 <?php
 namespace Core\Auth;
 
-use Container\ServiceProvider;
+use Core\Container\ServiceProvider;
 
 /**
  * Class AuthServiceProvider.
@@ -11,8 +11,10 @@ use Container\ServiceProvider;
 class AuthServiceProvider extends ServiceProvider
 {
 	/**
-	* Create Auth class.
-	*/
+	 * Create Auth class.
+	 *
+	 * @var Container $container
+	 */
 	public function register($container)
 	{
 		$container['auth'] = function($c) {

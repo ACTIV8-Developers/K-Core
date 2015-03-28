@@ -1,5 +1,5 @@
 <?php
-namespace Container;
+namespace Core\Container;
 
 /**
  * Abstract class ServiceProvider.
