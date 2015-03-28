@@ -59,7 +59,7 @@ abstract class Controller extends ContainerProvider
         include APPVIEW.$view.'.php';
 
         // containerend to output body.
-        $this->container['response']->addContent(ob_get_contents());
+        $this->container['response']->addBody(ob_get_contents());
         ob_end_clean();
     }
 
@@ -96,7 +96,7 @@ abstract class Controller extends ContainerProvider
     public function json($data, $options = 0)
     {
         $this->container['response']->headers->set('Content-Type', 'containerlication/json');
-        $this->container['response']->setContent(json_encode($data, $options));
+        $this->container['response']->setBody(json_encode($data, $options));
     }
 
     /**
