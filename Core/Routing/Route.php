@@ -1,7 +1,9 @@
 <?php
 namespace Core\Routing;
 
+use InvalidArgumentException;
 use Core\Routing\Interfaces\RouteInterface;
+use Core\Routing\Interfaces\ActionInterface;
 
 /**
  * Route class.
@@ -79,14 +81,17 @@ class Route implements RouteInterface
         $this->url = $url;
         if (is_array($callable)) {
             $this->action = new Action($callable[0], $callable[1]);
-        } elseif($callable instanceof Action) {
+        } elseif($callable instanceof ActionInterface) {
             $this->action = $callable;
+        } else {
+            throw new InvalidArgumentException('Error! Callable must be instance of Action interface 
+                or array containing two parameters');
         }
         $this->methods[] = $requestMethod;
     }
 
     /**
-     * Check if requested URI matches this route.
+     * Check if requested URI and method matches this route.
      * Inspired by: http://blog.sosedoff.com/2009/09/20/rails-like-php-url-router/
      *
      * @param string $uri

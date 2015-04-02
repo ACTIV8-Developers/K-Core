@@ -2,6 +2,7 @@
 namespace Core\Core;
 
 use Core\Container\ContainerProvider;
+use Core\Core\Exceptions\StopException;
 use Core\Core\Exceptions\NotFoundException;
 
 /**
@@ -21,9 +22,9 @@ abstract class Controller extends ContainerProvider
     protected function get($key = null)
     {
         if ($key === null) {
-            return $this->container['request']->get->all();
+            return $this->app['request']->get->all();
         }
-        return $this->container['request']->get->get($key);
+        return $this->app['request']->get->get($key);
     }
 
 
@@ -36,9 +37,9 @@ abstract class Controller extends ContainerProvider
     protected function post($key = null)
     {
         if ($key === null) {
-            return $this->container['request']->post->all();
+            return $this->app['request']->post->all();
         }
-        return $this->container['request']->post->get($key);
+        return $this->app['request']->post->get($key);
     }
 
     /**
@@ -59,7 +60,7 @@ abstract class Controller extends ContainerProvider
         include APPVIEW.$view.'.php';
 
         // containerend to output body.
-        $this->container['response']->addBody(ob_get_contents());
+        $this->app['response']->addBody(ob_get_contents());
         ob_end_clean();
     }
 
@@ -95,14 +96,14 @@ abstract class Controller extends ContainerProvider
      */
     public function json($data, $options = 0)
     {
-        $this->container['response']->headers->set('Content-Type', 'containerlication/json');
-        $this->container['response']->setBody(json_encode($data, $options));
+        $this->app['response']->headers->set('Content-Type', 'containerlication/json');
+        $this->app['response']->setBody(json_encode($data, $options));
     }
 
     /**
      * Display page with not found code.
      * 
-     * @throws \Core\Core\NotFoundException
+     * @throws \Core\Core\Exceptions\NotFoundException
      */
     protected function notFound()
     {
@@ -110,14 +111,12 @@ abstract class Controller extends ContainerProvider
     }
 
     /**
-     * Load language file with defined constants.
-     *
-     * @param string $lang,
-     * @param string $file
-     * @return array
+     * Stop controller execution and render current response
+     * 
+     * @throws \Core\Core\Exceptions\StopException
      */
-    protected function language($lang, $file = 'default')
+    protected function stop()
     {
-        return APP.'/Languages/'.$lang.'/'.$file.'.php';
+        throw new StopException();
     }
 }

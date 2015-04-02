@@ -9,7 +9,7 @@ namespace Core\Routing\Interfaces;
 interface RouteInterface
 {
     /**
-     * Check if requested URI matches this route.
+     * Check if requested URI and method matches this route.
      *
      * @param string $uri
      * @param string method

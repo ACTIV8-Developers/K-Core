@@ -18,7 +18,7 @@ abstract class Model extends ContainerProvider
      */
     protected function db($dbName = 'default')
     {
-        return $this->container['db.'.$dbName];
+        return $this->app['db.'.$dbName];
     }
 
     /**
@@ -30,10 +30,10 @@ abstract class Model extends ContainerProvider
     protected function getValue($key)
     {
         if ($key === 'db') {
-            return $this->container['db.default'];
+            return $this->app['db.default'];
         }
-        if (isset($this->container[$key])) {
-            return $this->container[$key];
+        if (isset($this->app[$key])) {
+            return $this->app[$key];
         }
         return null;
     }

@@ -18,7 +18,7 @@ abstract class ContainerProvider
      */
     protected function setValue($key, $value)
     {
-        $this->container[$key] = $value;
+        $this->app[$key] = $value;
     }
 
     /**
@@ -29,8 +29,8 @@ abstract class ContainerProvider
      */
     protected function getValue($key)
     {
-        if (isset($this->container[$key])) {
-            return $this->container[$key];
+        if (isset($this->app[$key])) {
+            return $this->app[$key];
         }
         return null;
     }
@@ -41,9 +41,9 @@ abstract class ContainerProvider
      */
     public function __get($var) 
     {
-        if ($var === 'container') {
-            $this->container = Core::getInstance()->getContainer();
-            return $this->container;
+        if ($var === 'app') {
+            $this->app = Core::getInstance();
+            return $this->app;
         } else {
             return $this->getValue($var);
         }

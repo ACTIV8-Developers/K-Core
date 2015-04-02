@@ -14,7 +14,7 @@ class BaseModelTest extends PHPUnit_Framework_TestCase
 
 		$this->assertInstanceOf('Core\Database\Database', $mod->getDatabase());
 
-		$this->assertSame($app->getContainer()['db.default'], $mod->getDatabase());
+		$this->assertSame($app['db.default'], $mod->getDatabase());
 	}
 }
 
