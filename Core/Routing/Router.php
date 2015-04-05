@@ -7,7 +7,7 @@ use Core\Routing\Interfaces\RouterInterface;
  * Router class.
  *
  * This class contains list of application routes,
- * also here are methods for adding things to list and
+ * also routes serves as route factory and
  * here is defined run method for routing requests.
  *
  * @author <milos@caenazzo.com>

@@ -2,11 +2,11 @@
 namespace Core\Routing\Interfaces;
 
 /**
- * ActionInterface
+ * ExecutableInterface
  *
  * @author <milos@caenazzo.com>
  */
-interface ActionInterface
+interface ExecutableInterface
 {
     /**
      * Execute action

@@ -20,7 +20,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $app = \Core\Core\Core::getInstance();      
 
         $this->expectOutputString('<p>Working</p>');
-        $app->routeRequest();
+        $app->run();
     }
 
     public function testSendReponse()
@@ -33,18 +33,6 @@ class CoreTest extends PHPUnit_Framework_TestCase
         //$this->expectOutputString('<div>Test</div>');
         $app->sendResponse();
     }
-
-    public function testNotFound()
-    {
-        // Make instance of app.
-        $app = \Core\Core\Core::getInstance();
-
-        $ex = new \Core\Core\Exceptions\NotFoundException('Test');
-
-        $app->notFound($ex);
-
-        $this->assertEquals($app['response']->getBody(), '<h1>404 Not Found</h1>The page that you have requested could not be found.');
-    }
     
     public function testHooks()
     {
@@ -52,13 +40,9 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $app = \Core\Core\Core::getInstance();
 
         // Make some functions.
-        $function1 = function($app) {
-            $app['foo'] = 'bar';
-        };
+        $function1 = ['Foo', 'bar'];
 
-        $function2 = function($app) {
-            $app['bar'] = 'foo';
-        };
+        $function2 = ['Bar', 'foo'];
 
         // Make hooks.
         $app->setHook('before.routing', $function1);

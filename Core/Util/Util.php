@@ -15,6 +15,11 @@ class Util
 	 */
 	protected static $base = null;
 
+    /*
+     * @var string
+     */
+    public static $publicPath = '';
+
     /**
      * Get site base url.
      *
@@ -46,7 +51,7 @@ class Util
 	 */
 	public static function css($css)
 	{
-		return self::$base.PUBLIC_DIR.'/css/'.$css;
+		return self::$base.self::$publicPath.'/css/'.$css;
 	}	
 
 	/**
@@ -57,7 +62,7 @@ class Util
 	 */
 	public static function js($js)
 	{
-		return self::$base.PUBLIC_DIR.'/js/'.$js;
+		return self::$base.self::$publicPath.'/js/'.$js;
 	}
 
 	/**
@@ -68,7 +73,7 @@ class Util
 	 */
 	public static function img($img)
 	{
-		return self::$base.PUBLIC_DIR.'/images/'.$img;
+		return self::$base.self::$publicPath.'/images/'.$img;
 	}
 
     /**

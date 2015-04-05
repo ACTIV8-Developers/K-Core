@@ -1,49 +1,10 @@
 <?php
+use Core\Core\Core;
+use Core\Core\Controller;
+use Core\Util\Util;
+use Core\Util\AliasLoader;
+
 ob_start();
-/*
-|--------------------------------------------------------------------------
-| Set application path.
-|--------------------------------------------------------------------------
-*/
-define('APP', __DIR__.'/MockApp');
-/*
-|--------------------------------------------------------------------------
-| Set name of directory and namespace where controllers are stored.
-|--------------------------------------------------------------------------
-| This needs to match structure defined in composer.json file, usually
-| controllers are stored in App/Controllers.
-*/
-define('CONTROLERS', '');
-/*
-|--------------------------------------------------------------------------
-| Set path to directory where views are stored.
-|--------------------------------------------------------------------------
-*/
-define('APPVIEW', APP.'/MockViews/');
-/*
-|--------------------------------------------------------------------------
-| Set path to file containing routes.
-|--------------------------------------------------------------------------
-*/
-define('ROUTES', APP.'/routes.php');
-/*
-|--------------------------------------------------------------------------
-| Set name of the public directory.
-|--------------------------------------------------------------------------
-*/
-define('PUBLIC_DIR', 'public');
-/*
-|--------------------------------------------------------------------------
-| Set path to the public directory.
-|--------------------------------------------------------------------------
-*/
-define('PUBLIC_PATH', __DIR__.'/../'.PUBLIC_DIR.'/');
-/*
-|--------------------------------------------------------------------------
-| Register timezone
-|--------------------------------------------------------------------------
-*/
-date_default_timezone_set('Europe/Belgrade');
 /*
 |--------------------------------------------------------------------------
 | Register the composer auto loader
@@ -56,7 +17,33 @@ require __DIR__.'/../vendor/autoload.php';
 |--------------------------------------------------------------------------
 | Additional auto loader for prettier class names.
 */
-Core\Util\AliasLoader::getInstance(require(APP.'/Config/Aliases.php'))->register();
+AliasLoader::getInstance(require(__DIR__.'/MockApp/Config/Aliases.php'))->register();
+/*
+|--------------------------------------------------------------------------
+| Set path to directory where views are stored.
+|--------------------------------------------------------------------------
+*/
+Controller::$viewPath = __DIR__. '/MockApp/MockViews/';
+/*
+|--------------------------------------------------------------------------
+| Set name of the public directory.
+|--------------------------------------------------------------------------
+*/
+Util::$publicPath = 'public';
+/*
+|--------------------------------------------------------------------------
+| Register timezone
+|--------------------------------------------------------------------------
+*/
+date_default_timezone_set('Europe/Belgrade');
+/*
+|--------------------------------------------------------------------------
+| Boot mockup app
+|--------------------------------------------------------------------------
+*/
+Core::getInstance(__DIR__.'/MockApp')
+					->setControllerNamespace('')
+					->boot();
 /*
 |--------------------------------------------------------------------------
 | Mockup request

@@ -1,15 +1,15 @@
 <?php
 namespace Core\Routing;
 
-use Core\Routing\Interfaces\ActionInterface;
+use Core\Routing\Interfaces\ExecutableInterface;
 
 /**
- * Action class.
+ * Executable class.
  * Class contains information about action to be executed when route is matched.
  *
  * @author <milos@caenazzo.com>
  */
-class Action implements ActionInterface
+class Executable implements ExecutableInterface
 {
     /**
      * @var string

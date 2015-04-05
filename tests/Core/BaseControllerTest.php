@@ -24,7 +24,7 @@ class BaseControllerTest extends PHPUnit_Framework_TestCase
 		$result = $con->bufferIt($view);
 
 		// Output string should be same as content of MockView.php file
-		$this->expectOutputString(file_get_contents(APPVIEW.$view.'.php'));
+		$this->expectOutputString(file_get_contents(Controller::$viewPath.$view.'.php'));
 		echo $result;
 	}
 
@@ -43,7 +43,7 @@ class BaseControllerTest extends PHPUnit_Framework_TestCase
 		$res = $con->bufferIt($view, $data);
 
 		// Output string shoudl be same as content of MockNestedViewTest.php file
-		$this->expectOutputString(file_get_contents(APPVIEW.$compareView.'.php'));
+		$this->expectOutputString(file_get_contents(Controller::$viewPath.$compareView.'.php'));
 		echo $res;
 	}
 }

@@ -3,7 +3,7 @@ namespace Core\Routing;
 
 use InvalidArgumentException;
 use Core\Routing\Interfaces\RouteInterface;
-use Core\Routing\Interfaces\ActionInterface;
+use Core\Routing\Interfaces\ExecutableInterface;
 
 /**
  * Route class.
@@ -23,9 +23,9 @@ class Route implements RouteInterface
     /**
      * Controller/method assigned to be executed when route is matched.
      *
-     * @var Action
+     * @var Executable
      */
-    public $action = null;
+    public $executable = null;
 
     /**
      * List of parameters extracted from passed URI.
@@ -73,18 +73,18 @@ class Route implements RouteInterface
      * Class constructor.
      *
      * @param string $url
-     * @param array $callable
+     * @param array $executable
      * @param string $requestMethod
      */
-    public function __construct($url, $callable, $requestMethod = 'GET')
+    public function __construct($url, $executable, $requestMethod = 'GET')
     {
         $this->url = $url;
-        if (is_array($callable)) {
-            $this->action = new Action($callable[0], $callable[1]);
-        } elseif($callable instanceof ActionInterface) {
-            $this->action = $callable;
+        if (is_array($executable)) {
+            $this->executable = new Executable($executable[0], $executable[1]);
+        } elseif($executable instanceof ExecutableInterface) {
+            $this->executable = $executable;
         } else {
-            throw new InvalidArgumentException('Error! Callable must be instance of Action interface 
+            throw new InvalidArgumentException('Error! Executable must be instance of ExecutableInterface 
                 or array containing two parameters');
         }
         $this->methods[] = $requestMethod;
