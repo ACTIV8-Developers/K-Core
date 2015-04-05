@@ -13,8 +13,7 @@
     "require":{
         "php": ">=5.4.0",
         "pimple/pimple": "3.0.*@dev",
-        "phpunit/php-timer": "dev-master",
-        "filp/whoops": "1.2.*@dev"
+        "phpunit/php-timer": "dev-master"
     },
     "suggest": {
         "predis/predis": "Redis client",

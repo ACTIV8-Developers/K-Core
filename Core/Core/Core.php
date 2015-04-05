@@ -11,6 +11,7 @@ use Core\Database\Database;
 use Core\Container\Container;
 use Core\Routing\Action;
 use Core\Routing\Router;
+use Core\Routing\Executable;
 use Core\Routing\Interfaces\ExecutableInterface;
 use Core\Core\Exceptions\StopException;
 use Core\Core\Exceptions\NotFoundException;
@@ -67,7 +68,7 @@ class Core extends Container
     /**
      * @var string
      */
-    protected $controllerNamespace = 'controllers';
+    protected $controllerNamespace = 'Controllers';
 
     /**
      * Array of middleware actions
@@ -384,9 +385,9 @@ class Core extends Container
      */
     protected function executeAction($executable) 
     {
-        if (is_array($callable)) {
-            $executable = new Executable($callable[0], $callable[1]);
-        } elseif (!$callable instanceof ExecutableInterface) {
+        if (is_array($executable)) {
+            $executable = new Executable($executable[0], $executable[1]);
+        } elseif (!$executable instanceof ExecutableInterface) {
             throw new InvalidArgumentException('Error! Executable must be instance of ExecutableInterface 
                 or array containing two parameters');
         }
