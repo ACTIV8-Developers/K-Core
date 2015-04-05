@@ -71,6 +71,11 @@ class Core extends Container
     protected $controllerNamespace = 'Controllers';
 
     /**
+     * @var string
+     */
+    protected $viewsPath = '';
+
+    /**
      * Array of middleware actions
      * 
      * @var array
@@ -114,6 +119,9 @@ class Core extends Container
 
         // Set app routes path
         $this->routesPath = $appPath.'/routes.php';
+
+        // Set path where views are stored
+        $this->viewsPath = $appPath.'/Views';
     }
 
     /**
@@ -238,7 +246,7 @@ class Core extends Container
         try {
             $this->routeRequest();
         } catch (StopException $e) {
-            // Just pass and send current response
+            // Just pass
         } catch (NotFoundException $e) {
             $this->notFound($e);
         } catch (Exception $e) {
@@ -361,7 +369,7 @@ class Core extends Container
      * Add hook.
      *
      * @param string $key
-     * @param callable $callable
+     * @param string $callable
      */
     public function setHook($key, $callable) 
     {
@@ -372,7 +380,7 @@ class Core extends Container
      * Get hook.
      *
      * @param string $key
-     * @return callable
+     * @return string
      */
     public function getHook($key) 
     {
@@ -402,6 +410,64 @@ class Core extends Container
     public function setControllerNamespace($controllerNamespace)
     {
         $this->controllerNamespace = $controllerNamespace;
+        return $this;
+    }
+
+    /**
+     * @param string $appPath
+     * @return self
+     */
+    public function setAppPath($appPath)
+    {
+        $this->appPath = $appPath;
+        return $this;
+    }
+
+    /**
+     * @param string $routesPath
+     * @return self
+     */
+    public function setRoutesPath($routesPath)
+    {
+        $this->routesPath = $routesPath;
+        return $this;
+    }
+
+    /**
+     * @param string $configPath
+     * @return self
+     */
+    public function setConfigPath($configPath)
+    {
+        $this->configPath = $configPath;
+        return $this;
+    }
+
+    /**
+     * @param string $viewsPath
+     * @return self
+     */
+    public function setViewsPath($viewsPath)
+    {
+        $this->viewsPath = $viewsPath;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getViewsPath()
+    {
+        return $this->viewsPath;
+    }
+
+    /**
+     * @param string $databaseConfigPath
+     * @return self
+     */
+    public function setDatabaseConfigPath($databaseConfigPath)
+    {
+        $this->databaseConfigPath = $databaseConfigPath;
         return $this;
     }
 

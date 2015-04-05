@@ -13,12 +13,6 @@ use Core\Core\Exceptions\NotFoundException;
  */
 abstract class Controller extends ContainerProvider
 {
-
-    /**
-     * @var string
-     */
-    public static $viewPath = '';
-
     /**
      * Get GET value from request object.
      *
@@ -63,7 +57,7 @@ abstract class Controller extends ContainerProvider
         ob_start();
 
         // Load view file (root location is declared in viewPath var).
-        include self::$viewPath.$view.'.php';
+        include $this->app->getViewsPath().'/'.$view.'.php';
 
         // containerend to output body.
         $this->app['response']->addBody(ob_get_contents());
@@ -86,7 +80,7 @@ abstract class Controller extends ContainerProvider
         ob_start();
 
         // Load view file (root location is declared in viewPath var).
-        include self::$viewPath.$view.'.php';
+        include $this->app->getViewsPath().'/'.$view.'.php';
 
         // Return string.       
         $buffer = ob_get_contents();

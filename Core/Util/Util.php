@@ -15,10 +15,10 @@ class Util
 	 */
 	protected static $base = null;
 
-    /*
+    /**
      * @var string
      */
-    public static $publicPath = '';
+    public static $publicPath = 'public';
 
     /**
      * Get site base url.

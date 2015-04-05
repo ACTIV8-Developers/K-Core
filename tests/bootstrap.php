@@ -20,18 +20,6 @@ require __DIR__.'/../vendor/autoload.php';
 AliasLoader::getInstance(require(__DIR__.'/MockApp/Config/Aliases.php'))->register();
 /*
 |--------------------------------------------------------------------------
-| Set path to directory where views are stored.
-|--------------------------------------------------------------------------
-*/
-Controller::$viewPath = __DIR__. '/MockApp/MockViews/';
-/*
-|--------------------------------------------------------------------------
-| Set name of the public directory.
-|--------------------------------------------------------------------------
-*/
-Util::$publicPath = 'public';
-/*
-|--------------------------------------------------------------------------
 | Register timezone
 |--------------------------------------------------------------------------
 */
@@ -42,6 +30,7 @@ date_default_timezone_set('Europe/Belgrade');
 |--------------------------------------------------------------------------
 */
 Core::getInstance(__DIR__.'/MockApp')
+					->setViewsPath(__DIR__.'/MockApp/MockViews')
 					->setControllerNamespace('')
 					->boot();
 /*
