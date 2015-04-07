@@ -21,11 +21,18 @@ class Route implements RouteInterface
     public $url = '';
 
     /**
-     * Controller/method assigned to be executed when route is matched.
+ * Controller/method assigned to be executed when route is matched.
+ *
+ * @var string
+ */
+    public $class = null;
+
+    /**
+     * Function assigned to be executed when route is matched.
      *
-     * @var array|string|Executable
+     * @var string
      */
-    public $executable = null;
+    public $function = null;
 
     /**
      * List of parameters extracted from passed URI.
@@ -73,13 +80,15 @@ class Route implements RouteInterface
      * Class constructor.
      *
      * @param string $url
-     * @param array|string|Executable $executable
+     * @param string $class
+     * @param string $function
      * @param string $requestMethod
      */
-    public function __construct($url, $executable, $requestMethod = 'GET')
+    public function __construct($url, $requestMethod, $class, $function)
     {
         $this->url = $url;
-        $this->executable = $executable;
+        $this->class = $class;
+        $this->function = $function;
         $this->methods[] = $requestMethod;
     }
 

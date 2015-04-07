@@ -21,16 +21,18 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
         $this->expectOutputString('<p>Working</p>');
         $app->run();
+
+        $app->sendResponse();
     }
 
-    public function testSendReponse()
+    public function testSendResponse()
     {
         // Make instance of app.
         $app = \Core\Core\Core::getInstance();
 
         $app['response']->setBody('<div>Test</div>');
 
-        //$this->expectOutputString('<div>Test</div>');
+        $this->expectOutputString('<div>Test</div>');
         $app->sendResponse();
     }
     
@@ -39,18 +41,13 @@ class CoreTest extends PHPUnit_Framework_TestCase
         // Make instance of app.
         $app = \Core\Core\Core::getInstance();
 
-        // Make some functions.
-        $function1 = ['Foo', 'bar'];
-
-        $function2 = ['Bar', 'foo'];
-
         // Make hooks.
-        $app->setHook('before.routing', $function1);
-        $app->setHook('after.routing', $function2);
+        $app->setHook('before.routing', 'Foo', 'bar');
+        $app->setHook('after.routing', 'Bar', 'foo');
 
         // Test hooks.
-        $this->assertEquals($app->getHook('before.routing'), $function1);
-        $this->assertEquals($app->getHook('after.routing'), $function2);
+        $this->assertTrue($app->getHook('before.routing') instanceof \Core\Routing\Interfaces\ExecutableInterface);
+        $this->assertTrue($app->getHook('after.routing')instanceof \Core\Routing\Interfaces\ExecutableInterface);
     }
 }
 

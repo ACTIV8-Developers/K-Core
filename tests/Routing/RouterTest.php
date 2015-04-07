@@ -12,7 +12,7 @@ class RouterTest extends PHPUnit_Framework_TestCase
 		// Create router object
 		$router = new Router();
 
-		$route = new Route('foo/bar', ['foo', 'bar'], 'GET');
+		$route = new Route('foo/bar', 'GET', 'foo', 'bar');
 		// Create mock route and add it to router
 		$router->addRoute($route);
 
@@ -27,15 +27,15 @@ class RouterTest extends PHPUnit_Framework_TestCase
 		// Create router object
 		$router = new Router();
 		
-		$route1 = $router->get('foo/bar', ['', '']);
+		$route1 = $router->get('foo/bar', '', '');
 
-		$route2 = $router->post('bar/foo', ['', '']);
+		$route2 = $router->post('bar/foo', '', '');
 
-		$route3 = $router->put('bar/foo2', ['', '']);
+		$route3 = $router->put('bar/foo2', '', '');
 
-		$route4 = $router->delete('bar/foo3', ['', '']);
+		$route4 = $router->delete('bar/foo3', '', '');
 
-		$route5 = $router->get('bar/foo4', ['', '']);
+		$route5 = $router->get('bar/foo4', '', '');
 
 		$this->assertContains($route1, $router->getRoutes());
 

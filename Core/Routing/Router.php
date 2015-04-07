@@ -44,12 +44,13 @@ class Router implements RouterInterface
      * Add a route object to the router accepting GET request method.
      *
      * @param string $url
-     * @param array
+     * @param string $class
+     * @param string $function
      * @return \Core\Routing\Route
      */
-    public function get($url, $callable)
+    public function get($url, $class, $function)
     {
-        $route = new Route($url, $callable, 'GET');
+        $route = new Route($url, 'GET', $class, $function);
         $this->routes[] = $route;
         return $route;
     }
@@ -58,12 +59,13 @@ class Router implements RouterInterface
      * Add a route object to the router accepting POST request method.
      *
      * @param string $url
-     * @param $callable
+     * @param string $class
+     * @param string $function
      * @return \Core\Routing\Route
      */
-    public function post($url, $callable)
+    public function post($url, $class, $function)
     {
-        $route = new Route($url, $callable, 'POST');
+        $route = new Route($url, 'POST', $class, $function);
         $this->routes[] = $route;
         return $route;
     }
@@ -72,12 +74,13 @@ class Router implements RouterInterface
      * Add a route object to the router accepting PUT request method.
      *
      * @param string $url
-     * @param $callable
+     * @param string $class
+     * @param string $function
      * @return \Core\Core\Route
      */
-    public function put($url, $callable)
+    public function put($url, $class, $function)
     {
-        $route = new Route($url, $callable, 'PUT');
+        $route = new Route($url, 'PUT', $class, $function);
         $this->routes[] = $route;
         return $route;
     }
@@ -86,12 +89,13 @@ class Router implements RouterInterface
      * Add a route object to the router accepting DELETE request method.
      *
      * @param string $url
-     * @param $callable
+     * @param string $class
+     * @param string $function
      * @return \Core\Core\Route
      */
-    public function delete($url, $callable)
+    public function delete($url, $class, $function)
     {
-        $route = new Route($url, $callable, 'DELETE');
+        $route = new Route($url, 'DELETE', $class, $function);
         $this->routes[] = $route;
         return $route;
     }

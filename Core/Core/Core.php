@@ -33,7 +33,7 @@ class Core extends Container
      *
      * @var string
      */
-    const VERSION = '1.55rc';
+    const VERSION = '1.57rc';
 
     /**
      * @var Core
@@ -135,7 +135,7 @@ class Core extends Container
 
             // Pre boot hook.
             if (isset($this->hooks['before.boot'])) {
-                $this->execute($this->hooks['before.boot']);
+                $this->hooks['before.boot']->execute();
             }
 
             // Load application configuration.
@@ -215,13 +215,15 @@ class Core extends Container
             }
 
             // Register middleware stack
-            if (isset($this['config']['middleware']) && is_array($this['config']['middleware'])) {
-                $this->middleware = $this['config']['middleware'];
+            if (isset($this['config']['middleware'])) {
+                foreach ($this['config']['middleware'] as $class => $function) {
+                    $this->addMiddleware($class, $function);
+                }
             }
 
             // After boot hook
             if (isset($this->hooks['after.boot'])) {
-                $this->execute($this->hooks['after.boot']);
+                $this->hooks['after.boot']->execute();
             }
 
             $this->isBooted = true;
@@ -270,12 +272,12 @@ class Core extends Container
 
         // Pre routing/controller hook.
         if (isset($this->hooks['before.run'])) {
-            $this->execute($this->hooks['before.run']);
+            $this->hooks['before.run']->execute();
         }
 
         // Call middleware stack
         foreach ($this->middleware as $m) {
-            $this->execute($m);
+            $m->execute();
         }
 
         // Route requests
@@ -287,7 +289,8 @@ class Core extends Container
             $this['request']->get->add($matchedRoute->params);
 
             // Execute matched route.
-            $this->execute($matchedRoute->executable, $matchedRoute->params, $this->controllerNamespace);
+            $this->execute($matchedRoute->class, $matchedRoute->function,
+                        $matchedRoute->params, $this->controllerNamespace);
         } else {
             // If page not found display 404 error.
             $this->notFound();
@@ -295,7 +298,7 @@ class Core extends Container
 
         // Post routing/controller hook.
         if (isset($this->hooks['after.run'])) {
-            $this->execute($this->hooks['after.run']);
+            $this->hooks['after.run']->execute();
         }
     }
 
@@ -316,7 +319,7 @@ class Core extends Container
 
         // Post response hook.
         if (isset($this->hooks['after.response'])) {
-            $this->execute($this->hooks['after.response']);
+            $this->hooks['after.response']->execute();
         }
 
         // Display benchmark time if enabled.
@@ -336,7 +339,7 @@ class Core extends Container
     {
         if (isset($this->hooks['not.found'])) {
             $this['not.found'] = $e;
-            $this->execute($this->hooks['not.found']);
+            $this->hooks['not.found']->execute();
         } else {
             $this['response']->setStatusCode(404);
             $this['response']->setBody('<h1>404 Not Found</h1>The page that you have ' .
@@ -353,7 +356,7 @@ class Core extends Container
     {
         if (isset($this->hooks['internal.error'])) {
             $this['exception'] = $e;
-            $this->execute($this->hooks['internal.error']);
+            $this->hooks['internal.error']->execute();
         } else {
             $this['response']->setStatusCode(500);
             $this['response']->setBody('Internal error: ' . $e->getMessage());
@@ -364,18 +367,21 @@ class Core extends Container
      * Add hook.
      *
      * @param string $key
-     * @param string $callable
+     * @param string $class
+     * @param string $function
+     * @return self
      */
-    public function setHook($key, $callable)
+    public function setHook($key, $class, $function)
     {
-        $this->hooks[$key] = $callable;
+        $this->hooks[$key] = new Executable($class, $function);
+        return $this;
     }
 
     /**
      * Get hook.
      *
      * @param string $key
-     * @return string
+     * @return ExecutableInterface
      */
     public function getHook($key)
     {
@@ -383,19 +389,15 @@ class Core extends Container
     }
 
     /**
-     * @param array|Action
-     * @param array
-     * @param string|null
+     * @param string $class
+     * @param string $function
+     * @param array $params
+     * @param string $namespacePrefix
      * @throws \InvalidArgumentException
      */
-    protected function execute($executable, $params = [], $namespacePrefix = null)
+    protected function execute($class, $function, $params = [], $namespacePrefix = null)
     {
-        if (is_array($executable)) {
-            $executable = new Executable($executable[0], $executable[1]);
-        } elseif (!$executable instanceof ExecutableInterface) {
-            throw new InvalidArgumentException('Error! Executable must be instance of ExecutableInterface
-                or array containing two parameters');
-        }
+        $executable = new Executable($class, $function);
 
         if (!empty($params)) {
             $executable->setParams($params);
@@ -477,12 +479,13 @@ class Core extends Container
     }
 
     /**
-     * @param array $middleware
+     * @param string $class
+     * @param string $function
      * @return self
      */
-    public function addMiddleware($middleware)
+    public function addMiddleware($class, $function)
     {
-        $this->middleware[] = $middleware;
+        $this->middleware[] = new Executable($class, $function);
         return $this;
     }
 

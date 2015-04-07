@@ -5,7 +5,7 @@ class RouteTest extends PHPUnit_Framework_TestCase
 {
 	public function testConstructAndGet()
 	{
-		$route = new Route('foo/bar', ['foo', 'bar'], 'PUT');
+		$route = new Route('foo/bar', 'PUT', 'foo', 'bar');
 
 		// Did route URL set properly ?
 		$this->assertEquals('foo/bar', $route->url);
@@ -25,75 +25,76 @@ class RouteTest extends PHPUnit_Framework_TestCase
 
 	public function testMatches()
 	{
-		/* Test random routing casses.
+		/* Test random routing cases.
 		* (callable parameter can be empty here since route won't be dispatched)
 		******************************/
 
 		// Case 1
-		$route1 = new Route('foo/bar', ['bar', 'foo'], 'GET');
+		$route1 = new Route('foo/bar', 'GET', 'bar', 'foo');
 
 		$this->assertTrue($route1->matches('foo/bar','GET'));
 
 		$this->assertFalse($route1->matches('foo','GET'));
 
 		// Case 2
-		$route2 = new Route(':f/:o/foo/bar/:i', ['bar', 'foo'], 'GET');
+		$route2 = new Route(':f/:o/foo/bar/:i', 'GET', 'bar', 'foo');
 
 		$this->assertTrue($route2->matches('en/2014/foo/bar/2','GET'));
 
 		$this->assertFalse($route2->matches('en/2014/wrong/delete/2','GET'));
 
 		// Case 3
-		$route3 = new Route('foo/bar', ['bar', 'foo'], 'POST');
+		$route3 = new Route('foo/bar', 'POST', 'bar', 'foo');
 
 		$this->assertTrue($route3->matches('foo/bar','POST'));
 
 		$this->assertFalse($route3->matches('foo/bar','GET'));
 
 		// Case 4
-		$route4 = new Route('foo/bar/:param', ['bar', 'foo'], 'GET');
+		$route4 = new Route('foo/bar/:param', 'GET', 'bar', 'foo');
 
 		$this->assertTrue($route4->matches('foo/bar/foobar','GET'));
 
 		$this->assertFalse($route4->matches('foo/bar/foo/bar','GET'));
 
 		// Case 5
-		$route5 = new Route('foo/bar', ['bar', 'foo'], 'GET');
+		$route5 = new Route('foo/bar', 'GET', 'bar', 'foo');
 
 		$this->assertTrue($route5->matches('foo/bar','GET'));
 
 		$this->assertTrue($route5->matches('foo/bar/','GET'));
 
 		// Case 6
-		$route6 = new Route('foo', ['bar', 'foo'], 'PUT');
+
+		$route6 = new Route('foo', 'PUT', 'bar', 'foo');
 
 		$this->assertTrue($route6->matches('foo/','PUT'));
 
 		$this->assertFalse($route6->matches('foo/bar','PUT'));
 
 		// Case 7
-		$route7 = new Route('foo/:cat/:id/:sort', ['bar', 'foo'], 'DELETE');
+		$route7 = new Route('foo/:cat/:id/:sort', 'DELETE', 'bar', 'foo');
 
 		$this->assertTrue($route7->matches('foo/2/3/asc','DELETE'));
 
 		$this->assertFalse($route7->matches('foo/bar/are/','DELETE'));
 
 		// Case 8
-		$route8 = new Route('foo/bar', ['bar', 'foo'], 'GET');
+		$route8 = new Route('foo/bar', 'GET', 'bar', 'foo');
 
 		$this->assertTrue($route8->matches('foo/bar','GET'));
 
 		$this->assertFalse($route8->matches('foo','GET'));
 
 		// Case 9
-		$route9 = new Route('foo/:id/bar/jar', ['bar', 'foo'], 'GET');
+		$route9 = new Route('foo/:id/bar/jar', 'GET', 'bar', 'foo');
 
 		$this->assertTrue($route9->matches('foo/22/bar/jar/','GET'));
 
 		$this->assertFalse($route9->matches('foo/44/bar/jara','GET'));
 
 		// Case 10
-		$route10 = new Route('foo/:id/bar/jar/bar/dar/:param', ['bar', 'foo'], 'HEAD');
+		$route10 = new Route('foo/:id/bar/jar/bar/dar/:param', 'HEAD', 'bar', 'foo');
 
 		$this->assertTrue($route10->matches('foo/22/bar/jar/bar/dar/somevalue','HEAD'));
 
@@ -107,7 +108,7 @@ class RouteTest extends PHPUnit_Framework_TestCase
 		******************************/
 
 		// Case 1
-		$route1 = new Route('foo/:param', ['bar', 'foo'], 'GET');
+		$route1 = new Route('foo/:param', 'GET', 'bar', 'foo');
 		$route1->where('param', 'numeric');
 
 		$this->assertFalse($route1->matches('foo/bar','GET'));
@@ -117,7 +118,7 @@ class RouteTest extends PHPUnit_Framework_TestCase
 		$this->assertFalse($route1->matches('foo/a2c','GET'));
 
 		// Case 2
-		$route2 = new Route('foo/:param', ['bar', 'foo'], 'GET');
+		$route2 = new Route('foo/:param', 'GET','bar', 'foo');
 		$route2->where('param', 'alpha-lowercase');
 
 		$this->assertFalse($route2->matches('foo/BAR','GET'));
@@ -125,7 +126,7 @@ class RouteTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue($route2->matches('foo/bar','GET'));
 
 		// Case 3
-		$route3 = new Route('foo/:param', ['bar', 'foo'], 'GET');
+		$route3 = new Route('foo/:param', 'GET','bar', 'foo');
 		$route3->where('param', 'alpha-numeric');
 
 		$this->assertFalse($route3->matches('foo/Ba#R$','GET'));
@@ -133,7 +134,7 @@ class RouteTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue($route3->matches('foo/baR34','GET'));
 
 		// Case 4
-		$route4 = new Route('foo/:param', ['bar', 'foo'], 'GET');
+		$route4 = new Route('foo/:param', 'GET', 'bar', 'foo');
 		$route4->where('param', 'alpha');
 
 		$this->assertFalse($route4->matches('foo/bar2','GET'));
@@ -141,7 +142,7 @@ class RouteTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue($route4->matches('foo/bar','GET'));
 
 		// Case 5
-		$route5 = new Route('foo/:param', ['bar', 'foo'], 'GET');
+		$route5 = new Route('foo/:param', 'GET', 'bar', 'foo');
 		$route5->where('param', 'real-numeric');
 
 		$this->assertFalse($route5->matches('foo/bar2.6','GET'));
@@ -149,7 +150,7 @@ class RouteTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue($route5->matches('foo/3.5','GET'));
 
 		// Case 6 custom filter
-		$route6 = new Route('foo/:param', ['bar', 'foo'], 'GET');
+		$route6 = new Route('foo/:param', 'GET', 'bar', 'foo');
 		$route6->whereRegex('param', 'a{3}');
 
 		$this->assertFalse($route6->matches('foo/aaab','GET'));
@@ -159,7 +160,7 @@ class RouteTest extends PHPUnit_Framework_TestCase
 
 	public function testGetParams()
 	{
-		$route = new Route('foo/:param', ['bar', 'foo'], 'GET');
+		$route = new Route('foo/:param', 'GET', 'bar', 'foo');
 
 		$this->assertEmpty($route->params);
 
