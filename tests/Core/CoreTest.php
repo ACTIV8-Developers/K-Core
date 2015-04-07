@@ -2,10 +2,14 @@
 
 class CoreTest extends PHPUnit_Framework_TestCase
 {
-    public function testConstruct()
+    public static $test = '';
+
+    public function testBoot()
     {
         // Make instance of app.
-        $app = \Core\Core\Core::getInstance();
+        $app = \Core\Core\Core::getNew(__DIR__ . '/../MockApp');
+
+        $app->boot();
 
         // Check if construct made all required things.
         $this->assertInstanceOf('Core\Core\Core', $app);
@@ -14,15 +18,16 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Core\Session\Session', $app['session']);
     }
 
-    public function testRouteRequest()
+    public function testRun()
     {
         // Make instance of app.
-        $app = \Core\Core\Core::getInstance();      
+        $app = \Core\Core\Core::getNew(__DIR__ . '/../MockApp');
 
-        $this->expectOutputString('<p>Working</p>');
+        $app->boot();
+
         $app->run();
 
-        $app->sendResponse();
+        $this->assertEquals(self::$test, 'test');
     }
 
     public function testSendResponse()
@@ -33,13 +38,16 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $app['response']->setBody('<div>Test</div>');
 
         $this->expectOutputString('<div>Test</div>');
+
         $app->sendResponse();
     }
     
     public function testHooks()
     {
         // Make instance of app.
-        $app = \Core\Core\Core::getInstance();
+        $app = \Core\Core\Core::getNew(__DIR__ . '/../MockApp');
+
+        $app->boot();
 
         // Make hooks.
         $app->setHook('before.routing', 'Foo', 'bar');
@@ -55,6 +63,6 @@ class TestController
 {
     public function index()
     {
-        echo '<p>Working</p>';
+        CoreTest::$test = 'test';
     }
 }

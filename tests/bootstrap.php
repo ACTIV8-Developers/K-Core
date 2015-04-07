@@ -24,15 +24,6 @@ AliasLoader::getInstance(require(__DIR__.'/MockApp/Config/Aliases.php'))->regist
 date_default_timezone_set('Europe/Belgrade');
 /*
 |--------------------------------------------------------------------------
-| Boot mockup app
-|--------------------------------------------------------------------------
-*/
-Core::getInstance(__DIR__.'/MockApp')
-					->setViewsPath(__DIR__.'/MockApp/MockViews')
-					->setControllerNamespace('')
-					->boot();
-/*
-|--------------------------------------------------------------------------
 | Mockup request
 |--------------------------------------------------------------------------
 */

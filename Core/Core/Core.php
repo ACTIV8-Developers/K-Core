@@ -502,4 +502,15 @@ class Core extends Container
         }
         return self::$instance;
     }
+
+    /**
+     * Get new instance of Core class.
+     *
+     * @param string $appPath
+     * @return Core
+     */
+    public static function getNew($appPath = '')
+    {
+        return new Core($appPath);
+    }
 }

@@ -1,12 +1,16 @@
 <?php
-use Core\Http\Response;
+
+use Core\Core\Core;
 use Core\Core\Controller;
 
 class BaseControllerTest extends PHPUnit_Framework_TestCase
 {
 	public function testGet()
 	{
-		$app = \Core\Core\Core::getInstance();
+        $app = Core::getInstance(__DIR__.'/../MockApp')
+            ->setViewsPath(__DIR__.'/../MockApp/MockViews')
+            ->setControllerNamespace('')
+            ->boot();
 
 		$con = new MockController();
 

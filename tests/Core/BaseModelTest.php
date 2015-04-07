@@ -1,5 +1,6 @@
 <?php
-use \Core\Core\Model;
+use Core\Core\Model;
+use Core\Core\Core;
 
 class BaseModelTest extends PHPUnit_Framework_TestCase
 {
@@ -8,7 +9,8 @@ class BaseModelTest extends PHPUnit_Framework_TestCase
      */
 	public function testDb() // Will throw exception since it cant connect to db at this momment.
 	{
-        $app = \Core\Core\Core::getInstance();
+        $app = Core::getInstance(__DIR__.'/../MockApp')
+                            ->boot();
         
 		$mod = new MockModel();
 
