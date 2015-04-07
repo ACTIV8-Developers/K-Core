@@ -7,7 +7,7 @@ namespace Core\Http\Interfaces;
  * @author <milos@caenazzocom>
  */
 interface RequestInterface extends HttpInterface
-{    
+{
     /**
      * Retrieves the HTTP method of the request
      *
@@ -18,7 +18,7 @@ interface RequestInterface extends HttpInterface
     /**
      * Set HTTP request method
      *
-     * @return string
+     * @param string
      * @return self
      */
     public function setMethod($method);
@@ -32,7 +32,7 @@ interface RequestInterface extends HttpInterface
 
     /**
      * Sets the request URI
-	 *
+     *
      * @param string $uri New request URI to use
      * @return self
      */

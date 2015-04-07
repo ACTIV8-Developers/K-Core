@@ -1,29 +1,29 @@
 <?php
 namespace Core\Core;
 
-use Exception;
-use InvalidArgumentException;
 use BadFunctionCallException;
+use Core\Container\Container;
+use Core\Core\Exceptions\NotFoundException;
+use Core\Core\Exceptions\StopException;
+use Core\Database\Connections\MySQLConnection;
+use Core\Database\Database;
 use Core\Http\Request;
 use Core\Http\Response;
-use Core\Session\Session;
-use Core\Database\Database;
-use Core\Container\Container;
 use Core\Routing\Action;
-use Core\Routing\Router;
 use Core\Routing\Executable;
 use Core\Routing\Interfaces\ExecutableInterface;
-use Core\Core\Exceptions\StopException;
-use Core\Core\Exceptions\NotFoundException;
-use Core\Database\Connections\MySQLConnection;
+use Core\Routing\Router;
 use Core\Session\Handlers\DatabaseSessionHandler;
 use Core\Session\Handlers\EncryptedFileSessionHandler;
+use Core\Session\Session;
+use Exception;
+use InvalidArgumentException;
 
 /**
  * Core class.
  *
  * This is the heart of whole application.
- * 
+ *
  * @author <milos@caenazzo.com>
  */
 class Core extends Container
@@ -54,12 +54,12 @@ class Core extends Container
      * @var string
      */
     protected $routesPath = '';
-    
+
     /**
      * @var string
      */
     protected $configPath = '';
-   
+
     /**
      * @var string
      */
@@ -77,7 +77,7 @@ class Core extends Container
 
     /**
      * Array of middleware actions
-     * 
+     *
      * @var array
      */
     protected $middleware = [];
@@ -88,12 +88,12 @@ class Core extends Container
      * @var array
      */
     protected $hooks = [
-        'before.boot'    => null, 
-        'after.boot'     => null,
-        'before.run'     => null, 
-        'after.run'      => null,
+        'before.boot' => null,
+        'after.boot' => null,
+        'before.run' => null,
+        'after.run' => null,
         'after.response' => null,
-        'not.found'      => null,
+        'not.found' => null,
         'internal.error' => null
     ];
 
@@ -101,7 +101,6 @@ class Core extends Container
      * Class constructor.
      *
      * @param string $appPath
-     * @throws \InvalidArgumentException
      */
     public function __construct($appPath = '')
     {
@@ -112,16 +111,16 @@ class Core extends Container
         $this->appPath = $appPath;
 
         // Set app configuration path
-        $this->configPath = $appPath.'/Config/Config.php';
+        $this->configPath = $appPath . '/Config/Config.php';
 
         // Set app database configuration path
-        $this->databaseConfigPath = $appPath.'/Config/Database.php';
+        $this->databaseConfigPath = $appPath . '/Config/Database.php';
 
         // Set app routes path
-        $this->routesPath = $appPath.'/routes.php';
+        $this->routesPath = $appPath . '/routes.php';
 
         // Set path where views are stored
-        $this->viewsPath = $appPath.'/Views';
+        $this->viewsPath = $appPath . '/Views';
     }
 
     /**
@@ -133,10 +132,10 @@ class Core extends Container
     public function boot()
     {
         if (!$this->isBooted) {
-            
+
             // Pre boot hook.
             if (isset($this->hooks['before.boot'])) {
-                $this->executeAction($this->hooks['before.boot']);
+                $this->execute($this->hooks['before.boot']);
             }
 
             // Load application configuration.
@@ -147,21 +146,21 @@ class Core extends Container
             }
 
             // Create request class closure.
-            $this['request'] = function() {
+            $this['request'] = function () {
                 return new Request($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
-            }; 
+            };
 
             // Create response class closure.
-            $this['response'] = function($c) {
+            $this['response'] = function ($c) {
                 $response = new Response();
                 $response->setProtocolVersion($c['request']->getProtocolVersion());
                 return $response;
             };
 
             // Create router class closure
-            $this['router'] = function() {
+            $this['router'] = function () {
                 return new Router();
-            }; 
+            };
 
             // Load database configuration.
             if (is_file($this->databaseConfigPath)) {
@@ -172,10 +171,10 @@ class Core extends Container
 
             // For each needed database create database class closure.
             foreach ($this['config.database'] as $dbName => $dbConfig) {
-                $this['db.'.$dbName] = function() use ($dbConfig) {
+                $this['db.' . $dbName] = function () use ($dbConfig) {
                     $db = null;
                     switch ($dbConfig['driver']) { // Choose connection and create it.
-                        case 'mysql':               
+                        case 'mysql':
                             $db = new MySQLConnection($dbConfig);
                             break;
                         default:
@@ -185,11 +184,11 @@ class Core extends Container
                     $database = new Database();
                     $database->setConnection($db->connect());
                     return $database;
-                };  
+                };
             }
 
             // Create session class closure.
-            $this['session'] = function($c) {
+            $this['session'] = function ($c) {
                 // Select session handler.
                 $handler = null;
                 switch ($c['config']['sessionHandler']) {
@@ -198,7 +197,7 @@ class Core extends Container
                         break;
                     case 'database':
                         $name = $c['config']['session']['connName'];
-                        $conn = $this['db.'.$name]->getConnection();
+                        $conn = $this['db.' . $name]->getConnection();
                         $handler = new DatabaseSessionHandler($conn);
                         break;
                 }
@@ -222,7 +221,7 @@ class Core extends Container
 
             // After boot hook
             if (isset($this->hooks['after.boot'])) {
-                $this->executeAction($this->hooks['after.boot']);
+                $this->execute($this->hooks['after.boot']);
             }
 
             $this->isBooted = true;
@@ -230,13 +229,13 @@ class Core extends Container
 
         return $this;
     }
-    
+
     /**
      * Application main executive function.
      *
      * @throws BadFunctionCallException
      * @return self
-     */        
+     */
     public function run()
     {
         if (!$this->isBooted) {
@@ -254,7 +253,7 @@ class Core extends Container
         }
 
         return $this;
-    }  
+    }
 
     /**
      * Route request and execute proper controller if route found.
@@ -271,28 +270,24 @@ class Core extends Container
 
         // Pre routing/controller hook.
         if (isset($this->hooks['before.run'])) {
-            $this->executeAction($this->hooks['before.run']);
+            $this->execute($this->hooks['before.run']);
         }
 
         // Call middleware stack
         foreach ($this->middleware as $m) {
-            $this->executeAction($m);
+            $this->execute($m);
         }
 
         // Route requests
         $matchedRoute = $route->run($this['request']->getUri(), $this['request']->getMethod());
 
         // Execute route if found.
-        if (false !== $matchedRoute) {
+        if (null !== $matchedRoute) {
             // Append passed params to GET array.
             $this['request']->get->add($matchedRoute->params);
 
             // Execute matched route.
-            $matchedRoute->executable
-                            ->setNamespacePrefix($this->controllerNamespace)
-                            ->setParams($matchedRoute->params)
-                            ->execute();
-
+            $this->execute($matchedRoute->executable, $matchedRoute->params, $this->controllerNamespace);
         } else {
             // If page not found display 404 error.
             $this->notFound();
@@ -300,7 +295,7 @@ class Core extends Container
 
         // Post routing/controller hook.
         if (isset($this->hooks['after.run'])) {
-            $this->executeAction($this->hooks['after.run']);
+            $this->execute($this->hooks['after.run']);
         }
     }
 
@@ -321,12 +316,12 @@ class Core extends Container
 
         // Post response hook.
         if (isset($this->hooks['after.response'])) {
-            $this->executeAction($this->hooks['after.response']);
+            $this->execute($this->hooks['after.response']);
         }
 
         // Display benchmark time if enabled.
         if ($this['config']['benchmark']) {
-            print '<!--'.\PHP_Timer::resourceUsage().'-->';
+            print '<!--' . \PHP_Timer::resourceUsage() . '-->';
         }
 
         return $this;
@@ -335,17 +330,17 @@ class Core extends Container
     /**
      * Default handler for 404 error.
      *
-     * @param NotFoundException
+     * @param NotFoundException $e
      */
     protected function notFound(NotFoundException $e = null)
     {
         if (isset($this->hooks['not.found'])) {
             $this['not.found'] = $e;
-            $this->executeAction($this->hooks['not.found']);
+            $this->execute($this->hooks['not.found']);
         } else {
             $this['response']->setStatusCode(404);
-            $this['response']->setBody('<h1>404 Not Found</h1>The page that you have '.
-                                            'requested could not be found.');
+            $this['response']->setBody('<h1>404 Not Found</h1>The page that you have ' .
+                'requested could not be found.');
         }
     }
 
@@ -358,10 +353,10 @@ class Core extends Container
     {
         if (isset($this->hooks['internal.error'])) {
             $this['exception'] = $e;
-            $this->executeAction($this->hooks['internal.error']);
+            $this->execute($this->hooks['internal.error']);
         } else {
-            $this['response']->setStatusCode(500);                
-            $this['response']->setBody('Internal error: '.$e->getMessage());
+            $this['response']->setStatusCode(500);
+            $this['response']->setBody('Internal error: ' . $e->getMessage());
         }
     }
 
@@ -371,7 +366,7 @@ class Core extends Container
      * @param string $key
      * @param string $callable
      */
-    public function setHook($key, $callable) 
+    public function setHook($key, $callable)
     {
         $this->hooks[$key] = $callable;
     }
@@ -382,22 +377,32 @@ class Core extends Container
      * @param string $key
      * @return string
      */
-    public function getHook($key) 
+    public function getHook($key)
     {
         return $this->hooks[$key];
     }
 
     /**
      * @param array|Action
+     * @param array
+     * @param string|null
      * @throws \InvalidArgumentException
      */
-    protected function executeAction($executable) 
+    protected function execute($executable, $params = [], $namespacePrefix = null)
     {
         if (is_array($executable)) {
             $executable = new Executable($executable[0], $executable[1]);
         } elseif (!$executable instanceof ExecutableInterface) {
-            throw new InvalidArgumentException('Error! Executable must be instance of ExecutableInterface 
+            throw new InvalidArgumentException('Error! Executable must be instance of ExecutableInterface
                 or array containing two parameters');
+        }
+
+        if (!empty($params)) {
+            $executable->setParams($params);
+        }
+
+        if ($namespacePrefix !== null) {
+            $executable->getNamespacePrefix($namespacePrefix);
         }
 
         $executable->execute();
@@ -468,6 +473,16 @@ class Core extends Container
     public function setDatabaseConfigPath($databaseConfigPath)
     {
         $this->databaseConfigPath = $databaseConfigPath;
+        return $this;
+    }
+
+    /**
+     * @param array $middleware
+     * @return self
+     */
+    public function addMiddleware($middleware)
+    {
+        $this->middleware[] = $middleware;
         return $this;
     }
 

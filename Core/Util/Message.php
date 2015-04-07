@@ -9,10 +9,10 @@ namespace Core\Util;
  *
  * @author milos@caenazzo.com
  */
-class Message 
+class Message
 {
     /**
-     * Set message. 
+     * Set message.
      *
      * @param string $key
      * @param mixed $value
@@ -23,7 +23,7 @@ class Message
     }
 
     /**
-     * Get message and destroy upon reading unless stated otherwise. 
+     * Get message and destroy upon reading unless stated otherwise.
      *
      * @param string $key
      * @param bool $preserve
@@ -35,8 +35,8 @@ class Message
         if (isset($_SESSION['flashmessage'][$key])) {
             $value = $_SESSION['flashmessage'][$key];
             if (!$preserve) {
-                 unset($_SESSION['flashmessage'][$key]);
-            }         
+                unset($_SESSION['flashmessage'][$key]);
+            }
         }
         return $value;
     }

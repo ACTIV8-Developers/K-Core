@@ -5,7 +5,7 @@ use Core\Routing\Interfaces\ExecutableInterface;
 
 /**
  * Executable class.
- * Class contains information about action to be executed when route is matched.
+ * Class contains information about action to be executed.
  *
  * @author <milos@caenazzo.com>
  */
@@ -47,11 +47,12 @@ class Executable implements ExecutableInterface
 
     /**
      * Execute action
+     *
      * @return self
      */
     public function execute()
     {
-        $this->class = $this->namespacePrefix.'\\'.$this->class;
+        $this->class = $this->namespacePrefix . '\\' . $this->class;
         call_user_func_array([new $this->class, $this->method], $this->params);
         return $this;
     }

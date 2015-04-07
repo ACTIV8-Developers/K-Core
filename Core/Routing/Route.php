@@ -1,9 +1,9 @@
 <?php
 namespace Core\Routing;
 
-use InvalidArgumentException;
-use Core\Routing\Interfaces\RouteInterface;
 use Core\Routing\Interfaces\ExecutableInterface;
+use Core\Routing\Interfaces\RouteInterface;
+use InvalidArgumentException;
 
 /**
  * Route class.
@@ -23,7 +23,7 @@ class Route implements RouteInterface
     /**
      * Controller/method assigned to be executed when route is matched.
      *
-     * @var Executable
+     * @var array|string|Executable
      */
     public $executable = null;
 
@@ -54,12 +54,12 @@ class Route implements RouteInterface
      * @param array
      */
     protected static $conditionRegex = [
-        'default'           => '[a-zA-Z0-9_\-]+', // Default allows letters, numbers, underscores and dashes.
-        'alpha-numeric'     => '[a-zA-Z0-9]+', // Numbers and letters.
-        'numeric'           => '[0-9]+', // Numbers only.
-        'alpha'             => '[a-zA-Z]+', // Letters only.
-        'alpha-lowercase'   => '[a-z]+',  // All lowercase letter.
-        'real-numeric'      => '[0-9\.\-]+' // Numbers, dots or minus signs.
+        'default' => '[a-zA-Z0-9_\-]+', // Default allows letters, numbers, underscores and dashes.
+        'alpha-numeric' => '[a-zA-Z0-9]+', // Numbers and letters.
+        'numeric' => '[0-9]+', // Numbers only.
+        'alpha' => '[a-zA-Z]+', // Letters only.
+        'alpha-lowercase' => '[a-z]+',  // All lowercase letter.
+        'real-numeric' => '[0-9\.\-]+' // Numbers, dots or minus signs.
     ];
 
     /**
@@ -73,20 +73,13 @@ class Route implements RouteInterface
      * Class constructor.
      *
      * @param string $url
-     * @param array $executable
+     * @param array|string|Executable $executable
      * @param string $requestMethod
      */
     public function __construct($url, $executable, $requestMethod = 'GET')
     {
         $this->url = $url;
-        if (is_array($executable)) {
-            $this->executable = new Executable($executable[0], $executable[1]);
-        } elseif($executable instanceof ExecutableInterface) {
-            $this->executable = $executable;
-        } else {
-            throw new InvalidArgumentException('Error! Executable must be instance of ExecutableInterface 
-                or array containing two parameters');
-        }
+        $this->executable = $executable;
         $this->methods[] = $requestMethod;
     }
 
@@ -108,7 +101,7 @@ class Route implements RouteInterface
             $urlRegex = preg_replace_callback(self::MATCHES_REGEX, [$this, 'regexUrl'], $this->url);
 
             // Check if URI matches and if it matches put results in values array.
-            if (preg_match('@^'.$urlRegex.'/?$@', $uri, $paramValues) === 1) {// There is a match.
+            if (preg_match('@^' . $urlRegex . '/?$@', $uri, $paramValues) === 1) {// There is a match.
                 // Extract parameter names.
                 $paramNames = [];
                 preg_match_all(self::MATCHES_REGEX, $this->url, $paramNames, PREG_PATTERN_ORDER);
@@ -135,9 +128,9 @@ class Route implements RouteInterface
     {
         $key = substr($matches[0], 1);
         if (isset($this->conditions[$key])) {
-            return '('.$this->conditions[$key].')';
+            return '(' . $this->conditions[$key] . ')';
         } else {
-            return '('.self::$conditionRegex['default'].')';
+            return '(' . self::$conditionRegex['default'] . ')';
         }
     }
 

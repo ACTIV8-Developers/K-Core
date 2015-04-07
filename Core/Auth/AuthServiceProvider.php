@@ -10,15 +10,15 @@ use Core\Container\ServiceProvider;
  */
 class AuthServiceProvider extends ServiceProvider
 {
-	/**
-	 * Create Auth class.
-	 *
-	 * @var Container $container
-	 */
-	public function register($container)
-	{
-		$container['auth'] = function($c) {
-			return new Auth($c['db.default'], $c['session']);
-		};
-	}
+    /**
+     * Create Auth class.
+     *
+     * @var Container $container
+     */
+    public function register($container)
+    {
+        $container['auth'] = function ($c) {
+            return new Auth($c['db.default'], $c['session'], new PasswordHash(8, FALSE));
+        };
+    }
 }

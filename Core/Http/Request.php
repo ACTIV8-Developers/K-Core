@@ -89,15 +89,15 @@ class Request implements RequestInterface
         if (!isset($server['REQUEST_URI']) || !isset($server['REQUEST_METHOD'])) {
             throw new \InvalidArgumentException('HTTP request must have URI and method set.');
         }
-        
+
         // Fix URI if needed.
         if (strpos($server['REQUEST_URI'], $server['SCRIPT_NAME']) === 0) {
             $server['REQUEST_URI'] = substr($server['REQUEST_URI'], strlen($server['SCRIPT_NAME']));
         } elseif (strpos($server['REQUEST_URI'], dirname($server['SCRIPT_NAME'])) === 0) {
             $server['REQUEST_URI'] = substr($server['REQUEST_URI'], strlen(dirname($server['SCRIPT_NAME'])));
         }
-        if(!empty($_SERVER['QUERY_STRING'])) {
-            $server['REQUEST_URI'] = str_replace('?'.$_SERVER['QUERY_STRING'], '', $server['REQUEST_URI']);
+        if (!empty($_SERVER['QUERY_STRING'])) {
+            $server['REQUEST_URI'] = str_replace('?' . $_SERVER['QUERY_STRING'], '', $server['REQUEST_URI']);
         }
         $server['REQUEST_URI'] = trim($server['REQUEST_URI'], '/');
 
@@ -120,17 +120,18 @@ class Request implements RequestInterface
 
         // Since PHP doesn't support PUT, DELETE, PATCH naturally for these methods we will parse data directly from source.
         if (0 === strpos($this->headers->get('CONTENT_TYPE'), 'application/x-www-form-urlencoded')
-            && in_array($this->server->get('REQUEST_METHOD'), array('PUT', 'DELETE', 'PATCH'))) {
+            && in_array($this->server->get('REQUEST_METHOD'), array('PUT', 'DELETE', 'PATCH'))
+        ) {
             parse_str($this->getContent(), $data);
             $this->post = new HttpBag($data);
         } else {
-            $this->post = new HttpBag($post); 
+            $this->post = new HttpBag($post);
         }
-        
+
         // Set GET parameters, cookies and files.
         $this->get = new HttpBag($get);
-        $this->cookies = new HttpBag($cookies); 
-        $this->files = new HttpBag($files); 
+        $this->cookies = new HttpBag($cookies);
+        $this->files = new HttpBag($files);
     }
 
     /**
@@ -219,13 +220,14 @@ class Request implements RequestInterface
 
     /**
      * Check if it is AJAX request.
-     *  
+     *
      * @return bool
      */
     public function isAjax()
     {
         if ($this->headers->get('HTTP_X_REQUESTED_WITH') !== null
-            && strtolower($this->headers->get('HTTP_X_REQUESTED_WITH')) === 'xmlhttprequest') {
+            && strtolower($this->headers->get('HTTP_X_REQUESTED_WITH')) === 'xmlhttprequest'
+        ) {
             return true;
         }
         return false;
@@ -244,7 +246,7 @@ class Request implements RequestInterface
     /**
      * Set HTTP request method
      *
-     * @return string
+     * @param string
      * @return self
      */
     public function setMethod($method)
@@ -274,7 +276,7 @@ class Request implements RequestInterface
     }
 
     /**
-     * Check if it is POST request.  
+     * Check if it is POST request.
      *
      * @return bool
      */
@@ -285,7 +287,7 @@ class Request implements RequestInterface
 
     /**
      * Check if it is PUT request.
-     *  
+     *
      * @return bool
      */
     public function isPut()
@@ -294,8 +296,8 @@ class Request implements RequestInterface
     }
 
     /**
-     * Check if it is PATCH request. 
-     * 
+     * Check if it is PATCH request.
+     *
      * @return bool
      */
     public function isPatch()
@@ -304,7 +306,7 @@ class Request implements RequestInterface
     }
 
     /**
-     * Check if it is DELETE request.  
+     * Check if it is DELETE request.
      *
      * @return bool
      */
@@ -314,8 +316,8 @@ class Request implements RequestInterface
     }
 
     /**
-     * Check if it is OPTIONS request. 
-     * 
+     * Check if it is OPTIONS request.
+     *
      * @return bool
      */
     public function isOptions()
@@ -324,11 +326,11 @@ class Request implements RequestInterface
     }
 
     /**
-     * Returns an associative array of all current headers 
+     * Returns an associative array of all current headers
      *
      * Each key will be a header name with it's value
      *
-     * @return array 
+     * @return array
      */
     public function getHeaders()
     {
@@ -336,7 +338,7 @@ class Request implements RequestInterface
     }
 
     /**
-     * Set new header, replacing any existing values 
+     * Set new header, replacing any existing values
      * of any headers with the same case-insensitive name
      *
      * @param string $key Case-insensitive header field name
@@ -375,9 +377,9 @@ class Request implements RequestInterface
      *
      * @return string|null
      */
-    public function getReferer()
+    public function getReferrer()
     {
-        return $this->headers->get('HTTP_REFERER');
+        return $this->headers->get('HTTP_REFERRER');
     }
 
     /**

@@ -1,11 +1,11 @@
-<?php 
+<?php
 namespace Core\Session;
 
 /**
-* Session manager class.
-*
-* @author <milos@caenazzo.com>
-*/
+ * Session manager class.
+ *
+ * @author <milos@caenazzo.com>
+ */
 class Session
 {
     /**
@@ -15,159 +15,159 @@ class Session
      */
     protected $hashKey = 'super_secret';
 
-	/**
-	 * Lifetime of the session cookie and session duration, defined in seconds.
-	 *
-	 * @var int
-	 */
-	protected $expiration = 7200;
+    /**
+     * Lifetime of the session cookie and session duration, defined in seconds.
+     *
+     * @var int
+     */
+    protected $expiration = 7200;
 
-	/**
-	 * Cookie domain, for example 'www.php.net'. 
-	 * To make cookies visible on all sub domains then the domain must be prefixed with a dot like '.php.net'.
-	 *
-	 * @var string|null
-	 */
-	protected $domain = '';
+    /**
+     * Cookie domain, for example 'www.php.net'.
+     * To make cookies visible on all sub domains then the domain must be prefixed with a dot like '.php.net'.
+     *
+     * @var string|null
+     */
+    protected $domain = '';
 
-	/**
-	 * If true the browser only sends the cookie over HTTPS.
-	 * Null denotes class will decide.
-	 *
-	 * @var bool|null
-	 */
-	protected $secure = null;
+    /**
+     * If true the browser only sends the cookie over HTTPS.
+     * Null denotes class will decide.
+     *
+     * @var bool|null
+     */
+    protected $secure = null;
 
-	/**
-	 * Session name.
-	 *
-	 * @var string
-	 */
-	protected $name = 'PHPSESS';
+    /**
+     * Session name.
+     *
+     * @var string
+     */
+    protected $name = 'PHPSESS';
 
-	/**
-	 * Match user agent across session requests.
-	 *
-	 * @var bool
-	 */
-	protected $matchUserAgent = false;
+    /**
+     * Match user agent across session requests.
+     *
+     * @var bool
+     */
+    protected $matchUserAgent = false;
 
-	/**
-	 * Period of refreshing session ID.
-	 *
-	 * @var int
-	 */
-	protected $updateFrequency = 10;
+    /**
+     * Period of refreshing session ID.
+     *
+     * @var int
+     */
+    protected $updateFrequency = 10;
 
-	/**
-	 * Hashing algorithm used for creating security tokens.
-	 *
-	 * @var string
-	 */
-	protected $hashAlgo = 'md5';
-	
-	/**
-	 * Class construct.
-	 * Register handler and start session here.
-	 *
-	 * @param array $params
-	 * @param \SessionHandlerInterface
-	 */
-	public function __construct(array $params = [], \SessionHandlerInterface $handler = null)
-	{
-		// Load configuration parameters.
+    /**
+     * Hashing algorithm used for creating security tokens.
+     *
+     * @var string
+     */
+    protected $hashAlgo = 'md5';
+
+    /**
+     * Class construct.
+     * Register handler and start session here.
+     *
+     * @param array $params
+     * @param \SessionHandlerInterface
+     */
+    public function __construct(array $params = [], \SessionHandlerInterface $handler = null)
+    {
+        // Load configuration parameters.
         foreach ($params as $key => $val) {
             if (isset($this->$key)) {
                 $this->$key = $val;
             }
         }
 
-		// Set session cookie name.
-		session_name($this->name.'');
+        // Set session cookie name.
+        session_name($this->name . '');
 
-      	// Set the default secure value to whether the site is being accessed with SSL.
-      	$this->secure = $this->secure !== null ? $this->secure : isset($_SERVER['HTTPS']);
+        // Set the default secure value to whether the site is being accessed with SSL.
+        $this->secure = $this->secure !== null ? $this->secure : isset($_SERVER['HTTPS']);
 
-      	// Set the domain to default or to the current domain.
-      	$this->domain = isset($this->domain) ? $this->domain : isset($_SERVER['SERVER_NAME']);
+        // Set the domain to default or to the current domain.
+        $this->domain = isset($this->domain) ? $this->domain : isset($_SERVER['SERVER_NAME']);
 
-	    // Set the cookie settings.
-      	session_set_cookie_params($this->expiration, '/', $this->domain, $this->secure, true);
+        // Set the cookie settings.
+        session_set_cookie_params($this->expiration, '/', $this->domain, $this->secure, true);
 
-		// Select session handler.
-		if ($handler !== null) {
-			// Assign session handler.
-			session_set_save_handler($handler, true);
-		}
-	}
+        // Select session handler.
+        if ($handler !== null) {
+            // Assign session handler.
+            session_set_save_handler($handler, true);
+        }
+    }
 
-	/**
-	 * Start session.
-	 */
-	public function start()
-	{
-		// If no active session start one.
-	    if (session_status() !== PHP_SESSION_ACTIVE) { 
-	        session_start(); 
-	    } 
-
-		// Validate session, if session is new or irregular clear data and start new session.
-		if (!$this->validate()) {
-			$this->regenerate();
+    /**
+     * Start session.
+     */
+    public function start()
+    {
+        // If no active session start one.
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
         }
 
-		// Regenerate session ID cycle.
-		if ($this->updateFrequency !== 0 && mt_rand(1, 100) < $this->updateFrequency) {
-			// Regenerate session
-			session_regenerate_id();
-		}
-	}
-
-	/**
-	 * Validate session.
-	 *
-	 * @return bool
-	 */
-	protected function validate()
-	{
-		// Are needed session variables set ?
-		if (!isset($_SESSION['s3ss10nCr3at3d']) || !isset($_SESSION['n3k0t'])) {
-			return false;
-		}
-
-		// Check if session token match ?
-		if ($this->matchUserAgent) {
-			if ($_SESSION['n3k0t'] !== hash_hmac($this->hashAlgo, $_SERVER['HTTP_USER_AGENT'].$_SESSION['s3ss10nCr3at3d'], $this->hashKey)) {
-				return false;
-			}
-		} elseif ($_SESSION['n3k0t'] !== hash_hmac($this->hashAlgo, $_SESSION['s3ss10nCr3at3d'], $this->hashKey)) {
-				return false;
+        // Validate session, if session is new or irregular clear data and start new session.
+        if (!$this->validate()) {
+            $this->regenerate();
         }
 
-		// Is session expired ?
-		if ((time() > ($_SESSION['s3ss10nCr3at3d']) + $this->expiration)) {
-			return false;
-		}
+        // Regenerate session ID cycle.
+        if ($this->updateFrequency !== 0 && mt_rand(1, 100) < $this->updateFrequency) {
+            // Regenerate session
+            session_regenerate_id();
+        }
+    }
 
-		// Everything is fine return true
-		return true;
-	}
+    /**
+     * Validate session.
+     *
+     * @return bool
+     */
+    protected function validate()
+    {
+        // Are needed session variables set ?
+        if (!isset($_SESSION['s3ss10nCr3at3d']) || !isset($_SESSION['n3k0t'])) {
+            return false;
+        }
+
+        // Check if session token match ?
+        if ($this->matchUserAgent) {
+            if ($_SESSION['n3k0t'] !== hash_hmac($this->hashAlgo, $_SERVER['HTTP_USER_AGENT'] . $_SESSION['s3ss10nCr3at3d'], $this->hashKey)) {
+                return false;
+            }
+        } elseif ($_SESSION['n3k0t'] !== hash_hmac($this->hashAlgo, $_SESSION['s3ss10nCr3at3d'], $this->hashKey)) {
+            return false;
+        }
+
+        // Is session expired ?
+        if ((time() > ($_SESSION['s3ss10nCr3at3d']) + $this->expiration)) {
+            return false;
+        }
+
+        // Everything is fine return true
+        return true;
+    }
 
     /**
      * Completely regenerate session.
      */
     public function regenerate()
     {
-		// Clear old session data
-		$_SESSION = [];
-		// Set session start time
+        // Clear old session data
+        $_SESSION = [];
+        // Set session start time
         $_SESSION['s3ss10nCr3at3d'] = time();
-		// Set new session token
-		if ($this->matchUserAgent) {
-            $_SESSION['n3k0t'] = hash_hmac($this->hashAlgo, $_SERVER['HTTP_USER_AGENT'].$_SESSION['s3ss10nCr3at3d'], $this->hashKey);
-		} else {
+        // Set new session token
+        if ($this->matchUserAgent) {
+            $_SESSION['n3k0t'] = hash_hmac($this->hashAlgo, $_SERVER['HTTP_USER_AGENT'] . $_SESSION['s3ss10nCr3at3d'], $this->hashKey);
+        } else {
             $_SESSION['n3k0t'] = hash_hmac($this->hashAlgo, $_SESSION['s3ss10nCr3at3d'], $this->hashKey);
-		}
+        }
         // Regenerate session
         session_regenerate_id();
     }
@@ -178,7 +178,7 @@ class Session
      */
     public function get($key)
     {
-    	return isset($_SESSION[$key])?$_SESSION[$key]:null;
+        return isset($_SESSION[$key]) ? $_SESSION[$key] : null;
     }
 
     /**
@@ -187,7 +187,7 @@ class Session
      */
     public function set($key, $value)
     {
-    	$_SESSION[$key] = $value;
+        $_SESSION[$key] = $value;
     }
 
     /**
@@ -195,7 +195,7 @@ class Session
      */
     public function all()
     {
-    	return $_SESSION;
+        return $_SESSION;
     }
 
     /**
@@ -203,7 +203,7 @@ class Session
      */
     public function flush()
     {
-    	$_SESSION = [];
+        $_SESSION = [];
     }
 
     /**
@@ -211,7 +211,7 @@ class Session
      */
     public function forget($key)
     {
-    	unset($_SESSION[$key]);
+        unset($_SESSION[$key]);
     }
 
     /**
@@ -220,7 +220,7 @@ class Session
      */
     public function has($key)
     {
-    	return isset($_SESSION[$key]);
+        return isset($_SESSION[$key]);
     }
 
     /**
@@ -228,6 +228,6 @@ class Session
      */
     public function setHashKey($hashKey)
     {
-    	$this->hashKey = $hashKey;
+        $this->hashKey = $hashKey;
     }
 }

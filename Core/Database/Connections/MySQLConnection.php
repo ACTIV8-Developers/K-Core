@@ -35,7 +35,7 @@ class MySQLConnection extends PDOConnection
     {
         try {
             // Make string containing database settings
-            $database = 'mysql:host='.$this->host.';dbname='.$this->database.';charset='.$this->charset;
+            $database = 'mysql:host=' . $this->host . ';dbname=' . $this->database . ';charset=' . $this->charset;
 
             // Make connection.
             $conn = new \PDO($database, $this->username, $this->password);
@@ -46,7 +46,7 @@ class MySQLConnection extends PDOConnection
 
             return $conn;
         } catch (\PDOException $ex) {
-            throw new \InvalidArgumentException('Error! Cannot connect to database '.$ex->getMessage());
+            throw new \InvalidArgumentException('Error! Cannot connect to database ' . $ex->getMessage());
         }
     }
 }

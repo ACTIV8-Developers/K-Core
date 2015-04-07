@@ -1,7 +1,5 @@
 <?php
 use Core\Core\Core;
-use Core\Core\Controller;
-use Core\Util\Util;
 use Core\Util\AliasLoader;
 
 ob_start();

@@ -7,7 +7,7 @@ namespace Core\Http\Interfaces;
  * @author <milos@caenazzo.com>
  */
 interface ResponseInterface extends HttpInterface
-{ 
+{
     /**
      * Get the response Status-Code
      *

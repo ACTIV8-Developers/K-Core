@@ -8,13 +8,13 @@ namespace Core\Routing\Interfaces;
  */
 interface RouterInterface
 {
-	/**
-	 * Check routes and returns matching one if found,
-     * otherwise return false.
+    /**
+     * Check routes and returns matching one if found,
+     * otherwise return null.
      *
-	 * @var string $uri
+     * @var string $uri
      * @var string $requestMethod
-	 * @return bool|\Core\Routing\Route
-	 */
-	public function run($uri, $requestMethod);
+     * @return null|\Core\Routing\Route
+     */
+    public function run($uri, $requestMethod);
 }

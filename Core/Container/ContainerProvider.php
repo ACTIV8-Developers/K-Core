@@ -6,19 +6,23 @@ use Core\Core\Core;
 /**
  * Abstract class ContainerProvider. Extend to gain access to core container.
  *
+ * @property Core $app
  * @author <milos@caenazzo.com>
  */
 abstract class ContainerProvider
 {
     /**
-     * Set value in container.
-     *
-     * @param string $key
-     * @param mixed $value
+     * @param string $var
+     * @return mixed
      */
-    protected function setValue($key, $value)
+    public function __get($var)
     {
-        $this->app[$key] = $value;
+        if ($var === 'app') {
+            $this->app = Core::getInstance();
+            return $this->app;
+        } else {
+            return $this->getValue($var);
+        }
     }
 
     /**
@@ -36,16 +40,13 @@ abstract class ContainerProvider
     }
 
     /**
-     * @param string $var
-     * @return mixed
+     * Set value in container.
+     *
+     * @param string $key
+     * @param mixed $value
      */
-    public function __get($var) 
+    protected function setValue($key, $value)
     {
-        if ($var === 'app') {
-            $this->app = Core::getInstance();
-            return $this->app;
-        } else {
-            return $this->getValue($var);
-        }
+        $this->app[$key] = $value;
     }
 }

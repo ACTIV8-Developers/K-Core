@@ -1,11 +1,11 @@
-<?php 
+<?php
 namespace Core\Core;
 
 use Core\Container\ContainerProvider;
 
 /**
  * Base model abstract class.
- * 
+ *
  * @author <milos@caenazzo.com>
  */
 abstract class Model extends ContainerProvider
@@ -18,7 +18,7 @@ abstract class Model extends ContainerProvider
      */
     protected function db($dbName = 'default')
     {
-        return $this->app['db.'.$dbName];
+        return $this->app['db.' . $dbName];
     }
 
     /**

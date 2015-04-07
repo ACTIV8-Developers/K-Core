@@ -16,16 +16,6 @@ abstract class AbstractDatabase
     protected $connection = null;
 
     /**
-     * Set connection variable.
-     *
-     * @param \PDO $conn
-     */
-    public function setConnection(\PDO $conn)
-    {
-        $this->connection = $conn;
-    }
-
-    /**
      * Get connection variable.
      *
      * @return \PDO
@@ -36,6 +26,16 @@ abstract class AbstractDatabase
     }
 
     /**
+     * Set connection variable.
+     *
+     * @param \PDO $conn
+     */
+    public function setConnection(\PDO $conn)
+    {
+        $this->connection = $conn;
+    }
+
+    /**
      * Set PDO attribute.
      *
      * @param int $attr
@@ -43,6 +43,6 @@ abstract class AbstractDatabase
      */
     public function setAttribute($attr, $value)
     {
-    	$this->connection->setAttribute($attr, $value);
+        $this->connection->setAttribute($attr, $value);
     }
 }

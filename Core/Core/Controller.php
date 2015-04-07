@@ -2,8 +2,8 @@
 namespace Core\Core;
 
 use Core\Container\ContainerProvider;
-use Core\Core\Exceptions\StopException;
 use Core\Core\Exceptions\NotFoundException;
+use Core\Core\Exceptions\StopException;
 
 /**
  * Base controller abstract class.
@@ -46,7 +46,7 @@ abstract class Controller extends ContainerProvider
      * Render output for display.
      *
      * @param string $view
-     * @param array $data 
+     * @param array $data
      */
     protected function render($view, array $data = [])
     {
@@ -57,9 +57,9 @@ abstract class Controller extends ContainerProvider
         ob_start();
 
         // Load view file (root location is declared in viewPath var).
-        include $this->app->getViewsPath().'/'.$view.'.php';
+        include $this->app->getViewsPath() . '/' . $view . '.php';
 
-        // containerend to output body.
+        // Append to output body.
         $this->app['response']->addBody(ob_get_contents());
         ob_end_clean();
     }
@@ -80,7 +80,7 @@ abstract class Controller extends ContainerProvider
         ob_start();
 
         // Load view file (root location is declared in viewPath var).
-        include $this->app->getViewsPath().'/'.$view.'.php';
+        include $this->app->getViewsPath() . '/' . $view . '.php';
 
         // Return string.       
         $buffer = ob_get_contents();
@@ -96,13 +96,13 @@ abstract class Controller extends ContainerProvider
      */
     public function json($data, $options = 0)
     {
-        $this->app['response']->headers->set('Content-Type', 'containerlication/json');
+        $this->app['response']->headers->set('Content-Type', 'application/json');
         $this->app['response']->setBody(json_encode($data, $options));
     }
 
     /**
      * Display page with not found code.
-     * 
+     *
      * @throws \Core\Core\Exceptions\NotFoundException
      */
     protected function notFound()
@@ -112,7 +112,7 @@ abstract class Controller extends ContainerProvider
 
     /**
      * Stop controller execution and render current response
-     * 
+     *
      * @throws \Core\Core\Exceptions\StopException
      */
     protected function stop()

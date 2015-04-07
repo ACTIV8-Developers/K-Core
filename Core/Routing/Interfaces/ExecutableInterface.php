@@ -10,6 +10,7 @@ interface ExecutableInterface
 {
     /**
      * Execute action
+     *
      * @return self
      */
     public function execute();

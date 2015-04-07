@@ -2,14 +2,14 @@
 namespace Core\Session\Handlers;
 
 /**
-* Session handler using file interface.
-* The encryption is built using mcrypt extension
-* and the randomness is managed by openssl
-* The default encryption algorithm is AES (Rijndael-128)
-* and we use CBC+HMAC (Encrypt-then-mac) with SHA-256
-*
-* @author Enrico Zimuel (enrico@zimuel.it)
-*/
+ * Session handler using file interface.
+ * The encryption is built using mcrypt extension
+ * and the randomness is managed by openssl
+ * The default encryption algorithm is AES (Rijndael-128)
+ * and we use CBC+HMAC (Encrypt-then-mac) with SHA-256
+ *
+ * @author Enrico Zimuel (enrico@zimuel.it)
+ */
 class EncryptedFileSessionHandler implements \SessionHandlerInterface
 {
     /**
@@ -69,28 +69,6 @@ class EncryptedFileSessionHandler implements \SessionHandlerInterface
     }
 
     /**
-     * Generate a random key using openssl,
-     * fallback to mcrypt_create_iv.
-     *
-     * @param int
-     * @return string
-     * @throws Exception
-     */
-    protected function _randomKey($length = 32) {
-        if(function_exists('openssl_random_pseudo_bytes')) {
-            $rnd = openssl_random_pseudo_bytes($length, $strong);
-            if ($strong === true) {
-                return $rnd;
-            }
-        }
-        if (defined('MCRYPT_DEV_URANDOM')) {
-            return mcrypt_create_iv($length, MCRYPT_DEV_URANDOM);
-        } else {
-            throw new Exception("I cannot generate a secure pseudo-random key. Please install OpenSSL or Mcrypt extension");
-        }
-    }
-
-    /**
      * Open the session.
      *
      * @param  string
@@ -99,18 +77,18 @@ class EncryptedFileSessionHandler implements \SessionHandlerInterface
      */
     public function open($save_path, $session_name)
     {
-        $this->_path    = $save_path.'/';
-        $this->_name    = $session_name;
-        $this->_keyName = 'KEY_'.$session_name;
-        $this->_ivSize  = mcrypt_get_iv_size($this->_algo, MCRYPT_MODE_CBC);
+        $this->_path = $save_path . '/';
+        $this->_name = $session_name;
+        $this->_keyName = 'KEY_' . $session_name;
+        $this->_ivSize = mcrypt_get_iv_size($this->_algo, MCRYPT_MODE_CBC);
 
-        if (empty($_COOKIE[$this->_keyName]) || strpos($_COOKIE[$this->_keyName],':')===false) {
-            $keyLength    = mcrypt_get_key_size($this->_algo, MCRYPT_MODE_CBC);
-            $this->_key   = self::_randomKey($keyLength);
-            $this->_auth  = self::_randomKey(32);
+        if (empty($_COOKIE[$this->_keyName]) || strpos($_COOKIE[$this->_keyName], ':') === false) {
+            $keyLength = mcrypt_get_key_size($this->_algo, MCRYPT_MODE_CBC);
+            $this->_key = self::_randomKey($keyLength);
+            $this->_auth = self::_randomKey(32);
 
             $cookie_param = session_get_cookie_params();
-            
+
             setcookie(
                 $this->_keyName,
                 base64_encode($this->_key) . ':' . base64_encode($this->_auth),
@@ -121,11 +99,34 @@ class EncryptedFileSessionHandler implements \SessionHandlerInterface
                 $cookie_param['httponly']
             );
         } else {
-            list ($this->_key, $this->_auth) = explode (':',$_COOKIE[$this->_keyName]);
-            $this->_key  = base64_decode($this->_key);
+            list ($this->_key, $this->_auth) = explode(':', $_COOKIE[$this->_keyName]);
+            $this->_key = base64_decode($this->_key);
             $this->_auth = base64_decode($this->_auth);
         }
         return true;
+    }
+
+    /**
+     * Generate a random key using openssl,
+     * fallback to mcrypt_create_iv.
+     *
+     * @param int
+     * @return string
+     * @throws Exception
+     */
+    protected function _randomKey($length = 32)
+    {
+        if (function_exists('openssl_random_pseudo_bytes')) {
+            $rnd = openssl_random_pseudo_bytes($length, $strong);
+            if ($strong === true) {
+                return $rnd;
+            }
+        }
+        if (defined('MCRYPT_DEV_URANDOM')) {
+            return mcrypt_create_iv($length, MCRYPT_DEV_URANDOM);
+        } else {
+            throw new Exception("I cannot generate a secure pseudo-random key. Please install OpenSSL or Mcrypt extension");
+        }
     }
 
     /**
@@ -146,15 +147,15 @@ class EncryptedFileSessionHandler implements \SessionHandlerInterface
      */
     public function read($id)
     {
-        $sess_file = $this->_path.$this->_name."_$id";
+        $sess_file = $this->_path . $this->_name . "_$id";
         if (!file_exists($sess_file)) {
             return false;
         }
         $data = file_get_contents($sess_file);
-        list($hmac, $iv, $encrypted)= explode(':',$data);
-        $iv        = base64_decode($iv);
+        list($hmac, $iv, $encrypted) = explode(':', $data);
+        $iv = base64_decode($iv);
         $encrypted = base64_decode($encrypted);
-        $newHmac   = hash_hmac('sha256', $iv . $this->_algo . $encrypted, $this->_auth);
+        $newHmac = hash_hmac('sha256', $iv . $this->_algo . $encrypted, $this->_auth);
         if ($hmac !== $newHmac) {
             return false;
         }
@@ -178,7 +179,7 @@ class EncryptedFileSessionHandler implements \SessionHandlerInterface
     public function write($id, $data)
     {
         $sess_file = $this->_path . $this->_name . "_$id";
-        $iv        = mcrypt_create_iv($this->_ivSize, MCRYPT_DEV_URANDOM);
+        $iv = mcrypt_create_iv($this->_ivSize, MCRYPT_DEV_URANDOM);
         $encrypted = mcrypt_encrypt(
             $this->_algo,
             $this->_key,
@@ -186,7 +187,7 @@ class EncryptedFileSessionHandler implements \SessionHandlerInterface
             MCRYPT_MODE_CBC,
             $iv
         );
-        $hmac  = hash_hmac('sha256', $iv . $this->_algo . $encrypted, $this->_auth);
+        $hmac = hash_hmac('sha256', $iv . $this->_algo . $encrypted, $this->_auth);
         $bytes = file_put_contents($sess_file, $hmac . ':' . base64_encode($iv) . ':' . base64_encode($encrypted));
         return ($bytes !== false);
     }
@@ -200,8 +201,8 @@ class EncryptedFileSessionHandler implements \SessionHandlerInterface
     public function destroy($id)
     {
         $sess_file = $this->_path . $this->_name . "_$id";
-        setcookie ($this->_keyName, '', time() - 3600);
-        return(@unlink($sess_file));
+        setcookie($this->_keyName, '', time() - 3600);
+        return (@unlink($sess_file));
     }
 
     /**

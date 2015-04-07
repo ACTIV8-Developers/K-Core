@@ -15,13 +15,13 @@ class Pagination
      * @var int
      */
     protected $perPage = 12;
-    
+
     /**
      * Total number of rows.
      *
      * @var int
      */
-    protected $totalRows = 0; 
+    protected $totalRows = 0;
 
     /**
      * Current displaying offset.
@@ -29,7 +29,7 @@ class Pagination
      * @var int
      */
     protected $curOffset = 0;
-    
+
     /**
      * Number of links to display at once.
      * NumLinks must be odd number in order to class function properly.
@@ -58,7 +58,7 @@ class Pagination
      * @var string
      */
     protected $extraParams = '';
-    
+
     /**
      * Class constructor
      *
@@ -73,7 +73,7 @@ class Pagination
         }
 
         if ($this->extraParams !== '') {
-            $this->extraParams = '/'.$this->extraParams;
+            $this->extraParams = '/' . $this->extraParams;
         }
     }
 
@@ -86,8 +86,8 @@ class Pagination
      */
     public static function make($config)
     {
-        $pagi = new Pagination($config);
-        return $pagi->createLinks();
+        $pagination = new Pagination($config);
+        return $pagination->createLinks();
     }
 
     /**
@@ -106,19 +106,19 @@ class Pagination
             return '';
         }
 
-        $display_offset = (int) ($this->numLinks/2);//precalculate display offset according to numLinks
-        $r.='<div class="" id="pagination"><ul class="pagination">';//set opening tags
-        $r.='<li class="'.$this->liClass.'" id="1"><a href="'.$this->baseUrl.'/0/'.$this->perPage.$this->extraParams.'">&laquo</a></li>';//set go to first tag
+        $display_offset = (int)($this->numLinks / 2);//precalculate display offset according to numLinks
+        $r .= '<div class="" id="pagination"><ul class="pagination">';//set opening tags
+        $r .= '<li class="' . $this->liClass . '" id="1"><a href="' . $this->baseUrl . '/0/' . $this->perPage . $this->extraParams . '">&laquo</a></li>';//set go to first tag
 
         $start = 0;
         $end = $num_pages;
         if (!($num_pages <= $this->numLinks)) {//if total pages is less than numLinks display all pages at once
-            $cur_link_number = ($this->curOffset/$this->perPage);
-            if (($cur_link_number)<=$display_offset) {//if current link in first set of links
+            $cur_link_number = ($this->curOffset / $this->perPage);
+            if (($cur_link_number) <= $display_offset) {//if current link in first set of links
                 $start = 0;
                 $end = $this->numLinks;
-            } elseif ($num_pages-$cur_link_number<=$display_offset) {//if current link in last set of links
-                $start = $num_pages-$this->numLinks;
+            } elseif ($num_pages - $cur_link_number <= $display_offset) {//if current link in last set of links
+                $start = $num_pages - $this->numLinks;
                 $end = $num_pages;
             } else {//if current link in middle set of links
                 $start = $cur_link_number - $display_offset;
@@ -127,16 +127,16 @@ class Pagination
         }
 
         // Create links according to parameters
-        for ($i = $start;$i < $end;++$i) {// Create links tags
+        for ($i = $start; $i < $end; ++$i) {// Create links tags
             $offset = $i * $this->perPage;// Set offset to pass to jquery function
-            if ($offset != $this->curOffset) $class = ''; else $class=' active';// Set current link active
+            if ($offset != $this->curOffset) $class = ''; else $class = ' active';// Set current link active
             // Add link to result variable
-            $r.='<li class="'.$this->liClass.$class.'" id="'.($i+1).'">
-            <a href="'.$this->baseUrl.'/'.($i*$this->perPage).'/'.$this->perPage.$this->extraParams.'">'.($i+1).'</a></li>';
+            $r .= '<li class="' . $this->liClass . $class . '" id="' . ($i + 1) . '">
+            <a href="' . $this->baseUrl . '/' . ($i * $this->perPage) . '/' . $this->perPage . $this->extraParams . '">' . ($i + 1) . '</a></li>';
         }
 
-        $r.='<li class="'.$this->liClass.'" id="'.$num_pages.'"><a href="'.$this->baseUrl.'/'.(($num_pages-1)*$this->perPage).'/'.$this->perPage.$this->extraParams.'">»</a></li>';//set go to last tag
-        $r.='</div><ul>';// Set closing tags
+        $r .= '<li class="' . $this->liClass . '" id="' . $num_pages . '"><a href="' . $this->baseUrl . '/' . (($num_pages - 1) * $this->perPage) . '/' . $this->perPage . $this->extraParams . '">»</a></li>';//set go to last tag
+        $r .= '</div><ul>';// Set closing tags
 
         return $r;// Return final result
     }

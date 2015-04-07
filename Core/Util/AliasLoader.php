@@ -1,156 +1,154 @@
-<?php 
+<?php
 namespace Core\Util;
 
 /**
-* Class AliasLoader. Inspired by Laravel framework AliasLoader
-*
-* @see http://laravel.com/api/4.2/Illuminate/Foundation/AliasLoader.html
-*/
-class AliasLoader 
+ * Class AliasLoader. Inspired by Laravel framework AliasLoader
+ *
+ * @see http://laravel.com/api/4.2/Illuminate/Foundation/AliasLoader.html
+ */
+class AliasLoader
 {
-	/**
-	 * The array of class aliases.
-	 *
-	 * @var array
-	 */
-	protected $aliases;
+    /**
+     * The singleton instance of the loader.
+     *
+     * @var \Core\Util\AliasLoader
+     */
+    protected static $instance;
+    /**
+     * The array of class aliases.
+     *
+     * @var array
+     */
+    protected $aliases;
+    /**
+     * Indicates if a loader has been registered.
+     *
+     * @var bool
+     */
+    protected $registered = false;
 
-	/**
-	 * Indicates if a loader has been registered.
-	 *
-	 * @var bool
-	 */
-	protected $registered = false;
+    /**
+     * Create a new class alias loader instance.
+     *
+     * @param array
+     */
+    public function __construct(array $aliases = [])
+    {
+        $this->aliases = $aliases;
+    }
 
-	/**
-	 * The singleton instance of the loader.
-	 *
-	 * @var \Core\Util\AliasLoader
-	 */
-	protected static $instance;
+    /**
+     * Get or create the singleton alias loader instance.
+     *
+     * @param array
+     * @return \Core\Util\AliasLoader
+     */
+    public static function getInstance(array $aliases = [])
+    {
+        if (is_null(static::$instance)) {
+            return static::$instance = new static($aliases);
+        }
 
-	/**
-	 * Create a new class alias loader instance.
-	 *
-	 * @param array
-	 */
-	public function __construct(array $aliases = [])
-	{
-		$this->aliases = $aliases;
-	}
+        $aliases = array_merge(static::$instance->getAliases(), $aliases);
 
-	/**
-	 * Get or create the singleton alias loader instance.
-	 *
-	 * @param array
-	 * @return \Core\Util\AliasLoader
-	 */
-	public static function getInstance(array $aliases = [])
-	{
-		if (is_null(static::$instance)) {
-			return static::$instance = new static($aliases);
-		}
+        static::$instance->setAliases($aliases);
 
-		$aliases = array_merge(static::$instance->getAliases(), $aliases);
+        return static::$instance;
+    }
 
-		static::$instance->setAliases($aliases);
+    /**
+     * Set the value of the singleton alias loader.
+     *
+     * @param \Core\Util\AliasLoader
+     */
+    public static function setInstance($loader)
+    {
+        static::$instance = $loader;
+    }
 
-		return static::$instance;
-	}
+    /**
+     * Get the registered aliases.
+     *
+     * @return array
+     */
+    public function getAliases()
+    {
+        return $this->aliases;
+    }
 
-	/**
-	 * Load a class alias if it is registered.
-	 *
-	 * @param string $alias
-	 * @return void
-	 */
-	public function load($alias)
-	{
-		if (isset($this->aliases[$alias])) {
-			return class_alias($this->aliases[$alias], $alias);
-		}
-	}
+    /**
+     * Set the registered aliases.
+     *
+     * @param array
+     */
+    public function setAliases(array $aliases)
+    {
+        $this->aliases = $aliases;
+    }
 
-	/**
-	 * Add an alias to the loader.
-	 *
-	 * @param string $class
-	 * @param string $alias
-	 * @return void
-	 */
-	public function alias($class, $alias)
-	{
-		$this->aliases[$class] = $alias;
-	}
+    /**
+     * Load a class alias if it is registered.
+     *
+     * @param string $alias
+     * @return string
+     */
+    public function load($alias)
+    {
+        if (isset($this->aliases[$alias])) {
+            return class_alias($this->aliases[$alias], $alias);
+        }
+    }
 
-	/**
-	 * Register the loader on the auto-loader stack.
-	 *
-	 * @return void
-	 */
-	public function register()
-	{
-		if (!$this->registered) {
-			$this->prependToLoaderStack();
-			$this->registered = true;
-		}
-	}
+    /**
+     * Add an alias to the loader.
+     *
+     * @param string $class
+     * @param string $alias
+     * @return void
+     */
+    public function alias($class, $alias)
+    {
+        $this->aliases[$class] = $alias;
+    }
 
-	/**
-	 * Prepend the load method to the auto-loader stack.
-	 */
-	protected function prependToLoaderStack()
-	{
-		spl_autoload_register(array($this, 'load'), true, true);
-	}
+    /**
+     * Register the loader on the auto-loader stack.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        if (!$this->registered) {
+            $this->prependToLoaderStack();
+            $this->registered = true;
+        }
+    }
 
-	/**
-	 * Get the registered aliases.
-	 *
-	 * @return array
-	 */
-	public function getAliases()
-	{
-		return $this->aliases;
-	}
+    /**
+     * Prepend the load method to the auto-loader stack.
+     */
+    protected function prependToLoaderStack()
+    {
+        spl_autoload_register(array($this, 'load'), true, true);
+    }
 
-	/**
-	 * Set the registered aliases.
-	 *
-	 * @param array
-	 */
-	public function setAliases(array $aliases)
-	{
-		$this->aliases = $aliases;
-	}
+    /**
+     * Indicates if the loader has been registered.
+     *
+     * @return bool
+     */
+    public function isRegistered()
+    {
+        return $this->registered;
+    }
 
-	/**
-	 * Indicates if the loader has been registered.
-	 *
-	 * @return bool
-	 */
-	public function isRegistered()
-	{
-		return $this->registered;
-	}
-
-	/**
-	 * Set the "registered" state of the loader.
-	 *
-	 * @param bool
-	 */
-	public function setRegistered($value)
-	{
-		$this->registered = $value;
-	}
-
-	/**
-	 * Set the value of the singleton alias loader.
-	 *
-	 * @param \Core\Util\AliasLoader
-	 */
-	public static function setInstance($loader)
-	{
-		static::$instance = $loader;
-	}
+    /**
+     * Set the "registered" state of the loader.
+     *
+     * @param bool
+     */
+    public function setRegistered($value)
+    {
+        $this->registered = $value;
+    }
 }

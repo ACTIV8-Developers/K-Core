@@ -7,7 +7,7 @@ namespace Core\Http\Interfaces;
  * @author <milos@caenazzocom>
  */
 interface HttpInterface
-{    
+{
     /**
      * Get HTTP protocol version ("HTTP/1.1" or "HTTP/1.0").
      *
@@ -24,16 +24,16 @@ interface HttpInterface
     public function setProtocolVersion($version);
 
     /**
-     * Returns an associative array of all current headers 
+     * Returns an associative array of all current headers
      *
      * Each key will be a header name with it's value
      *
-     * @return array 
+     * @return array
      */
     public function getHeaders();
 
     /**
-     * Set new header, replacing any existing values 
+     * Set new header, replacing any existing values
      * of any headers with the same case-insensitive name
      *
      * @param string $key Case-insensitive header field name
@@ -61,7 +61,7 @@ interface HttpInterface
     /**
      * Set request body
      *
-     * @param $body Body
+     * @param string $body
      * @return self
      */
     public function setBody($body);

@@ -65,17 +65,6 @@ class HttpBag implements \IteratorAggregate, \Countable
     }
 
     /**
-     * Returns a element by name.
-     *
-     * @param string $key
-     * @return mixed
-     */
-    public function get($key)
-    {
-        return isset($this->elements[$key]) ? $this->elements[$key] : null;
-    }
-
-    /**
      * Sets a element by name.
      *
      * @param string $key
@@ -112,7 +101,7 @@ class HttpBag implements \IteratorAggregate, \Countable
      *
      * @param string $key
      * @param int $filter FILTER_* constant.
-     * @param mixed $options.
+     * @param mixed $options .
      * @see http://php.net/manual/en/function.filter-var.php
      * @return mixed
      */
@@ -131,6 +120,17 @@ class HttpBag implements \IteratorAggregate, \Countable
         }
 
         return filter_var($value, $filter, $options);
+    }
+
+    /**
+     * Returns a element by name.
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public function get($key)
+    {
+        return isset($this->elements[$key]) ? $this->elements[$key] : null;
     }
 
     /**

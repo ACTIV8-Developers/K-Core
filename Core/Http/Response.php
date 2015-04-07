@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace Core\Http;
 
 use Core\Http\Interfaces\ResponseInterface;
@@ -6,7 +6,7 @@ use Core\Http\Interfaces\ResponseInterface;
 /**
  * HTTP response class.
  *
- * This class provides simple abstraction over top an HTTP response. 
+ * This class provides simple abstraction over top an HTTP response.
  * This class provides methods to set the HTTP status, the HTTP headers,
  * the HTTP cookies and the HTTP body.
  *
@@ -18,7 +18,7 @@ class Response implements ResponseInterface
      * HTTP response codes and messages.
      *
      * @var array
-     * @see http://en.wikipedia.org/wiki/List_of_HTTP_status_codes 
+     * @see http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
      */
     protected static $messages = [
         // Informational 1xx.
@@ -71,46 +71,40 @@ class Response implements ResponseInterface
         504 => '504 Gateway Timeout',
         505 => '505 HTTP Version Not Supported'
     ];
-    
-    /**
-     * HTTP response protocol version.
-     *
-     * @var string
-     */
-    protected $protocolVersion = 'HTTP/1.1';
-
-    /**
-     * HTTP response code.
-     *
-     * @var int
-     */
-    protected $statusCode = 200;
-
-    /**
-     * HTTP reason phrase.
-     *
-     * @var string|null
-     */
-    protected $reasonPhrase = null;
-
     /**
      * List of HTTP headers to be sent.
      *
      * @var \Core\Http\HttpBag
      */
     public $headers = null;
-
     /**
      * Array of cookies to be sent.
      *
      * @var \Core\Http\HttpBag
      */
     public $cookies = null;
-
+    /**
+     * HTTP response protocol version.
+     *
+     * @var string
+     */
+    protected $protocolVersion = 'HTTP/1.1';
+    /**
+     * HTTP response code.
+     *
+     * @var int
+     */
+    protected $statusCode = 200;
+    /**
+     * HTTP reason phrase.
+     *
+     * @var string|null
+     */
+    protected $reasonPhrase = null;
     /**
      * HTTP response body.
      *
-     * @var string 
+     * @var string
      */
     protected $body = '';
 
@@ -121,18 +115,6 @@ class Response implements ResponseInterface
     {
         $this->headers = new HttpBag();
         $this->cookies = new HttpBag();
-    }
-
-    /**
-     * Set request body
-     *
-     * @param $body Body
-     * @return self
-     */
-    public function setBody($body)
-    {
-        $this->body = $body;
-        return $this;
     }
 
     /**
@@ -158,6 +140,28 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Set request body
+     *
+     * @param string $body
+     * @return self
+     */
+    public function setBody($body)
+    {
+        $this->body = $body;
+        return $this;
+    }
+
+    /**
+     * Get the response Status-Code
+     *
+     * @return integer Status code
+     */
+    public function getStatusCode()
+    {
+        return $this->statusCode;
+    }
+
+    /**
      * Set the response Status-Code
      *
      * @param integer $code The 3-digit integer result code to set.
@@ -170,16 +174,6 @@ class Response implements ResponseInterface
         $this->statusCode = $code;
         $this->reasonPhrase = $reasonPhrase;
         return $this;
-    }
-
-    /**
-     * Get the response Status-Code
-     *
-     * @return integer Status code
-     */
-    public function getStatusCode()
-    {
-        return $this->statusCode;
     }
 
     /**
@@ -205,11 +199,11 @@ class Response implements ResponseInterface
     }
 
     /**
-     * Returns an associative array of all current headers 
+     * Returns an associative array of all current headers
      *
      * Each key will be a header name with it's value
      *
-     * @return array 
+     * @return array
      */
     public function getHeaders()
     {
@@ -217,7 +211,7 @@ class Response implements ResponseInterface
     }
 
     /**
-     * Set new header, replacing any existing values 
+     * Set new header, replacing any existing values
      * of any headers with the same case-insensitive name
      *
      * @param string $key Case-insensitive header field name
@@ -244,12 +238,12 @@ class Response implements ResponseInterface
     /**
      * Send cookie with response.
      *
-     * @param string $name  
-     * @param string $value 
-     * @param int|string|\DateTime $expire 
+     * @param string $name
+     * @param string $value
+     * @param int|string|\DateTime $expire
      * @param string $path
      * @param string $domain
-     * @param bool $secure                   
+     * @param bool $secure
      * @param bool $httpOnly
      * @throws \InvalidArgumentException
      * @return self
@@ -277,7 +271,7 @@ class Response implements ResponseInterface
 
             // Send status code.
             header(sprintf('%s %s', $this->protocolVersion, $this->reasonPhrase), true, $this->statusCode);
-            
+
             // Send headers.
             foreach ($this->headers as $header => $value) {
                 header(sprintf('%s: %s', $header, $value), true, $this->statusCode);
@@ -285,7 +279,7 @@ class Response implements ResponseInterface
 
             // Send cookies.
             foreach ($this->cookies as $cookie) {
-                setcookie($cookie['name'], $cookie['value'], $cookie['expire'], 
+                setcookie($cookie['name'], $cookie['value'], $cookie['expire'],
                     $cookie['path'], $cookie['domain'], $cookie['secure'], $cookie['httponly']);
             }
 
