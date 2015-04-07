@@ -1,7 +1,7 @@
 <?php
 
-use \Core\Util\Util;
-use \Core\Util\Date;
+use Core\Util\Date;
+use Core\Util\Util;
 
 class UtilTest extends PHPUnit_Framework_TestCase
 {

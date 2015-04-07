@@ -33,7 +33,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
     public function testSendResponse()
     {
         // Make instance of app.
-        $app = \Core\Core\Core::getInstance();
+        $app = \Core\Core\Core::getNew(__DIR__ . '/../MockApp')->boot();
 
         $app['response']->setBody('<div>Test</div>');
 

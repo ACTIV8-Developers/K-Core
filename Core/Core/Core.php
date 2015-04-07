@@ -124,6 +124,31 @@ class Core extends Container
     }
 
     /**
+     * Get singleton instance of Core class.
+     *
+     * @param string $appPath
+     * @return Core
+     */
+    public static function getInstance($appPath = '')
+    {
+        if (null === self::$instance) {
+            self::$instance = new Core($appPath);
+        }
+        return self::$instance;
+    }
+
+    /**
+     * Get new instance of Core class.
+     *
+     * @param string $appPath
+     * @return Core
+     */
+    public static function getNew($appPath = '')
+    {
+        return new Core($appPath);
+    }
+
+    /**
      * Boot application
      *
      * @return self
@@ -233,6 +258,17 @@ class Core extends Container
     }
 
     /**
+     * @param string $class
+     * @param string $function
+     * @return self
+     */
+    public function addMiddleware($class, $function)
+    {
+        $this->middleware[] = new Executable($class, $function);
+        return $this;
+    }
+
+    /**
      * Application main executive function.
      *
      * @throws BadFunctionCallException
@@ -303,31 +339,25 @@ class Core extends Container
     }
 
     /**
-     * Send application response.
-     *
-     * @throws BadFunctionCallException
-     * @return self
+     * @param string $class
+     * @param string $function
+     * @param array $params
+     * @param string $namespacePrefix
+     * @throws \InvalidArgumentException
      */
-    public function sendResponse()
+    protected function execute($class, $function, $params = [], $namespacePrefix = null)
     {
-        if (!$this->isBooted) {
-            throw new BadFunctionCallException('Error! Application is not booted.');
+        $executable = new Executable($class, $function);
+
+        if (!empty($params)) {
+            $executable->setParams($params);
         }
 
-        // Send final response.
-        $this['response']->send();
-
-        // Post response hook.
-        if (isset($this->hooks['after.response'])) {
-            $this->hooks['after.response']->execute();
+        if ($namespacePrefix !== null) {
+            $executable->getNamespacePrefix($namespacePrefix);
         }
 
-        // Display benchmark time if enabled.
-        if ($this['config']['benchmark']) {
-            print '<!--' . \PHP_Timer::resourceUsage() . '-->';
-        }
-
-        return $this;
+        $executable->execute();
     }
 
     /**
@@ -364,6 +394,34 @@ class Core extends Container
     }
 
     /**
+     * Send application response.
+     *
+     * @throws BadFunctionCallException
+     * @return self
+     */
+    public function sendResponse()
+    {
+        if (!$this->isBooted) {
+            throw new BadFunctionCallException('Error! Application is not booted.');
+        }
+
+        // Send final response.
+        $this['response']->send();
+
+        // Post response hook.
+        if (isset($this->hooks['after.response'])) {
+            $this->hooks['after.response']->execute();
+        }
+
+        // Display benchmark time if enabled.
+        if ($this['config']['benchmark']) {
+            print '<!--' . \PHP_Timer::resourceUsage() . '-->';
+        }
+
+        return $this;
+    }
+
+    /**
      * Add hook.
      *
      * @param string $key
@@ -386,28 +444,6 @@ class Core extends Container
     public function getHook($key)
     {
         return $this->hooks[$key];
-    }
-
-    /**
-     * @param string $class
-     * @param string $function
-     * @param array $params
-     * @param string $namespacePrefix
-     * @throws \InvalidArgumentException
-     */
-    protected function execute($class, $function, $params = [], $namespacePrefix = null)
-    {
-        $executable = new Executable($class, $function);
-
-        if (!empty($params)) {
-            $executable->setParams($params);
-        }
-
-        if ($namespacePrefix !== null) {
-            $executable->getNamespacePrefix($namespacePrefix);
-        }
-
-        $executable->execute();
     }
 
     /**
@@ -451,6 +487,14 @@ class Core extends Container
     }
 
     /**
+     * @return string
+     */
+    public function getViewsPath()
+    {
+        return $this->viewsPath;
+    }
+
+    /**
      * @param string $viewsPath
      * @return self
      */
@@ -461,14 +505,6 @@ class Core extends Container
     }
 
     /**
-     * @return string
-     */
-    public function getViewsPath()
-    {
-        return $this->viewsPath;
-    }
-
-    /**
      * @param string $databaseConfigPath
      * @return self
      */
@@ -476,41 +512,5 @@ class Core extends Container
     {
         $this->databaseConfigPath = $databaseConfigPath;
         return $this;
-    }
-
-    /**
-     * @param string $class
-     * @param string $function
-     * @return self
-     */
-    public function addMiddleware($class, $function)
-    {
-        $this->middleware[] = new Executable($class, $function);
-        return $this;
-    }
-
-    /**
-     * Get singleton instance of Core class.
-     *
-     * @param string $appPath
-     * @return Core
-     */
-    public static function getInstance($appPath = '')
-    {
-        if (null === self::$instance) {
-            self::$instance = new Core($appPath);
-        }
-        return self::$instance;
-    }
-
-    /**
-     * Get new instance of Core class.
-     *
-     * @param string $appPath
-     * @return Core
-     */
-    public static function getNew($appPath = '')
-    {
-        return new Core($appPath);
     }
 }

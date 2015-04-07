@@ -1,9 +1,7 @@
 <?php
 namespace Core\Routing;
 
-use Core\Routing\Interfaces\ExecutableInterface;
 use Core\Routing\Interfaces\RouteInterface;
-use InvalidArgumentException;
 
 /**
  * Route class.

@@ -1,6 +1,6 @@
 <?php
 
-use \Core\Http\Response;
+use Core\Http\Response;
 
 class ResponseTest extends PHPUnit_Framework_TestCase
 {
