@@ -21,7 +21,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
     public function testRun()
     {
         // Make instance of app.
-        $app = \Core\Core\Core::getNew(__DIR__ . '/../MockApp');
+        $app = \Core\Core\Core::getNew(__DIR__ . '/../MockApp')->setControllerNamespace('');
 
         $app->boot();
 
@@ -33,7 +33,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
     public function testSendResponse()
     {
         // Make instance of app.
-        $app = \Core\Core\Core::getNew(__DIR__ . '/../MockApp')->boot();
+        $app = \Core\Core\Core::getNew(__DIR__ . '/../MockApp')->boot()->setControllerNamespace('');
 
         $app['response']->setBody('<div>Test</div>');
 
