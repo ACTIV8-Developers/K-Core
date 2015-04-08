@@ -354,7 +354,7 @@ class Core extends Container
         }
 
         if ($namespacePrefix !== null) {
-            $executable->getNamespacePrefix($namespacePrefix);
+            $executable->setNamespacePrefix($namespacePrefix);
         }
 
         $executable->execute();
