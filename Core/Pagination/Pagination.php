@@ -84,7 +84,7 @@ class Pagination
      * @param array $config
      * @return string
      */
-    public static function make($config)
+    public static function make(array $config)
     {
         $pagination = new Pagination($config);
         return $pagination->createLinks();

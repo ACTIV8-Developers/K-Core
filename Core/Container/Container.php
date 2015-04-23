@@ -8,6 +8,4 @@ use Pimple\Container as PimpleContainer;
  *
  * @author <milos@caenazzo.com>
  */
-class Container extends PimpleContainer
-{
-}
+class Container extends PimpleContainer {}

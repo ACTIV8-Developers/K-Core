@@ -1,9 +1,10 @@
 <?php
 namespace Core\Core;
 
+use BadMethodCallException;
 use Core\Container\ContainerProvider;
-use Core\Core\Exceptions\NotFoundException;
 use Core\Core\Exceptions\StopException;
+use Core\Core\Exceptions\NotFoundException;
 
 /**
  * Base controller abstract class.

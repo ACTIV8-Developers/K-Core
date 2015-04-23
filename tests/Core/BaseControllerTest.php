@@ -7,9 +7,8 @@ class BaseControllerTest extends PHPUnit_Framework_TestCase
 {
 	public function testGet()
 	{
-        $app = Core::getInstance(__DIR__.'/../MockApp')
-            ->setViewsPath(__DIR__.'/../MockApp/MockViews')
-            ->setControllerNamespace('')
+        $app = Core::getInstance(__DIR__ . '/../MockApp')
+            ->setViewsPath(__DIR__ . '/../MockApp/MockViews')
             ->boot();
 
 		$con = new MockController();

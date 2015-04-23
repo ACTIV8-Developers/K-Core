@@ -49,4 +49,16 @@ abstract class ContainerProvider
     {
         $this->app[$key] = $value;
     }
+
+    /**
+     * Handle calls to missing methods on the controller.
+     *
+     * @param  string $method
+     * @param  array $parameters
+     * @throws BadMethodCallException
+     */
+    public function __call($method, array $parameters)
+    {
+        throw new BadMethodCallException("Method [$method] does not exist.");
+    }
 }

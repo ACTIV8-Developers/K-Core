@@ -12,12 +12,36 @@ class Util
      * @var string
      */
     public static $publicPath = 'public';
+
     /**
      * Variable for caching base() call, since often it is called multiple times.
      *
      * @var string
      */
     protected static $base = null;
+
+    /**
+     * Get site base url.
+     *
+     * @param string $path
+     * @return string
+     */
+    public static function base($path = '')
+    {
+        // Check for cached version of base path
+        if (null !== self::$base) {
+            return self::$base . $path;
+        }
+
+        if (isset($_SERVER['HTTP_HOST'])) {
+            $base_url = isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off' ? 'https' : 'http';
+            $base_url .= '://' . $_SERVER['HTTP_HOST'];
+            $base_url .= str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
+            self::$base = $base_url;
+            return $base_url . $path;
+        }
+        return '';
+    }
 
     /**
      * Get CSS file path.
@@ -61,30 +85,7 @@ class Util
     public static function redirect($url = '', $statusCode = 303)
     {
         header('Location: ' . self::base($url), true, $statusCode);
-        die();
-    }
-
-    /**
-     * Get site base url.
-     *
-     * @param string $path
-     * @return string
-     */
-    public static function base($path = '')
-    {
-        // Check for cached version of base path
-        if (null !== self::$base) {
-            return self::$base . $path;
-        }
-
-        if (isset($_SERVER['HTTP_HOST'])) {
-            $base_url = isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off' ? 'https' : 'http';
-            $base_url .= '://' . $_SERVER['HTTP_HOST'];
-            $base_url .= str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
-            self::$base = $base_url;
-            return $base_url . $path;
-        }
-        return '';
+        exit(0);
     }
 
     /**
@@ -96,6 +97,6 @@ class Util
     public static function redirectToUrl($url = '', $statusCode = 303)
     {
         header('Location: ' . $url, true, $statusCode);
-        die();
+        exit(0);
     }
 }

@@ -2,6 +2,8 @@
 namespace Core\Session;
 
 use Core\Container\ServiceProvider;
+use Core\Session\Handlers\DatabaseSessionHandler;
+use Core\Session\Handlers\EncryptedFileSessionHandler;
 
 /**
  * Class SessionServiceProvider.
@@ -11,12 +13,12 @@ use Core\Container\ServiceProvider;
 class SessionServiceProvider extends ServiceProvider
 {
     /**
-     * Create Database class.
+     * Create Session class.
      */
     public function register()
     {
         // Create session class closure.
-        $thia->app['session'] = function ($c) {
+        $this->app['session'] = function ($c) {
             // Select session handler.
             $handler = null;
             switch ($c['config']['sessionHandler']) {

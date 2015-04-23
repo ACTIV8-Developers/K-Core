@@ -2,6 +2,7 @@
 namespace Core\Database;
 
 use Core\Container\ServiceProvider;
+use Core\Database\Connections\MySQLConnection;
 
 /**
  * Class DatabaseServiceProvider.
@@ -16,15 +17,16 @@ class DatabaseServiceProvider extends ServiceProvider
     public function register()
     {
         // Load database configuration.
-        if (is_file($this->appPath . '/Config/Database.php')) {
-            $container['config.database'] = require $this->appPath . '/Config/Database.php';
+        if (is_file($this->app->getconfigPath() . '/Database.php')) {
+            $this->app['config.database'] = require $this->app->getconfigPath() . '/Database.php';
         } else {
-            $container['config.database'] = [];
+            $this->app['config.database'] = [];
         }
 
         // For each needed database create database class closure.
-        foreach ($this['config.database'] as $dbName => $dbConfig) {
-            $container['db.' . $dbName] = function () use ($dbConfig) {
+        foreach ($this->app['config.database'] as $dbName => $dbConfig) {
+            if ($dbName === 'default') $dbName = '';
+            $this->app['db' . $dbName] = function () use ($dbConfig) {
                 $db = null;
                 switch ($dbConfig['driver']) { // Choose connection and create it.
                     case 'mysql':

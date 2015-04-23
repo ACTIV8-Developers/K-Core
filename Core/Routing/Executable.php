@@ -27,11 +27,6 @@ class Executable implements ExecutableInterface
     protected $params = [];
 
     /**
-     * @var string
-     */
-    protected $namespacePrefix = '';
-
-    /**
      * Class constructor.
      *
      * @param string $class
@@ -52,7 +47,7 @@ class Executable implements ExecutableInterface
      */
     public function execute()
     {
-        $this->class = $this->namespacePrefix . '\\' . $this->class;
+        $this->class = '\\' . $this->class;
         call_user_func_array([new $this->class, $this->method], $this->params);
         return $this;
     }
@@ -108,24 +103,6 @@ class Executable implements ExecutableInterface
     public function setParams($params)
     {
         $this->params = $params;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getNamespacePrefix()
-    {
-        return $this->namespacePrefix;
-    }
-
-    /**
-     * @param string $namespacePrefix
-     * @return self
-     */
-    public function setNamespacePrefix($namespacePrefix)
-    {
-        $this->namespacePrefix = $namespacePrefix;
         return $this;
     }
 }

@@ -6,6 +6,4 @@ namespace Core\Core\Exceptions;
  *
  * @author <milos@caenazzo.com>
  */
-class StopException extends \Exception
-{
-}
+class StopException extends \Exception {}

@@ -1,23 +1,18 @@
 <?php
 namespace Core\Core;
 
+use Exception;
 use BadFunctionCallException;
+use InvalidArgumentException;
 use Core\Container\Container;
-use Core\Core\Exceptions\NotFoundException;
 use Core\Core\Exceptions\StopException;
-use Core\Database\Connections\MySQLConnection;
-use Core\Database\Database;
+use Core\Core\Exceptions\NotFoundException;
 use Core\Http\Request;
 use Core\Http\Response;
 use Core\Routing\Action;
+use Core\Routing\Router;
 use Core\Routing\Executable;
 use Core\Routing\Interfaces\ExecutableInterface;
-use Core\Routing\Router;
-use Core\Session\Handlers\DatabaseSessionHandler;
-use Core\Session\Handlers\EncryptedFileSessionHandler;
-use Core\Session\Session;
-use Exception;
-use InvalidArgumentException;
 
 /**
  * Core class.
@@ -33,12 +28,17 @@ class Core extends Container
      *
      * @var string
      */
-    const VERSION = '1.57rc';
+    const VERSION = '1.7rc';
 
     /**
      * @var Core
      */
     protected static $instance;
+
+    /**
+     * @var string
+     */
+    protected $namespacePrefix = '';
 
     /**
      * @var bool
@@ -53,12 +53,12 @@ class Core extends Container
     /**
      * @var string
      */
-    protected $routesPath = '';
+    protected $configPath = '';
 
     /**
      * @var string
      */
-    protected $controllerNamespace = 'Controllers';
+    protected $routesPath = '';
 
     /**
      * @var string
@@ -107,6 +107,9 @@ class Core extends Container
         // Set app path
         $this->appPath = $appPath;
 
+        // Set config path
+        $this->configPath = $appPath . '/Config/Config.php';
+
         // Set app routes path
         $this->routesPath = $appPath . '/routes.php';
 
@@ -126,6 +129,18 @@ class Core extends Container
             self::$instance = new Core($appPath);
         }
         return self::$instance;
+    }
+
+    /**
+     * Set singleton instance of Core class.
+     *
+     * @param $instance
+     * @return mixed
+     */
+    public static function setInstance($instance)
+    {
+        self::$instance = $instance;
+        return $instance;
     }
 
     /**
@@ -155,8 +170,8 @@ class Core extends Container
             }
 
             // Load application configuration.
-            if (is_file($this->appPath . '/Config/Config.php')) {
-                $this['config'] = require $this->appPath . '/Config/Config.php';
+            if (is_file($this->configPath)) {
+                $this['config'] = require $this->configPath;
             } else {
                 $this['config'] = [];
             }
@@ -202,7 +217,7 @@ class Core extends Container
      * @throws BadFunctionCallException
      * @return self
      */
-    public function run()
+    public function execute()
     {
         if (!$this->isBooted) {
             throw new BadFunctionCallException('Error! Application is not booted.');
@@ -248,14 +263,11 @@ class Core extends Container
             $this['request']->get->add($matchedRoute->params);
 
             // Add found route to middleware stack
-            $executable = new Executable($matchedRoute->class, $matchedRoute->function);
+            $executable = new Executable($this->namespacePrefix.$matchedRoute->class,
+                                                                $matchedRoute->function);
 
             if (!empty($matchedRoute->params)) {
                 $executable->setParams($matchedRoute->params);
-            }
-
-            if ($this->controllerNamespace !== null) {
-                $executable->setNamespacePrefix($this->controllerNamespace);
             }
 
             $this->middleware[] = $executable;
@@ -264,7 +276,7 @@ class Core extends Container
             $this->notFound();
         }
 
-        // Call middleware stack
+        // Execute middleware stack
         foreach ($this->middleware as $m) {
             $m->execute();
         }
@@ -336,11 +348,12 @@ class Core extends Container
      * @param string $key
      * @param string $class
      * @param string $function
+     * @param array $params
      * @return self
      */
-    public function setHook($key, $class, $function = 'execute')
+    public function setHook($key, $class, $function = 'execute', array $params = [])
     {
-        $this->hooks[$key] = new Executable($class, $function);
+        $this->hooks[$key] = new Executable($class, $function, $params);
         return $this;
     }
 
@@ -358,11 +371,12 @@ class Core extends Container
     /**
      * @param string $class
      * @param string $function
+     * @param array $params
      * @return self
      */
-    public function addMiddleware($class, $function = 'execute')
+    public function addMiddleware($class, $function = 'execute', array $params = [])
     {
-        $this->middleware[] = new Executable($class, $function);
+        $this->middleware[] = new Executable($class, $function, $params);
         return $this;
     }
 
@@ -377,16 +391,6 @@ class Core extends Container
     }
 
     /**
-     * @param string $controllerNamespace
-     * @return self
-     */
-    public function setControllerNamespace($controllerNamespace)
-    {
-        $this->controllerNamespace = $controllerNamespace;
-        return $this;
-    }
-
-    /**
      * @param string $appPath
      * @return self
      */
@@ -394,6 +398,32 @@ class Core extends Container
     {
         $this->appPath = $appPath;
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAppPath()
+    {
+        return $this->appPath;
+    }
+
+    /**
+     * @param string $configPath
+     * @return self
+     */
+    public function setConfigPath($configPath)
+    {
+        $this->configPath = $configPath;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getConfigPath()
+    {
+        return $this->configPath;
     }
 
     /**
@@ -422,5 +452,23 @@ class Core extends Container
     {
         $this->viewsPath = $viewsPath;
         return $this;
+    }
+
+    /**
+     * @param string $namespacePrefix
+     * @return self
+     */
+    public function setNamespacePrefix($namespacePrefix)
+    {
+        $this->namespacePrefix = $namespacePrefix . '\\';
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNamespacePrefix()
+    {
+        return $this->namespacePrefix;
     }
 }

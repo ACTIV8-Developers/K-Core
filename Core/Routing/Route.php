@@ -19,10 +19,10 @@ class Route implements RouteInterface
     public $url = '';
 
     /**
- * Controller/method assigned to be executed when route is matched.
- *
- * @var string
- */
+     * Controller/method assigned to be executed when route is matched.
+     *
+     * @var string
+     */
     public $class = null;
 
     /**
