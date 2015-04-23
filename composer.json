@@ -12,10 +12,10 @@
     "license": "MIT",
     "require":{
         "php": ">=5.4.0",
-        "pimple/pimple": "3.0.*@dev",
-        "phpunit/php-timer": "dev-master"
+        "pimple/pimple": "3.0.*@dev"
     },
     "suggest": {
+        "phpunit/php-timer": "Benchmark",
         "predis/predis": "Redis client",
         "monolog/monolog": "Allows more advanced logging of the application flow",
         "swiftmailer/swiftmailer": "Great mailer library",

@@ -264,7 +264,7 @@ class Core extends Container
 
             // Add found route to middleware stack
             $executable = new Executable($this->namespacePrefix.$matchedRoute->class,
-                                                                $matchedRoute->function);
+                $matchedRoute->function);
 
             if (!empty($matchedRoute->params)) {
                 $executable->setParams($matchedRoute->params);
@@ -294,6 +294,10 @@ class Core extends Container
      */
     protected function notFound(NotFoundException $e = null)
     {
+        if ($e === null) {
+            $e = new NotFoundException();
+        }
+
         if (isset($this->hooks['not.found'])) {
             $this['not.found'] = $e;
             $this->hooks['not.found']->execute();

@@ -17,8 +17,8 @@ class DatabaseServiceProvider extends ServiceProvider
     public function register()
     {
         // Load database configuration.
-        if (is_file($this->app->getconfigPath() . '/Database.php')) {
-            $this->app['config.database'] = require $this->app->getconfigPath() . '/Database.php';
+        if (is_file($this->app->getAppPath() . '/Config/Database.php')) {
+            $this->app['config.database'] = require $this->app->getAppPath() . '/Config/Database.php';
         } else {
             $this->app['config.database'] = [];
         }
