@@ -58,22 +58,19 @@ class Core extends Container
     /**
      * @var string
      */
-    protected $configPath = '';
-
-    /**
-     * @var string
-     */
-    protected $databaseConfigPath = '';
-
-    /**
-     * @var string
-     */
     protected $controllerNamespace = 'Controllers';
 
     /**
      * @var string
      */
     protected $viewsPath = '';
+
+    /**
+     * Array of service providers
+     *
+     * @var array
+     */
+    protected $services = [];
 
     /**
      * Array of middleware actions
@@ -109,12 +106,6 @@ class Core extends Container
 
         // Set app path
         $this->appPath = $appPath;
-
-        // Set app configuration path
-        $this->configPath = $appPath . '/Config/Config.php';
-
-        // Set app database configuration path
-        $this->databaseConfigPath = $appPath . '/Config/Database.php';
 
         // Set app routes path
         $this->routesPath = $appPath . '/routes.php';
@@ -152,7 +143,7 @@ class Core extends Container
      * Boot application
      *
      * @return self
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function boot()
     {
@@ -164,8 +155,8 @@ class Core extends Container
             }
 
             // Load application configuration.
-            if (is_file($this->configPath)) {
-                $this['config'] = require $this->configPath;
+            if (is_file($this->appPath . '/Config/Config.php')) {
+                $this['config'] = require $this->appPath . '/Config/Config.php';
             } else {
                 $this['config'] = [];
             }
@@ -187,63 +178,11 @@ class Core extends Container
                 return new Router();
             };
 
-            // Load database configuration.
-            if (is_file($this->databaseConfigPath)) {
-                $this['config.database'] = require $this->databaseConfigPath;
-            } else {
-                $this['config.database'] = [];
-            }
-
-            // For each needed database create database class closure.
-            foreach ($this['config.database'] as $dbName => $dbConfig) {
-                $this['db.' . $dbName] = function () use ($dbConfig) {
-                    $db = null;
-                    switch ($dbConfig['driver']) { // Choose connection and create it.
-                        case 'mysql':
-                            $db = new MySQLConnection($dbConfig);
-                            break;
-                        default:
-                            throw new InvalidArgumentException('Error! Unsupported database connection type.');
-                    }
-                    // Inject it into database class.
-                    $database = new Database();
-                    $database->setConnection($db->connect());
-                    return $database;
-                };
-            }
-
-            // Create session class closure.
-            $this['session'] = function ($c) {
-                // Select session handler.
-                $handler = null;
-                switch ($c['config']['sessionHandler']) {
-                    case 'encrypted-file':
-                        $handler = new EncryptedFileSessionHandler();
-                        break;
-                    case 'database':
-                        $name = $c['config']['session']['connName'];
-                        $conn = $this['db.' . $name]->getConnection();
-                        $handler = new DatabaseSessionHandler($conn);
-                        break;
-                }
-                $session = new Session($c['config']['session'], $handler);
-                $session->setHashKey($c['config']['key']);
-                return $session;
-            };
-
             // Register service providers.
-            if (isset($this['config']['services']) && is_array($this['config']['services'])) {
-                foreach ($this['config']['services'] as $service) {
-                    $s = new $service();
-                    $s->register($this);
-                }
-            }
-
-            // Register middleware stack
-            if (isset($this['config']['middleware'])) {
-                foreach ($this['config']['middleware'] as $class => $function) {
-                    $this->addMiddleware($class, $function);
-                }
+            foreach ($this->services as $service) {
+                $s = new $service();
+                $s->setApp($this);
+                $s->register();
             }
 
             // After boot hook
@@ -254,17 +193,6 @@ class Core extends Container
             $this->isBooted = true;
         }
 
-        return $this;
-    }
-
-    /**
-     * @param string $class
-     * @param string $function
-     * @return self
-     */
-    public function addMiddleware($class, $function)
-    {
-        $this->middleware[] = new Executable($class, $function);
         return $this;
     }
 
@@ -311,11 +239,6 @@ class Core extends Container
             $this->hooks['before.run']->execute();
         }
 
-        // Call middleware stack
-        foreach ($this->middleware as $m) {
-            $m->execute();
-        }
-
         // Route requests
         $matchedRoute = $route->run($this['request']->getUri(), $this['request']->getMethod());
 
@@ -324,40 +247,32 @@ class Core extends Container
             // Append passed params to GET array.
             $this['request']->get->add($matchedRoute->params);
 
-            // Execute matched route.
-            $this->execute($matchedRoute->class, $matchedRoute->function,
-                        $matchedRoute->params, $this->controllerNamespace);
+            // Add found route to middleware stack
+            $executable = new Executable($matchedRoute->class, $matchedRoute->function);
+
+            if (!empty($matchedRoute->params)) {
+                $executable->setParams($matchedRoute->params);
+            }
+
+            if ($this->controllerNamespace !== null) {
+                $executable->setNamespacePrefix($this->controllerNamespace);
+            }
+
+            $this->middleware[] = $executable;
         } else {
             // If page not found display 404 error.
             $this->notFound();
+        }
+
+        // Call middleware stack
+        foreach ($this->middleware as $m) {
+            $m->execute();
         }
 
         // Post routing/controller hook.
         if (isset($this->hooks['after.run'])) {
             $this->hooks['after.run']->execute();
         }
-    }
-
-    /**
-     * @param string $class
-     * @param string $function
-     * @param array $params
-     * @param string $namespacePrefix
-     * @throws \InvalidArgumentException
-     */
-    protected function execute($class, $function, $params = [], $namespacePrefix = null)
-    {
-        $executable = new Executable($class, $function);
-
-        if (!empty($params)) {
-            $executable->setParams($params);
-        }
-
-        if ($namespacePrefix !== null) {
-            $executable->setNamespacePrefix($namespacePrefix);
-        }
-
-        $executable->execute();
     }
 
     /**
@@ -372,8 +287,7 @@ class Core extends Container
             $this->hooks['not.found']->execute();
         } else {
             $this['response']->setStatusCode(404);
-            $this['response']->setBody('<h1>404 Not Found</h1>The page that you have ' .
-                'requested could not be found.');
+            $this['response']->setBody($e->getMessage());
         }
     }
 
@@ -413,11 +327,6 @@ class Core extends Container
             $this->hooks['after.response']->execute();
         }
 
-        // Display benchmark time if enabled.
-        if ($this['config']['benchmark']) {
-            print '<!--' . \PHP_Timer::resourceUsage() . '-->';
-        }
-
         return $this;
     }
 
@@ -429,7 +338,7 @@ class Core extends Container
      * @param string $function
      * @return self
      */
-    public function setHook($key, $class, $function)
+    public function setHook($key, $class, $function = 'execute')
     {
         $this->hooks[$key] = new Executable($class, $function);
         return $this;
@@ -444,6 +353,27 @@ class Core extends Container
     public function getHook($key)
     {
         return $this->hooks[$key];
+    }
+
+    /**
+     * @param string $class
+     * @param string $function
+     * @return self
+     */
+    public function addMiddleware($class, $function = 'execute')
+    {
+        $this->middleware[] = new Executable($class, $function);
+        return $this;
+    }
+
+    /**
+     * @param string $service
+     * @return self
+     */
+    public function addService($service)
+    {
+        $this->services[] = $service;
+        return $this;
     }
 
     /**
@@ -477,16 +407,6 @@ class Core extends Container
     }
 
     /**
-     * @param string $configPath
-     * @return self
-     */
-    public function setConfigPath($configPath)
-    {
-        $this->configPath = $configPath;
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getViewsPath()
@@ -501,16 +421,6 @@ class Core extends Container
     public function setViewsPath($viewsPath)
     {
         $this->viewsPath = $viewsPath;
-        return $this;
-    }
-
-    /**
-     * @param string $databaseConfigPath
-     * @return self
-     */
-    public function setDatabaseConfigPath($databaseConfigPath)
-    {
-        $this->databaseConfigPath = $databaseConfigPath;
         return $this;
     }
 }

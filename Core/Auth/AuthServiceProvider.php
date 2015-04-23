@@ -12,12 +12,10 @@ class AuthServiceProvider extends ServiceProvider
 {
     /**
      * Create Auth class.
-     *
-     * @var Container $container
      */
-    public function register($container)
+    public function register()
     {
-        $container['auth'] = function ($c) {
+        $this->app['auth'] = function ($c) {
             return new Auth($c['db.default'], $c['session'], new PasswordHash(8, FALSE));
         };
     }

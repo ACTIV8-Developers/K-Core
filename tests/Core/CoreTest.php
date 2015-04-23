@@ -15,7 +15,6 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Core\Core\Core', $app);
         $this->assertInstanceOf('Core\Http\Response', $app['response']);
         $this->assertInstanceOf('Core\Http\Request', $app['request']);
-        $this->assertInstanceOf('Core\Session\Session', $app['session']);
     }
 
     public function testRun()

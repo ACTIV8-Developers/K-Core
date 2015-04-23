@@ -16,7 +16,6 @@ class BaseControllerTest extends PHPUnit_Framework_TestCase
 
 		$this->assertSame($app['request'], $con->getRequest());
 		$this->assertSame($app['response'], $con->getResponse());
-		$this->assertSame($app['session'], $con->getSession());
 	}
 
 	public function testRender()
@@ -54,11 +53,6 @@ class BaseControllerTest extends PHPUnit_Framework_TestCase
 
 class MockController extends Controller
 {
-	public function getSession()
-	{
-		return $this->getValue('session');
-	}
-
 	public function getRequest()
 	{
 		return $this->app['request'];

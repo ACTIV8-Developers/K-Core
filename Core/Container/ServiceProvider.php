@@ -9,9 +9,28 @@ namespace Core\Container;
 abstract class ServiceProvider
 {
     /**
-     * Register the service provider(s).
-     *
-     * @var \Core\Container\Container $container
+     * @var Container $app
      */
-    abstract public function register($container);
+    protected $app = null;
+
+    /**
+     * @return Container
+     */
+    public function getApp()
+    {
+        return $this->app;
+    }
+
+    /**
+     * @param Container $app
+     */
+    public function setApp(Container $app)
+    {
+        $this->app = $app;
+    }
+
+    /**
+     * Register the service provider(s).
+     */
+    abstract public function register();
 }
