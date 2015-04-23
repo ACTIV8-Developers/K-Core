@@ -14,12 +14,14 @@ class AliasLoader
      * @var \Core\Util\AliasLoader
      */
     protected static $instance;
+
     /**
      * The array of class aliases.
      *
      * @var array
      */
     protected $aliases;
+
     /**
      * Indicates if a loader has been registered.
      *

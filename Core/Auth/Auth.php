@@ -22,19 +22,19 @@ class Auth
      * Connections variable to use work with database,
      * loaded in class constructor.
      *
-     * @var object PDO
+     * @var PDO $conn
      */
     protected $conn = null;
 
     /**
      * PasswordHash object, used for password hashing.
      *
-     * @var object
+     * @var PasswordHash $hasher
      */
     protected $hasher = null;
 
     /**
-     * @var object Core\Session\Session
+     * @var \Core\Session\Session $session
      */
     protected $session = null;
 
@@ -43,9 +43,9 @@ class Auth
      *
      * @param AbstractDatabase $db
      * @param Session $session
-     * @param Hasher $hasher
+     * @param PasswordHash $hasher
      */
-    public function __construct(AbstractDatabase $db = null, Session $session, $hasher)
+    public function __construct(AbstractDatabase $db = null, Session $session, PasswordHash $hasher)
     {
         // Set database connection link.
         $this->conn = $db->getConnection();
