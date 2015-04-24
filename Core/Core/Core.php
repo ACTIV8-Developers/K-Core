@@ -262,8 +262,8 @@ class Core extends Container implements ExecutableInterface
             $this['request']->get->add($matchedRoute->params);
 
             // Add found route to middleware stack
-            $executable = new Executable($this->namespacePrefix.$matchedRoute->class,
-                $matchedRoute->function);
+            $executable = (new Executable($this->namespacePrefix.$matchedRoute->class,
+                $matchedRoute->function))->setApp($this);
 
             if (!empty($matchedRoute->params)) {
                 $executable->setParams($matchedRoute->params);
