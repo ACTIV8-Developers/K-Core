@@ -2,17 +2,16 @@
 namespace Core\Core;
 
 use Exception;
+use Core\Http\Request;
+use Core\Http\Response;
+use Core\Routing\Action;
+use Core\Routing\Router;
 use BadFunctionCallException;
 use InvalidArgumentException;
 use Core\Container\Container;
 use Core\Core\Exceptions\StopException;
 use Core\Core\Exceptions\NotFoundException;
-use Core\Http\Request;
-use Core\Http\Response;
-use Core\Routing\Action;
-use Core\Routing\Router;
-use Core\Routing\Executable;
-use Core\Routing\Interfaces\ExecutableInterface;
+use Core\Core\Interfaces\ExecutableInterface;
 
 /**
  * Core class.
@@ -21,14 +20,14 @@ use Core\Routing\Interfaces\ExecutableInterface;
  *
  * @author <milos@caenazzo.com>
  */
-class Core extends Container
+class Core extends Container implements ExecutableInterface
 {
     /**
      * Core version.
      *
      * @var string
      */
-    const VERSION = '1.7rc';
+    const VERSION = '2.0.0rc';
 
     /**
      * @var Core
@@ -357,7 +356,7 @@ class Core extends Container
      */
     public function setHook($key, $class, $function = 'execute', array $params = [])
     {
-        $this->hooks[$key] = new Executable($class, $function, $params);
+        $this->hooks[$key] = (new Executable($class, $function, $params))->setApp($this);
         return $this;
     }
 
@@ -380,7 +379,7 @@ class Core extends Container
      */
     public function addMiddleware($class, $function = 'execute', array $params = [])
     {
-        $this->middleware[] = new Executable($class, $function, $params);
+        $this->middleware[] = (new Executable($class, $function, $params))->setApp($this);
         return $this;
     }
 

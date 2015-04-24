@@ -1,5 +1,5 @@
 <?php
-namespace Core\Routing\Interfaces;
+namespace Core\Core\Interfaces;
 
 /**
  * ExecutableInterface

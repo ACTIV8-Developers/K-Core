@@ -1,11 +1,11 @@
 <?php
 namespace Core\Core;
 
-use Core\Container\ContainerProvider;
+use Core\Container\ContainerAware;
 
 /**
  * Base model abstract class.
  *
  * @author <milos@caenazzo.com>
  */
-abstract class Model extends ContainerProvider {}
+abstract class Model extends ContainerAware {}

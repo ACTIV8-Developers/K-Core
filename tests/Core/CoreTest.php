@@ -53,8 +53,8 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $app->setHook('after.routing', 'Bar', 'foo');
 
         // Test hooks.
-        $this->assertTrue($app->getHook('before.routing') instanceof \Core\Routing\Interfaces\ExecutableInterface);
-        $this->assertTrue($app->getHook('after.routing')instanceof \Core\Routing\Interfaces\ExecutableInterface);
+        $this->assertTrue($app->getHook('before.routing') instanceof \Core\Core\Interfaces\ExecutableInterface);
+        $this->assertTrue($app->getHook('after.routing') instanceof \Core\Core\Interfaces\ExecutableInterface);
     }
 }
 

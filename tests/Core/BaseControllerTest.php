@@ -12,6 +12,7 @@ class BaseControllerTest extends PHPUnit_Framework_TestCase
             ->boot();
 
 		$con = new MockController();
+        $con->setApp($app);
 
 		$this->assertSame($app['request'], $con->getRequest());
 		$this->assertSame($app['response'], $con->getResponse());
@@ -20,6 +21,7 @@ class BaseControllerTest extends PHPUnit_Framework_TestCase
 	public function testRender()
 	{
 		$con = new MockController();
+        $con->setApp(Core::getInstance());
 
 		// Try rendering view with no passed data
 		$view = 'MockView';
@@ -33,6 +35,8 @@ class BaseControllerTest extends PHPUnit_Framework_TestCase
 	public function testRenderDynamicPage()
 	{
 		$con = new MockController();
+
+        $con->setApp(Core::getInstance());
 
 		// Used view files
 		$view = 'MockDynamicView';
@@ -59,7 +63,7 @@ class MockController extends Controller
 
 	public function getResponse()
 	{
-		return $this->getValue('response');
+		return $this->response;
 	}
 
     public function bufferIt($view, $data = [])

@@ -6,29 +6,8 @@ namespace Core\Container;
  *
  * @author <milos@caenazzo.com>
  */
-abstract class ServiceProvider
+abstract class ServiceProvider extends ContainerAware
 {
-    /**
-     * @var Container $app
-     */
-    protected $app = null;
-
-    /**
-     * @return Container
-     */
-    public function getApp()
-    {
-        return $this->app;
-    }
-
-    /**
-     * @param Container $app
-     */
-    public function setApp(Container $app)
-    {
-        $this->app = $app;
-    }
-
     /**
      * Register the service provider(s).
      */

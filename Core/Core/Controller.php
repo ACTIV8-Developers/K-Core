@@ -1,8 +1,7 @@
 <?php
 namespace Core\Core;
 
-use BadMethodCallException;
-use Core\Container\ContainerProvider;
+use Core\Container\ContainerAware;
 use Core\Core\Exceptions\StopException;
 use Core\Core\Exceptions\NotFoundException;
 
@@ -12,7 +11,7 @@ use Core\Core\Exceptions\NotFoundException;
  *
  * @author <milos@caenazzo.com>
  */
-abstract class Controller extends ContainerProvider
+abstract class Controller extends ContainerAware
 {
     /**
      * Get GET value from request object.

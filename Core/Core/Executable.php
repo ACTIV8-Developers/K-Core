@@ -1,7 +1,8 @@
 <?php
-namespace Core\Routing;
+namespace Core\Core;
 
-use Core\Routing\Interfaces\ExecutableInterface;
+use Core\Container\ContainerAware;
+use Core\Core\Interfaces\ExecutableInterface;
 
 /**
  * Executable class.
@@ -9,7 +10,7 @@ use Core\Routing\Interfaces\ExecutableInterface;
  *
  * @author <milos@caenazzo.com>
  */
-class Executable implements ExecutableInterface
+class Executable extends ContainerAware implements ExecutableInterface
 {
     /**
      * @var string
@@ -48,7 +49,11 @@ class Executable implements ExecutableInterface
     public function execute()
     {
         $this->class = '\\' . $this->class;
-        call_user_func_array([new $this->class, $this->method], $this->params);
+        $class = new $this->class();
+        if ($class instanceof ContainerAware) {
+            $class->setApp($this->app);
+        }
+        call_user_func_array([$class, $this->method], $this->params);
         return $this;
     }
 
