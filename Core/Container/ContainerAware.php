@@ -51,16 +51,4 @@ abstract class ContainerAware
             }
         }
     }
-
-    /**
-     * Handle calls to missing methods on the controller.
-     *
-     * @param  string $method
-     * @param  array $parameters
-     * @throws BadMethodCallException
-     */
-    public function __call($method, array $parameters)
-    {
-        throw new BadMethodCallException(sprintf('Method %s does not exist.', $method));
-    }
 }
