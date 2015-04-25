@@ -12,7 +12,7 @@
 	</testsuites>
 	<filter>
 		<whitelist>
-		<directory>./Core/</directory>
+		<directory>../Core/</directory>
 		</whitelist>
 	</filter>
 </phpunit>

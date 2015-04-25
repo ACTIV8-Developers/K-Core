@@ -5,7 +5,7 @@ use Core\Core\Core;
 
 class BaseControllerTest extends PHPUnit_Framework_TestCase
 {
-	public function testGet()
+	public function testBoot()
 	{
         $app = Core::getInstance(__DIR__ . '/../MockApp')
             ->setViewsPath(__DIR__ . '/../MockApp/MockViews')
@@ -48,7 +48,7 @@ class BaseControllerTest extends PHPUnit_Framework_TestCase
 		// Output main and nested view
 		$res = $con->bufferIt($view, $data);
 
-		// Output string shoudl be same as content of MockNestedViewTest.php file
+		// Output string should be same as content of MockNestedViewTest.php file
 		$this->expectOutputString(file_get_contents(\Core\Core\Core::getInstance()->getViewsPath().'/'.$compareView.'.php'));
 		echo $res;
 	}

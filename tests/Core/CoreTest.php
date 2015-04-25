@@ -17,7 +17,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Core\Http\Request', $app['request']);
     }
 
-    public function testRun()
+    public function testExecute()
     {
         // Make instance of app.
         $app = \Core\Core\Core::getNew(__DIR__ . '/../MockApp');

@@ -41,14 +41,10 @@ abstract class ContainerAware
      */
     public function __get($var)
     {
-        if ($var === 'app') {
-            return $this->app;
+        if (isset($this->app[$var])) {
+            return $this->app[$var];
         } else {
-            if (isset($this->app[$var])) {
-                return $this->app[$var];
-            } else {
-                throw new InvalidArgumentException(sprintf('Identifier "%s" is not defined.', $var));
-            }
+            throw new InvalidArgumentException(sprintf('Identifier "%s" is not defined.', $var));
         }
     }
 }

@@ -19,6 +19,39 @@ class CookieTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers Core\Http\Cookie::offsetGet()
+     * @covers Core\Http\Cookie::offsetSet()
+     * @covers Core\Http\Cookie::offsetUnset()
+     * @covers Core\Http\Cookie::offsetExists()
+     */
+    public function testArrayAccess()
+    {
+        $cookie = new Cookie('MyCookie', 'foo');
+
+        $this->assertEquals('foo', $cookie['value']);
+
+        $this->assertTrue(isset($cookie['name']));
+
+        $this->assertTrue(!isset($cookie['unknown']));
+
+        $this->assertEquals(null, $cookie['unknown']);
+
+        unset($cookie['value']);
+
+        $cookie['value'] = 'bar';
+
+        $this->assertEquals('bar', $cookie->getValue());
+
+    }
+
+    public function testGetName()
+    {
+        $cookie = new Cookie('MyCookie', 'foo');
+
+        $this->assertEquals('MyCookie', $cookie->getName());
+    }
+
+    /**
      * @dataProvider invalidNames
      * @expectedException \InvalidArgumentException
      */

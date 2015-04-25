@@ -24,7 +24,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 			'REQUEST_METHOD' => 'PUT'
 		];
 
-		$request1 = new Request($server);
+		$request1 = new Request($server, [], [], [], [], []);
 
 		// Test URI
 		$this->assertEquals($request1->getUri(), 'foo/bar/2');
@@ -32,8 +32,10 @@ class RequestTest extends PHPUnit_Framework_TestCase
 		// Test method
 		$this->assertEquals($request1->getMethod(), 'PUT');
 
-		// Test get protocol
+		// Test get/set protocol
 		$this->assertEquals($request1->getProtocolVersion(), 'HTTP/1.1');
+        $request1->setProtocolVersion('HTTP/1.0');
+        $this->assertEquals($request1->getProtocolVersion(), 'HTTP/1.0');
 
 		// Test get user agent
 		$this->assertEquals($request1->getUserAgent(), 'RandomAgent');
@@ -42,6 +44,10 @@ class RequestTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($request1->headers->get('HTTP_HOST'), 'localhost');
 		$this->assertEquals($request1->server->get('SERVER_NAME'), 'localhost');
 		$this->assertEquals($request1->server->get('SERVER_PORT'), 80);
+
+        // Test get/set body
+        $request1->setBody('test body');
+        $this->assertEquals('test body', $request1->getBody());
 	}
 
 	public function testGetAndIs()
@@ -97,6 +103,9 @@ class RequestTest extends PHPUnit_Framework_TestCase
 		$request3 = new Request($server);
 
 		$this->assertTrue($request3->isDelete());
+
+        $request3->setMethod('HEAD');
+        $this->assertTrue($request3->isHead());
 	}
 
 	public function testPostAndGet()
@@ -116,34 +125,51 @@ class RequestTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($request->post->all(), ['foo'=>'bar','bar'=>'foo']);
 
 		$this->assertEquals($request->get->get('goo'), 'gar');
+
+        $request->setUri('test/2');
+
+        $this->assertEquals('test/2', $request->getUri());
 	}
 
 	public function testSegment()
 	{
 		// Mock random request
-		$_SERVER['REQUEST_URI'] = '/public/foo/bar/2';
-		$_SERVER['SCRIPT_NAME'] = '/public/index.php';
-		$_SERVER['QUERY_STRING'] = '';
-		$_SERVER['REQUEST_METHOD'] = 'GET';
+        $_TEST_SERVER['REQUEST_URI'] = '/public/foo/bar/2';
+        $_TEST_SERVER['SCRIPT_NAME'] = '/public/index.php';
+        $_TEST_SERVER['QUERY_STRING'] = '';
+        $_TEST_SERVER['REQUEST_METHOD'] = 'GET';
 
-		$request1 = new Request($_SERVER);
+		$request1 = new Request($_TEST_SERVER);
 
 		$this->assertEquals($request1->getUriSegment(0), 'foo');
 
 		$this->assertEquals($request1->getUriSegment(2), '2');
+
+        $this->assertEquals($request1->getUriSegment(100), false);
 	}
 
 	public function testGetHeaders()
 	{
-		$_SERVER['REQUEST_URI'] = '/public/foo/bar/2';
-		$_SERVER['REQUEST_METHOD'] = 'GET';
-		$_SERVER['HTTP_ACCEPT_ENCODING'] = 'gzip';
-		$_SERVER['CONTENT_TYPE'] = 'application/x-www-form-urlencoded';
-		$_SERVER['CONTENT_LENGTH'] = 100;
+        $_TEST_SERVER['REQUEST_URI'] = '/public/foo/bar/2';
+        $_TEST_SERVER['SCRIPT_NAME'] = '/public/index.php';
+        $_TEST_SERVER['QUERY_STRING'] = '';
+        $_TEST_SERVER['REQUEST_METHOD'] = 'GET';
 
-        $req = new Request($_SERVER);
+        $_TEST_SERVER['HTTP_ACCEPT_ENCODING'] = 'gzip';
+        $headers['HTTP_ACCEPT_ENCODING'] = $_TEST_SERVER['HTTP_ACCEPT_ENCODING'];
+        $_TEST_SERVER['CONTENT_TYPE'] = 'application/x-www-form-urlencoded';
+        $headers['CONTENT_TYPE'] = $_TEST_SERVER['CONTENT_TYPE'];
+        $_TEST_SERVER['CONTENT_LENGTH'] = 100;
+        $headers['CONTENT_LENGTH'] = $_TEST_SERVER['CONTENT_LENGTH'];
+
+        $req = new Request($_TEST_SERVER);
+
+        $this->assertEquals($req->getHeaders(), $headers);
         $this->assertEquals('gzip', $req->headers->get('HTTP_ACCEPT_ENCODING'));
-        $this->assertEquals(100, $req->headers->get('CONTENT_LENGTH'));
+        $this->assertEquals(100, $req->getHeader('CONTENT_LENGTH'));
+        $this->assertEquals(100, $req->getContentLength());
+        $req->setHeader('HTTP_REFERRER', 'www.test.com');
+        $this->assertEquals('www.test.com', $req->getReferrer());
         $this->assertEquals('application/x-www-form-urlencoded', $req->getContentType());
 	}
 }

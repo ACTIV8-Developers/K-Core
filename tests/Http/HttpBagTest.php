@@ -118,4 +118,28 @@ class HttpBagTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(count($parameters), count($HttpBag));
     }
+
+    public function testHas()
+    {
+        $parameters = ['foo' => 'bar', 'hello' => 'world'];
+
+        $HttpBag = new HttpBag($parameters);
+
+        $this->assertTrue($HttpBag->has('foo'));
+
+        $this->assertTrue(!$HttpBag->has('unknown'));
+    }
+
+    public function testReplace()
+    {
+        $parameters = ['foo' => 'bar'];
+
+        $HttpBag = new HttpBag($parameters);
+
+        $parameters2 = ['hello' => 'world'];
+
+        $HttpBag->replace($parameters2);
+
+        $this->assertEquals($parameters2, $HttpBag->all());
+    }
 }

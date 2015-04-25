@@ -10,13 +10,6 @@ ob_start();
 require __DIR__.'/../vendor/autoload.php';
 /*
 |--------------------------------------------------------------------------
-| Register aliases auto loader.
-|--------------------------------------------------------------------------
-| Additional auto loader for prettier class names.
-*/
-AliasLoader::getInstance(require(__DIR__.'/MockApp/Config/Aliases.php'))->register();
-/*
-|--------------------------------------------------------------------------
 | Register timezone
 |--------------------------------------------------------------------------
 */

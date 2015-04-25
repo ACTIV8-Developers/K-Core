@@ -2,16 +2,20 @@
 
 class AliasLoaderTest extends PHPUnit_Framework_TestCase
 {
-	public function testLoader()
-	{
-		// Mock random server status.
-		$_SERVER['HTTP_HOST'] = 'localhost';
-    	$_SERVER['SCRIPT_NAME'] = '/www/index.php';
+    public function testLoaderCanBeCreatedAndRegisteredOnce()
+    {
+        $loader = \Core\Util\AliasLoader::getInstance(array('foo' => 'bar'));
 
-    	// Test assets get (remember PUBLIC folder is set to 'public')
-    	$this->assertEquals(Util::base('foo'), 'http://localhost/www/foo');
-    	$this->assertEquals(Util::css('foo.css'), 'http://localhost/www/public/css/foo.css');
-    	$this->assertEquals(Util::js('foo.js'), 'http://localhost/www/public/js/foo.js');
-    	$this->assertEquals(Util::img('foo.png'), 'http://localhost/www/public/images/foo.png');
-	}
+        $this->assertEquals(array('foo' => 'bar'), $loader->getAliases());
+        $this->assertFalse($loader->isRegistered());
+        $loader->register();
+
+        $this->assertTrue($loader->isRegistered());
+    }
+
+    public function testGetInstanceCreatesOneInstance()
+    {
+        $loader = \Core\Util\AliasLoader::getInstance(array('foo' => 'bar'));
+        $this->assertEquals($loader, \Core\Util\AliasLoader::getInstance());
+    }
 }

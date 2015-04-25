@@ -150,7 +150,7 @@ class Request implements RequestInterface
     /**
      * Set request body
      *
-     * @param $body Body
+     * @param string $body
      * @return self
      */
     public function setBody($body)
