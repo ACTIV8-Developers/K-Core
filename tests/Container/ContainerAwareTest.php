@@ -46,6 +46,6 @@ class TestContainer extends \Core\Container\ContainerAware
 
     public function getUknown()
     {
-        return $this->app['uknown'];
+        return $this->uknown;
     }
 }

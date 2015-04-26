@@ -1,6 +1,4 @@
 <?php
-use Core\Util\AliasLoader;
-
 ob_start();
 /*
 |--------------------------------------------------------------------------
@@ -20,4 +18,4 @@ date_default_timezone_set('Europe/Belgrade');
 |--------------------------------------------------------------------------
 */
 $_SERVER['REQUEST_METHOD'] = 'GET';
-$_SERVER['REQUEST_URI'] = '/test';
+$_SERVER['REQUEST_URI'] = '/test/2';

@@ -71,7 +71,7 @@ class Request implements RequestInterface
      *
      * @var string
      */
-    protected $body = '';
+    protected $body = null;
 
     /**
      * Class constructor.
@@ -122,7 +122,7 @@ class Request implements RequestInterface
         if (0 === strpos($this->headers->get('CONTENT_TYPE'), 'application/x-www-form-urlencoded')
             && in_array($this->server->get('REQUEST_METHOD'), array('PUT', 'DELETE', 'PATCH'))
         ) {
-            parse_str($this->getContent(), $data);
+            parse_str($this->getBody(), $data);
             $this->post = new HttpBag($data);
         } else {
             $this->post = new HttpBag($post);

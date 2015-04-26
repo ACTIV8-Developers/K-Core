@@ -21,6 +21,10 @@ class RouteTest extends PHPUnit_Framework_TestCase
 
 		// Is array of methods good now ?
 		$this->assertEquals(['PUT', 'POST', 'GET'], $route->getHttpMethods());
+
+        // Set methods
+        $route->setHttpMethods(['PUT']);
+        $this->assertEquals(['PUT'], $route->getHttpMethods());
 	}
 
 	public function testMatches()

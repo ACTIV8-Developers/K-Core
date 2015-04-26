@@ -1,3 +1,3 @@
 <?php
 // Test route
-$route->get('test', 'TestController', 'index');
+$route->get('test/:id', 'TestController', 'index');

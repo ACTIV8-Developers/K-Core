@@ -1,7 +1,6 @@
 <?php
 namespace Core\Container;
 
-use BadMethodCallException;
 use InvalidArgumentException;
 
 /**

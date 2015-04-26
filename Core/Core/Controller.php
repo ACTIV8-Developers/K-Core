@@ -43,6 +43,34 @@ abstract class Controller extends ContainerAware
     }
 
     /**
+     * Get COOKIE value from request object.
+     *
+     * @param string $key
+     * @return mixed
+     */
+    protected function cookies($key = null)
+    {
+        if ($key === null) {
+            return $this->app['request']->cookies->all();
+        }
+        return $this->app['request']->cookies->get($key);
+    }
+
+    /**
+     * Get FILES value from request object.
+     *
+     * @param string $key
+     * @return mixed
+     */
+    protected function files($key = null)
+    {
+        if ($key === null) {
+            return $this->app['request']->files->all();
+        }
+        return $this->app['request']->files->get($key);
+    }
+
+    /**
      * Render output for display.
      *
      * @param string $view

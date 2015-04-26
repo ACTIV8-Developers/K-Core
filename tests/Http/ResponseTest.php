@@ -57,4 +57,15 @@ class ResponseTest extends PHPUnit_Framework_TestCase
 
         $response->setCookie('mycookie', 'foo');
     }
+
+    public function testSend()
+    {
+        $response = new Response();
+
+        $response->setCookie('foo', 'bar');
+
+        $response->setHeader('Content-Length', 0);
+
+        $response->send();
+    }
 }

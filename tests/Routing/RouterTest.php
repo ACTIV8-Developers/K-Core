@@ -4,9 +4,6 @@ use Core\Routing\Router;
 
 class RouterTest extends PHPUnit_Framework_TestCase
 {
-	/**
-	* Test main run method of Router class
-	*/
 	public function testRun()
 	{
 		// Create router object
@@ -46,5 +43,9 @@ class RouterTest extends PHPUnit_Framework_TestCase
 		$this->assertContains($route4, $router->getRoutes());
 
 		$this->assertContains($route5, $router->getRoutes());
+
+        $router->clearRoutes();
+
+        $this->assertEquals([], $router->getRoutes());
 	}
 }

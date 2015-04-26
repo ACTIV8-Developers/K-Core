@@ -93,12 +93,15 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
 		$this->assertFalse($request3->isOptions());
 
+        $this->assertFalse($request3->isAjax());
+
 		// Mock random request
 		$server['REQUEST_URI'] = '/public/foo/bar/';
 		$server['SCRIPT_NAME'] = '/public/index.php';
 		$server['QUERY_STRING'] = '?foo=2&bar=3';
 		$server['REQUEST_METHOD'] = 'DELETE';
 		$server['SERVER_PROTOCOL'] = 'HTTP/1.1';
+        $server['HTTP_X_REQUESTED_WITH'] = 'xmlhttprequest';
 
 		$request3 = new Request($server);
 
@@ -106,6 +109,8 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
         $request3->setMethod('HEAD');
         $this->assertTrue($request3->isHead());
+
+        $this->assertTrue($request3->isAjax());
 	}
 
 	public function testPostAndGet()
@@ -172,4 +177,25 @@ class RequestTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('www.test.com', $req->getReferrer());
         $this->assertEquals('application/x-www-form-urlencoded', $req->getContentType());
 	}
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testInvalidRequest()
+    {
+        $_TEST_SERVER = [];
+        new Request($_TEST_SERVER);
+    }
+
+    public function testPutPatchDelete()
+    {
+        $_TEST_SERVER['REQUEST_URI'] = '/public/index.php';
+        $_TEST_SERVER['SCRIPT_NAME'] = '/public/index.php';
+        $_TEST_SERVER['QUERY_STRING'] = '';
+        $_TEST_SERVER['REQUEST_METHOD'] = 'PUT';
+        $_TEST_SERVER['CONTENT_TYPE'] = 'application/x-www-form-urlencoded';
+        $_TEST_SERVER['HTTP_CONTENT_LENGTH'] = 0;
+
+        new Request($_TEST_SERVER);
+    }
 }
