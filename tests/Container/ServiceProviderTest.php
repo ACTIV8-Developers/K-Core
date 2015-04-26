@@ -7,6 +7,10 @@ class ServiceProviderTest extends PHPUnit_Framework_TestCase
      */
     public function testRegister()
     {
+        $stub = $this->getMockForAbstractClass('Core\Container\ServiceProvider');
+
+        $stub->register();
+
         $service = new TestServiceClass();
 
         $this->assertEquals('test', $service->register());

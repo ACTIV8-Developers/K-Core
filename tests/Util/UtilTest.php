@@ -21,4 +21,9 @@ class UtilTest extends PHPUnit_Framework_TestCase
         // Test cached
         $this->assertEquals(Util::base('foo'), 'http://localhost/www/foo');
 	}
+
+    public function testRedirect()
+    {
+
+    }
 }
