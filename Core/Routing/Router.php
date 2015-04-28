@@ -76,7 +76,7 @@ class Router implements RouterInterface
      * @param string $url
      * @param string $class
      * @param string $function
-     * @return \Core\Core\Route
+     * @return \Core\Routing\Route
      */
     public function put($url, $class, $function)
     {
@@ -91,7 +91,7 @@ class Router implements RouterInterface
      * @param string $url
      * @param string $class
      * @param string $function
-     * @return \Core\Core\Route
+     * @return \Core\Routing\Route
      */
     public function delete($url, $class, $function)
     {
@@ -115,7 +115,7 @@ class Router implements RouterInterface
     /**
      * Get list of routes.
      *
-     * @return \Core\Core\Route[]
+     * @return \Core\Routing\Route
      */
     public function getRoutes()
     {

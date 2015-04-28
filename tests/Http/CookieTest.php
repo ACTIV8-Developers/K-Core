@@ -18,12 +18,6 @@ class CookieTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @covers Core\Http\Cookie::offsetGet()
-     * @covers Core\Http\Cookie::offsetSet()
-     * @covers Core\Http\Cookie::offsetUnset()
-     * @covers Core\Http\Cookie::offsetExists()
-     */
     public function testArrayAccess()
     {
         $cookie = new Cookie('MyCookie', 'foo');

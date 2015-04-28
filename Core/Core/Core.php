@@ -4,7 +4,6 @@ namespace Core\Core;
 use Exception;
 use Core\Http\Request;
 use Core\Http\Response;
-use Core\Routing\Action;
 use Core\Routing\Router;
 use BadFunctionCallException;
 use InvalidArgumentException;
