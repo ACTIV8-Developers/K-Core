@@ -95,7 +95,7 @@ class Route implements RouteInterface
      * Inspired by: http://blog.sosedoff.com/2009/09/20/rails-like-php-url-router/
      *
      * @param string $uri
-     * @param string method
+     * @param string $method
      * @return bool
      */
     public function matches($uri, $method)

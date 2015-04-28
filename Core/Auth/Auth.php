@@ -22,7 +22,7 @@ class Auth
      * Connections variable to use work with database,
      * loaded in class constructor.
      *
-     * @var PDO $conn
+     * @var \PDO $conn
      */
     protected $conn = null;
 
