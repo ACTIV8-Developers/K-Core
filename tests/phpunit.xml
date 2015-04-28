@@ -12,12 +12,12 @@
 	</testsuites>
 	<filter>
 		<whitelist>
-		<!--directory>../Core/</directory-->
-        <directory>../Core/Container/</directory>
+		<directory>../Core/</directory>
+        <!--directory>../Core/Container/</directory>
         <directory>../Core/Core/</directory>
         <directory>../Core/Http/</directory>
         <directory>../Core/Routing/</directory>
-        <directory>../Core/Util/</directory>
+        <directory>../Core/Util/</directory-->
 		</whitelist>
 	</filter>
 </phpunit>

@@ -79,15 +79,32 @@ class Pagination
 
     /**
      * Shortcut static function, makes new Pagination object
-     * and calls createLinks method.
+     * and returns it
      *
      * @param array $config
-     * @return string
+     * @return self
      */
-    public static function make(array $config)
+    public function getNew(array $config = [])
     {
-        $pagination = new Pagination($config);
-        return $pagination->createLinks();
+        return new Pagination($config);
+    }
+
+    /**
+     * Shortcut setter
+     *
+     * @param $name
+     * @param $args
+     * @return $this
+     * @throws \InvalidArgumentException;
+     */
+    public function __call($name, $args)
+    {
+        if (isset($this->$name) && isset($args[0])) {
+            $this->$name = $args[0];
+        } else {
+            throw new \InvalidArgumentException('Undefined pagination property {$name}');
+        }
+        return $this;
     }
 
     /**
@@ -95,7 +112,7 @@ class Pagination
      *
      * @return string (HTML of pagination menu)
      */
-    public function createLinks()
+    public function create()
     {
         $r = '';// Variable to hold result
         // Calculate the total number of pages
