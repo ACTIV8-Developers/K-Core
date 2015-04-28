@@ -29,7 +29,7 @@ class Router implements RouterInterface
      * @var string $requestMethod
      * @return null|\Core\Routing\Route
      */
-    public function run($uri, $requestMethod)
+    public function execute($uri, $requestMethod)
     {
         // Find correct route.
         foreach ($this->routes as $route) {

@@ -81,11 +81,11 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $app->setHook('after.response', 'TestHook', 'hook');
 
         // Test hooks.
-        $this->assertTrue($app->getHook('before.boot') instanceof \Core\Core\Interfaces\ExecutableInterface);
-        $this->assertTrue($app->getHook('after.boot') instanceof \Core\Core\Interfaces\ExecutableInterface);
-        $this->assertTrue($app->getHook('before.run') instanceof \Core\Core\Interfaces\ExecutableInterface);
-        $this->assertTrue($app->getHook('after.run') instanceof \Core\Core\Interfaces\ExecutableInterface);
-        $this->assertTrue($app->getHook('after.response') instanceof \Core\Core\Interfaces\ExecutableInterface);
+        $this->assertTrue($app->getHook('before.boot') instanceof \Core\Container\Interfaces\ExecutableInterface);
+        $this->assertTrue($app->getHook('after.boot') instanceof \Core\Container\Interfaces\ExecutableInterface);
+        $this->assertTrue($app->getHook('before.run') instanceof \Core\Container\Interfaces\ExecutableInterface);
+        $this->assertTrue($app->getHook('after.run') instanceof \Core\Container\Interfaces\ExecutableInterface);
+        $this->assertTrue($app->getHook('after.response') instanceof \Core\Container\Interfaces\ExecutableInterface);
 
         $app->boot()->execute()->sendResponse();
 

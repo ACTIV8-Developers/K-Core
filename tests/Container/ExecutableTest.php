@@ -4,7 +4,7 @@ class ExecutableTest extends PHPUnit_Framework_TestCase
 {
     public function testGettersSetters()
     {
-        $e = new \Core\Core\Executable('class', 'method', ['test']);
+        $e = new \Core\Container\Executable('class', 'method', ['test']);
 
         $container = new \Core\Container\Container();
         $container['foo'] = 'bar';

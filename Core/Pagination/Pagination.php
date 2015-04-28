@@ -82,9 +82,9 @@ class Pagination
      * and returns it
      *
      * @param array $config
-     * @return self
+     * @return Pagination
      */
-    public function getNew(array $config = [])
+    public static function getNew(array $config = [])
     {
         return new Pagination($config);
     }

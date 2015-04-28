@@ -1,8 +1,7 @@
 <?php
-namespace Core\Core;
+namespace Core\Container;
 
-use Core\Container\ContainerAware;
-use Core\Core\Interfaces\ExecutableInterface;
+use Core\Container\Interfaces\ExecutableInterface;
 
 /**
  * Executable class.
@@ -48,11 +47,17 @@ class Executable extends ContainerAware implements ExecutableInterface
      */
     public function execute()
     {
+        // Add namespace prefix
         $this->class = '\\' . $this->class;
+
+        // Create class
         $class = new $this->class();
+
+        // If class needs container inject it
         if ($class instanceof ContainerAware) {
             $class->setApp($this->app);
         }
+        // Execute
         call_user_func_array([$class, $this->method], $this->params);
         return $this;
     }

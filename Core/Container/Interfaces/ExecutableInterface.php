@@ -1,5 +1,5 @@
 <?php
-namespace Core\Core\Interfaces;
+namespace Core\Container\Interfaces;
 
 /**
  * ExecutableInterface

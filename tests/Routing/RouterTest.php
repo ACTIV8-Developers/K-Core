@@ -14,9 +14,9 @@ class RouterTest extends PHPUnit_Framework_TestCase
 		$router->addRoute($route);
 
 		// Inject request and run test
-		$this->assertEquals($router->run('foo/bar', 'GET'), $route);
+		$this->assertEquals($router->execute('foo/bar', 'GET'), $route);
 
-		$this->assertEquals($router->run('foo/bar', 'POST'), false);
+		$this->assertEquals($router->execute('foo/bar', 'POST'), false);
 	}
 
 	public function testRouteAdd()

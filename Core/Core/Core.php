@@ -8,9 +8,10 @@ use Core\Routing\Router;
 use BadFunctionCallException;
 use InvalidArgumentException;
 use Core\Container\Container;
+use Core\Container\Executable;
 use Core\Core\Exceptions\StopException;
 use Core\Core\Exceptions\NotFoundException;
-use Core\Core\Interfaces\ExecutableInterface;
+use Core\Container\Interfaces\ExecutableInterface;
 
 /**
  * Core class.
@@ -210,7 +211,7 @@ class Core extends Container implements ExecutableInterface
     }
 
     /**
-     * Application main executive function.
+     * Route request and execute associated action.
      *
      * @throws BadFunctionCallException
      * @return self
@@ -253,7 +254,7 @@ class Core extends Container implements ExecutableInterface
         }
 
         // Route requests
-        $matchedRoute = $route->run($this['request']->getUri(), $this['request']->getMethod());
+        $matchedRoute = $route->execute($this['request']->getUri(), $this['request']->getMethod());
 
         // Execute route if found.
         if (null !== $matchedRoute) {
@@ -286,7 +287,7 @@ class Core extends Container implements ExecutableInterface
     }
 
     /**
-     * Default handler for 404 error.
+     * Handle 404.
      *
      * @param NotFoundException $e
      */
