@@ -76,15 +76,15 @@ class CoreTest extends PHPUnit_Framework_TestCase
         // Make hooks.
         $app->setHook('before.boot', 'TestHook', 'hook');
         $app->setHook('after.boot', 'TestHook', 'hook');
-        $app->setHook('before.run', 'TestHook', 'hook');
-        $app->setHook('after.run', 'TestHook', 'hook');
+        $app->setHook('before.routing', 'TestHook', 'hook');
+        $app->setHook('after.routing', 'TestHook', 'hook');
         $app->setHook('after.response', 'TestHook', 'hook');
 
         // Test hooks.
         $this->assertTrue($app->getHook('before.boot') instanceof \Core\Container\Interfaces\ExecutableInterface);
         $this->assertTrue($app->getHook('after.boot') instanceof \Core\Container\Interfaces\ExecutableInterface);
-        $this->assertTrue($app->getHook('before.run') instanceof \Core\Container\Interfaces\ExecutableInterface);
-        $this->assertTrue($app->getHook('after.run') instanceof \Core\Container\Interfaces\ExecutableInterface);
+        $this->assertTrue($app->getHook('before.routing') instanceof \Core\Container\Interfaces\ExecutableInterface);
+        $this->assertTrue($app->getHook('after.routing') instanceof \Core\Container\Interfaces\ExecutableInterface);
         $this->assertTrue($app->getHook('after.response') instanceof \Core\Container\Interfaces\ExecutableInterface);
 
         $app->boot()->execute()->sendResponse();

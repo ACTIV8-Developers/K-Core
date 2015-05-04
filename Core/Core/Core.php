@@ -11,7 +11,6 @@ use Core\Container\Container;
 use Core\Container\Executable;
 use Core\Core\Exceptions\StopException;
 use Core\Core\Exceptions\NotFoundException;
-use Core\Container\Interfaces\ExecutableInterface;
 
 /**
  * Core class.
@@ -20,7 +19,7 @@ use Core\Container\Interfaces\ExecutableInterface;
  *
  * @author <milos@caenazzo.com>
  */
-class Core extends Container implements ExecutableInterface
+class Core extends Container
 {
     /**
      * Core version.
@@ -86,8 +85,8 @@ class Core extends Container implements ExecutableInterface
     protected $hooks = [
         'before.boot' => null,
         'after.boot' => null,
-        'before.run' => null,
-        'after.run' => null,
+        'before.routing' => null,
+        'after.routing' => null,
         'after.response' => null,
         'not.found' => null,
         'internal.error' => null
@@ -249,8 +248,8 @@ class Core extends Container implements ExecutableInterface
         }
 
         // Pre routing/controller hook.
-        if (isset($this->hooks['before.run'])) {
-            $this->hooks['before.run']->execute();
+        if (isset($this->hooks['before.routing'])) {
+            $this->hooks['before.routing']->execute();
         }
 
         // Route requests
@@ -281,8 +280,8 @@ class Core extends Container implements ExecutableInterface
         }
 
         // Post routing/controller hook.
-        if (isset($this->hooks['after.run'])) {
-            $this->hooks['after.run']->execute();
+        if (isset($this->hooks['after.routing'])) {
+            $this->hooks['after.routing']->execute();
         }
     }
 
