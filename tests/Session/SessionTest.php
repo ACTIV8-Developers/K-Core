@@ -31,7 +31,7 @@ class SessionTest extends PHPUnit_Framework_TestCase
 
     public function testStart()
     {
-        $this->session->start();
+        //$this->session->start();
     }
 
 	public function testGetSet()
