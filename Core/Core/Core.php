@@ -26,7 +26,7 @@ class Core extends Container
      *
      * @var string
      */
-    const VERSION = '2.0.0rc';
+    const VERSION = '2.0.0';
 
     /**
      * @var Core
@@ -224,7 +224,7 @@ class Core extends Container
         try {
             $this->routeRequest();
         } catch (StopException $e) {
-            // Just pass
+            // Just stop
         } catch (NotFoundException $e) {
             $this->notFound($e);
         } catch (Exception $e) {

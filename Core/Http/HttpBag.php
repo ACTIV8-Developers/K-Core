@@ -35,13 +35,23 @@ class HttpBag implements \IteratorAggregate, \Countable
     }
 
     /**
-     * Returns the element keys.
+     * Returns the elements keys.
      *
      * @return array
      */
     public function keys()
     {
         return array_keys($this->elements);
+    }
+
+    /**
+     * Returns the elements values.
+     *
+     * @return array
+     */
+    public function values()
+    {
+        return array_values($this->elements);
     }
 
     /**
@@ -94,6 +104,15 @@ class HttpBag implements \IteratorAggregate, \Countable
     public function remove($key)
     {
         unset($this->elements[$key]);
+    }
+
+    /**
+     * Removes all elements.
+     */
+    public function clear()
+    {
+        unset($this->elements);
+        $this->elements = [];
     }
 
     /**

@@ -201,15 +201,16 @@ class Session
     /**
      * Clear session values.
      */
-    public function flush()
+    public function clear()
     {
+        unset($_SESSION);
         $_SESSION = [];
     }
 
     /**
      * @param string $key
      */
-    public function forget($key)
+    public function remove($key)
     {
         unset($_SESSION[$key]);
     }

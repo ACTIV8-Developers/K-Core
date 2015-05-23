@@ -30,11 +30,11 @@ class PaginationTest extends PHPUnit_Framework_TestCase
             'baseUrl'     => ''
         ];
 
-        $pagination = \Core\Pagination\Pagination::getNew()
+        $pagination = \Core\Pagination\Pagination::getNew($config)
                                     ->totalRows(10)
                                     ->perPage(2)
                                     ->numLinks(1)
-                                    ->curOffset(4);
+                                    ->curOffset(5);
     }
 
     /**

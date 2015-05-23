@@ -41,19 +41,19 @@ class Auth
     /**
      * Class constructor.
      *
-     * @param AbstractDatabase $db
+     * @param \PDO $dbConn
      * @param Session $session
      * @param PasswordHash $hasher
      */
-    public function __construct(AbstractDatabase $db = null, Session $session, PasswordHash $hasher)
+    public function __construct(\PDO $dbConn, Session $session, PasswordHash $hasher)
     {
         // Set database connection link.
-        $this->conn = $db->getConnection();
+        $this->conn = $dbConn;
 
         // Set session link.
         $this->session = $session;
 
-        // Set hasher tool
+        // Set hashes tool
         $this->hasher = $hasher;
     }
 
@@ -227,6 +227,6 @@ class Auth
      */
     public function logout()
     {
-        $this->session->forget('user');
+        $this->session->remove('user');
     }
 }

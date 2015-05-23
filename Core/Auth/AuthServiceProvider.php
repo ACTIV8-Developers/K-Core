@@ -16,7 +16,7 @@ class AuthServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app['auth'] = function ($c) {
-            return new Auth($c['db'], $c['session'], new PasswordHash(8, false));
+            return new Auth($c['db']->getConnection(), $c['session'], new PasswordHash(8, false));
         };
     }
 }

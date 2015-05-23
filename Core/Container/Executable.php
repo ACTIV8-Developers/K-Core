@@ -57,7 +57,8 @@ class Executable extends ContainerAware implements ExecutableInterface
         if ($class instanceof ContainerAware) {
             $class->setApp($this->app);
         }
-        // Execute
+
+        // Execute class method
         call_user_func_array([$class, $this->method], $this->params);
         return $this;
     }

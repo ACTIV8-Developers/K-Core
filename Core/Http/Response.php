@@ -71,6 +71,7 @@ class Response implements ResponseInterface
         504 => '504 Gateway Timeout',
         505 => '505 HTTP Version Not Supported'
     ];
+
     /**
      * List of HTTP headers to be sent.
      *

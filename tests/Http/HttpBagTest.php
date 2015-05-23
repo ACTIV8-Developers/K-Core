@@ -28,6 +28,13 @@ class HttpBagTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(['foo'], $HttpBag->keys());
     }
 
+    public function testValues()
+    {
+        $HttpBag = new HttpBag(['foo' => 'bar']);
+
+        $this->assertEquals(['bar'], $HttpBag->values());
+    }
+
     public function testAdd()
     {
         $HttpBag = new HttpBag(['foo' => 'bar']);
@@ -141,5 +148,16 @@ class HttpBagTest extends PHPUnit_Framework_TestCase
         $HttpBag->replace($parameters2);
 
         $this->assertEquals($parameters2, $HttpBag->all());
+    }
+
+    public function testClear()
+    {
+        $parameters = ['foo' => 'bar', 'hello' => 'world'];
+
+        $HttpBag = new HttpBag($parameters);
+
+        $HttpBag->clear();
+
+        $this->assertEquals($HttpBag->all(), []);
     }
 }
