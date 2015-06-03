@@ -7,9 +7,6 @@ class RouteTest extends PHPUnit_Framework_TestCase
 	{
 		$route = new Route('foo/bar', 'PUT', 'foo', 'bar');
 
-		// Did route URL set properly ?
-		$this->assertEquals('foo/bar', $route->url);
-		
 		// Add one more method.
 		$route->viaPost();
 
@@ -166,11 +163,11 @@ class RouteTest extends PHPUnit_Framework_TestCase
 	{
 		$route = new Route('foo/:param', 'GET', 'bar', 'foo');
 
-		$this->assertEmpty($route->params);
+		$this->assertEmpty($route->getParams());
 
 		// Route must match in order to get params, before that it will be empty.
 		$this->assertTrue($route->matches('foo/bar','GET'));
 
-		$this->assertEquals(['param' => 'bar'], $route->params);
+		$this->assertEquals(['param' => 'bar'], $route->getParams());
 	}
 }

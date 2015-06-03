@@ -2,13 +2,14 @@
 namespace Core\Container;
 
 use InvalidArgumentException;
+use Core\Container\Interfaces\ContainerAwareInterface;
 
 /**
  * Abstract class ContainerAware
  *
  * @author <milos@caenazzo.com>
  */
-abstract class ContainerAware
+abstract class ContainerAware implements ContainerAwareInterface
 {
     /**
      * @var Container $app
@@ -35,7 +36,7 @@ abstract class ContainerAware
 
     /**
      * @param $var
-     * @return Container|mixed
+     * @return mixed
      * @throws InvalidArgumentException
      */
     public function __get($var)

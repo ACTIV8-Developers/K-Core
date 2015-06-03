@@ -92,7 +92,7 @@ class ControllerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException  Core\Core\Exceptions\StopException
+     * @expectedException Core\Core\Exceptions\StopException
      */
     public function testStop()
     {

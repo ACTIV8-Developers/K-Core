@@ -16,28 +16,28 @@ class Route implements RouteInterface
      *
      * @var string
      */
-    public $url = '';
+    protected $url = '';
 
     /**
      * Controller/method assigned to be executed when route is matched.
      *
      * @var string
      */
-    public $class = null;
+    protected $class = null;
 
     /**
      * Function assigned to be executed when route is matched.
      *
      * @var string
      */
-    public $function = null;
+    protected $function = null;
 
     /**
      * List of parameters extracted from passed URI.
      *
      * @var array
      */
-    public $params = [];
+    protected $params = [];
 
     /**
      * List of supported HTTP methods for this route (GET, POST etc.).
@@ -209,5 +209,35 @@ class Route implements RouteInterface
     public function getHttpMethods()
     {
         return $this->methods;
+    }
+
+    /**
+     * Get parameters associated passed with route if matched
+     *
+     * @return array
+     */
+    public function getParams()
+    {
+        return $this->params;
+    }
+
+    /**
+     * Get class associated with route
+     *
+     * @return string
+     */
+    public function getClass()
+    {
+        return $this->class;
+    }
+
+    /**
+     * Get method/function associated with route
+     *
+     * @return string
+     */
+    public function getFunction()
+    {
+        return $this->function;
     }
 }

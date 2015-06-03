@@ -1,6 +1,7 @@
 <?php
 namespace Core\Container;
 
+use Core\Container\Interfaces\ContainerAwareInterface;
 use Core\Container\Interfaces\ExecutableInterface;
 
 /**
@@ -54,7 +55,7 @@ class Executable extends ContainerAware implements ExecutableInterface
         $class = new $this->class();
 
         // If class needs container inject it
-        if ($class instanceof ContainerAware) {
+        if ($class instanceof ContainerAwareInterface) {
             $class->setApp($this->app);
         }
 
@@ -111,7 +112,7 @@ class Executable extends ContainerAware implements ExecutableInterface
      * @param array $params
      * @return self
      */
-    public function setParams($params)
+    public function setParams(array $params)
     {
         $this->params = $params;
         return $this;

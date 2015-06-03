@@ -16,4 +16,25 @@ interface RouteInterface
      * @return bool
      */
     public function matches($uri, $method);
+
+    /**
+     * Get parameters associated passed with route if matched
+     *
+     * @return array
+     */
+    public function getParams();
+
+    /**
+     * Get class associated with route
+     *
+     * @return string
+     */
+    public function getClass();
+
+    /**
+     * Get method/function associated with route
+     *
+     * @return string
+     */
+    public function getFunction();
 }

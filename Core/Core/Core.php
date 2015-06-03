@@ -6,9 +6,9 @@ use Core\Http\Request;
 use Core\Http\Response;
 use Core\Routing\Router;
 use BadFunctionCallException;
-use InvalidArgumentException;
 use Core\Container\Container;
 use Core\Container\Executable;
+use Core\Core\Interfaces\CoreInterface;
 use Core\Core\Exceptions\StopException;
 use Core\Core\Exceptions\NotFoundException;
 
@@ -19,7 +19,7 @@ use Core\Core\Exceptions\NotFoundException;
  *
  * @author <milos@caenazzo.com>
  */
-class Core extends Container
+class Core extends Container implements CoreInterface
 {
     /**
      * Core version.
@@ -156,7 +156,6 @@ class Core extends Container
      * Boot application
      *
      * @return self
-     * @throws InvalidArgumentException
      */
     public function boot()
     {
@@ -257,17 +256,18 @@ class Core extends Container
 
         // Execute route if found.
         if (null !== $matchedRoute) {
+            // Get passed route params
+            $params = $matchedRoute->getParams();
+
             // Append passed params to GET array.
-            $this['request']->get->add($matchedRoute->params);
+            $this['request']->get->add($params);
 
-            // Add found route to middleware stack
-            $executable = (new Executable($this->namespacePrefix.$matchedRoute->class,
-                $matchedRoute->function))->setApp($this);
+            // Create executable from route
+            $executable = (new Executable($this->namespacePrefix . $matchedRoute->getClass(), $matchedRoute->getFunction()))
+                ->setApp($this)
+                ->setParams($params);
 
-            if (!empty($matchedRoute->params)) {
-                $executable->setParams($matchedRoute->params);
-            }
-
+            // Add found route/executable to middleware stack
             $this->middleware[] = $executable;
         } else {
             // If page not found display 404 error.
