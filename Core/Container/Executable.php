@@ -1,8 +1,8 @@
 <?php
 namespace Core\Container;
 
-use Core\Container\Interfaces\ContainerAwareInterface;
 use Core\Container\Interfaces\ExecutableInterface;
+use Core\Container\Interfaces\ContainerAwareInterface;
 
 /**
  * Executable class.
@@ -10,8 +10,13 @@ use Core\Container\Interfaces\ExecutableInterface;
  *
  * @author <milos@caenazzo.com>
  */
-class Executable extends ContainerAware implements ExecutableInterface
+class Executable implements ExecutableInterface
 {
+    /**
+     * @var Container
+     */
+    protected $app = null;
+
     /**
      * @var string
      */
@@ -115,6 +120,24 @@ class Executable extends ContainerAware implements ExecutableInterface
     public function setParams(array $params)
     {
         $this->params = $params;
+        return $this;
+    }
+
+    /**
+     * @return Container
+     */
+    public function getApp()
+    {
+        return $this->app;
+    }
+
+    /**
+     * @param Container $app
+     * @return self
+     */
+    public function setApp(Container $app)
+    {
+        $this->app = $app;
         return $this;
     }
 }

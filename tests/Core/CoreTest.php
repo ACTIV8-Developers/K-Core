@@ -202,6 +202,26 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
         $app->execute();
     }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testBadHook()
+    {
+        $app = \Core\Core\Core::getNew(__DIR__ . '/../MockApp');
+
+        $app->setHook('not.found', new TestController());
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testBadMiddleware()
+    {
+        $app = \Core\Core\Core::getNew(__DIR__ . '/../MockApp');
+
+        $app->addMiddleware([]);
+    }
 }
 
 class TestController

@@ -1,6 +1,7 @@
 <?php
 namespace Core\Container;
 
+use Core\Core\Core;
 use InvalidArgumentException;
 use Core\Container\Interfaces\ContainerAwareInterface;
 
@@ -8,6 +9,8 @@ use Core\Container\Interfaces\ContainerAwareInterface;
  * Abstract class ContainerAware
  *
  * @author <milos@caenazzo.com>
+ *
+ * @property Core $app
  */
 abstract class ContainerAware implements ContainerAwareInterface
 {

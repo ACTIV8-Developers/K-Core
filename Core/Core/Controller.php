@@ -4,12 +4,20 @@ namespace Core\Core;
 use Core\Container\ContainerAware;
 use Core\Core\Exceptions\StopException;
 use Core\Core\Exceptions\NotFoundException;
+use Core\Http\Interfaces\RequestInterface;
+use Core\Http\Interfaces\ResponseInterface;
+use Core\Routing\Interfaces\RouterInterface;
 
 /**
  * Base controller abstract class.
  * Extend to get access to app main container and common functions.
  *
  * @author <milos@caenazzo.com>
+ *
+ * @property RequestInterface $request
+ * @property ResponseInterface $response
+ * @property RouterInterface $router
+ * @property \ArrayAccess $config
  */
 abstract class Controller extends ContainerAware
 {

@@ -1,8 +1,6 @@
 <?php
 namespace Core\Routing\Interfaces;
 
-use Core\Routing\Route;
-
 /**
  * RouterInterface
  *
@@ -16,7 +14,7 @@ interface RouterInterface
      *
      * @var string $uri
      * @var string $requestMethod
-     * @return null|\Core\Routing\Route
+     * @return null|RouteInterface
      */
     public function execute($uri, $requestMethod);
 
@@ -26,7 +24,7 @@ interface RouterInterface
      * @param string $url
      * @param string $class
      * @param string $function
-     * @return \Core\Routing\Route
+     * @return RouteInterface
      */
     public function get($url, $class, $function);
 
@@ -36,7 +34,7 @@ interface RouterInterface
      * @param string $url
      * @param string $class
      * @param string $function
-     * @return \Core\Routing\Route
+     * @return RouteInterface
      */
     public function post($url, $class, $function);
 
@@ -46,7 +44,7 @@ interface RouterInterface
      * @param string $url
      * @param string $class
      * @param string $function
-     * @return \Core\Routing\Route
+     * @return RouteInterface
      */
     public function put($url, $class, $function);
 
@@ -56,15 +54,15 @@ interface RouterInterface
      * @param string $url
      * @param string $class
      * @param string $function
-     * @return \Core\Routing\Route
+     * @return RouteInterface
      */
     public function delete($url, $class, $function);
 
     /**
      * Add custom route object to routes array.
      *
-     * @param \Core\Routing\Route
+     * @param RouteInterface
      * @return self
      */
-    public function addRoute(Route $route);
+    public function addRoute(RouteInterface $route);
 }

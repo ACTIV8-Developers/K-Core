@@ -6,7 +6,7 @@ namespace Core\Container\Interfaces;
  *
  * @author <milos@caenazzo.com>
  */
-interface ExecutableInterface
+interface ExecutableInterface extends ContainerAwareInterface
 {
     /**
      * Execute action

@@ -1,6 +1,7 @@
 <?php
 namespace Core\Routing;
 
+use Core\Routing\Interfaces\RouteInterface;
 use Core\Routing\Interfaces\RouterInterface;
 
 /**
@@ -17,7 +18,7 @@ class Router implements RouterInterface
     /**
      * Collection of routes.
      *
-     * @var \Core\Routing\Route[]
+     * @var RouteInterface[]
      */
     protected $routes = [];
 
@@ -27,7 +28,7 @@ class Router implements RouterInterface
      *
      * @var string $uri
      * @var string $requestMethod
-     * @return null|\Core\Routing\Route
+     * @return null|RouteInterface
      */
     public function execute($uri, $requestMethod)
     {
@@ -46,7 +47,7 @@ class Router implements RouterInterface
      * @param string $url
      * @param string $class
      * @param string $function
-     * @return \Core\Routing\Route
+     * @return RouteInterface
      */
     public function get($url, $class, $function)
     {
@@ -61,7 +62,7 @@ class Router implements RouterInterface
      * @param string $url
      * @param string $class
      * @param string $function
-     * @return \Core\Routing\Route
+     * @return RouteInterface
      */
     public function post($url, $class, $function)
     {
@@ -76,7 +77,7 @@ class Router implements RouterInterface
      * @param string $url
      * @param string $class
      * @param string $function
-     * @return \Core\Routing\Route
+     * @return RouteInterface
      */
     public function put($url, $class, $function)
     {
@@ -91,7 +92,7 @@ class Router implements RouterInterface
      * @param string $url
      * @param string $class
      * @param string $function
-     * @return \Core\Routing\Route
+     * @return RouteInterface
      */
     public function delete($url, $class, $function)
     {
@@ -103,10 +104,10 @@ class Router implements RouterInterface
     /**
      * Add custom route object to routes array.
      *
-     * @param Route
+     * @param RouteInterface $route
      * @return self
      */
-    public function addRoute(Route $route)
+    public function addRoute(RouteInterface $route)
     {
         $this->routes[] = $route;
         return $this;
@@ -115,7 +116,7 @@ class Router implements RouterInterface
     /**
      * Get list of routes.
      *
-     * @return \Core\Routing\Route
+     * @return RouteInterface[]
      */
     public function getRoutes()
     {

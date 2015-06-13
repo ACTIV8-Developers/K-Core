@@ -6,11 +6,13 @@ use Core\Http\Request;
 use Core\Http\Response;
 use Core\Routing\Router;
 use BadFunctionCallException;
+use InvalidArgumentException;
 use Core\Container\Container;
 use Core\Container\Executable;
 use Core\Core\Interfaces\CoreInterface;
 use Core\Core\Exceptions\StopException;
 use Core\Core\Exceptions\NotFoundException;
+use Core\Container\Interfaces\ExecutableInterface;
 
 /**
  * Core class.
@@ -352,10 +354,16 @@ class Core extends Container implements CoreInterface
      * @param string $function
      * @param array $params
      * @return self
+     * @throws InvalidArgumentException
      */
     public function setHook($key, $class, $function = 'execute', array $params = [])
     {
-        $this->hooks[$key] = (new Executable($class, $function, $params))->setApp($this);
+        if (is_string($class) && is_string($function)) {
+            $this->hooks[$key] = (new Executable($class, $function, $params))->setApp($this);
+        } else {
+            throw new InvalidArgumentException('Parameters must be string names of class/method to execute as hook');
+        }
+
         return $this;
     }
 
@@ -375,10 +383,16 @@ class Core extends Container implements CoreInterface
      * @param string $function
      * @param array $params
      * @return self
+     * @throws InvalidArgumentException
      */
     public function addMiddleware($class, $function = 'execute', array $params = [])
     {
-        $this->middleware[] = (new Executable($class, $function, $params))->setApp($this);
+        if (is_string($class) && is_string($function)) {
+            $this->middleware[] = (new Executable($class, $function, $params))->setApp($this);
+        } else {
+            throw new InvalidArgumentException('Parameters must be string names of class/method to execute as middleware');
+        }
+
         return $this;
     }
 
