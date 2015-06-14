@@ -10,7 +10,7 @@ use Core\Container\Interfaces\ContainerAwareInterface;
  *
  * @author <milos@caenazzo.com>
  */
-class Executable implements ExecutableInterface
+class Executable implements ExecutableInterface, ContainerAwareInterface
 {
     /**
      * @var Container

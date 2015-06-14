@@ -371,7 +371,7 @@ class Core extends Container implements CoreInterface
      * Get hook.
      *
      * @param string $key
-     * @return ExecutableInterface
+     * @return Executable
      */
     public function getHook($key)
     {
