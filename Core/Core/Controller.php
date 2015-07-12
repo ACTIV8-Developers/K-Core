@@ -1,7 +1,9 @@
 <?php
 namespace Core\Core;
 
-use Core\Container\ContainerAware;
+use InvalidArgumentException;
+use Core\Container\Container;
+use Core\Container\Interfaces\ContainerAwareInterface;
 use Core\Core\Exceptions\StopException;
 use Core\Core\Exceptions\NotFoundException;
 use Core\Http\Interfaces\RequestInterface;
@@ -19,8 +21,13 @@ use Core\Routing\Interfaces\RouterInterface;
  * @property RouterInterface $router
  * @property \ArrayAccess $config
  */
-abstract class Controller extends ContainerAware
+abstract class Controller implements ContainerAwareInterface
 {
+    /**
+     * @var Container $app
+     */
+    protected $app = null;
+
     /**
      * Get GET value from request object.
      *
@@ -34,7 +41,6 @@ abstract class Controller extends ContainerAware
         }
         return $this->app['request']->get->get($key);
     }
-
 
     /**
      * Get POST value from request object.
@@ -154,5 +160,37 @@ abstract class Controller extends ContainerAware
     protected function stop()
     {
         throw new StopException();
+    }
+
+    /**
+     * @return Container
+     */
+    public function getApp()
+    {
+        return $this->app;
+    }
+
+    /**
+     * @param Container $app
+     * @return self
+     */
+    public function setApp(Container $app)
+    {
+        $this->app = $app;
+        return $this;
+    }
+
+    /**
+     * @param $var
+     * @return mixed
+     * @throws InvalidArgumentException
+     */
+    public function __get($var)
+    {
+        if (isset($this->app[$var])) {
+            return $this->app[$var];
+        } else {
+            throw new InvalidArgumentException(sprintf('Identifier "%s" is not defined.', $var));
+        }
     }
 }

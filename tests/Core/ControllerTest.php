@@ -111,6 +111,30 @@ class ControllerTest extends PHPUnit_Framework_TestCase
 
         $con->input();
     }
+
+    public function testContainer()
+    {
+        $c = new AnotherTestController;
+
+        $container = new \Core\Container\Container();
+        $c->setApp($container);
+
+        $this->assertEquals($container, $c->getApp());
+;
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testInvalidArgument()
+    {
+        $c = new AnotherTestController;
+
+        $container = new \Core\Container\Container();
+        $c->setApp($container);
+
+        $c->getUknown();
+    }
 }
 
 class AnotherTestController extends Controller
@@ -169,5 +193,20 @@ class AnotherTestController extends Controller
         $this->cookies();
 
         $this->files();
+    }
+
+    public function getFoo()
+    {
+        return $this->foo;
+    }
+
+    public function getFoo2()
+    {
+        return $this->app['foo'];
+    }
+
+    public function getUknown()
+    {
+        return $this->uknown;
     }
 }

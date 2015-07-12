@@ -1,6 +1,7 @@
 <?php
 namespace Core\Core;
 
+use Core\Routing\Interfaces\ResolverInterface;
 use Exception;
 use Core\Http\Request;
 use Core\Http\Response;
@@ -8,10 +9,10 @@ use Core\Routing\Router;
 use BadFunctionCallException;
 use InvalidArgumentException;
 use Core\Container\Container;
-use Core\Container\Executable;
 use Core\Core\Interfaces\CoreInterface;
 use Core\Core\Exceptions\StopException;
 use Core\Core\Exceptions\NotFoundException;
+use Core\Routing\Executable;
 use Core\Container\Interfaces\ExecutableInterface;
 
 /**
@@ -80,6 +81,11 @@ class Core extends Container implements CoreInterface
     protected $middleware = [];
 
     /**
+     * @var ResolverInterface
+     */
+    protected $resolver = null;
+
+    /**
      * Array of hooks to be applied.
      *
      * @var array
@@ -115,6 +121,9 @@ class Core extends Container implements CoreInterface
 
         // Set path where views are stored
         $this->viewsPath = $appPath . '/Views';
+
+        // Make class resolver
+        $this->resolver = new Resolver($this);
     }
 
     /**
@@ -165,7 +174,7 @@ class Core extends Container implements CoreInterface
 
             // Pre boot hook.
             if (isset($this->hooks['before.boot'])) {
-                $this->hooks['before.boot']->execute();
+                $this->hooks['before.boot']->execute($this->resolver);
             }
 
             // Load application configuration.
@@ -201,7 +210,7 @@ class Core extends Container implements CoreInterface
 
             // After boot hook
             if (isset($this->hooks['after.boot'])) {
-                $this->hooks['after.boot']->execute();
+                $this->hooks['after.boot']->execute($this->resolver);
             }
 
             $this->isBooted = true;
@@ -250,7 +259,7 @@ class Core extends Container implements CoreInterface
 
         // Pre routing/controller hook.
         if (isset($this->hooks['before.routing'])) {
-            $this->hooks['before.routing']->execute();
+            $this->hooks['before.routing']->execute($this->resolver);
         }
 
         // Route requests
@@ -265,9 +274,9 @@ class Core extends Container implements CoreInterface
             $this['request']->get->add($params);
 
             // Create executable from route
-            $executable = (new Executable($this->namespacePrefix . $matchedRoute->getClass(), $matchedRoute->getFunction()))
-                ->setApp($this)
-                ->setParams($params);
+            $executable = new Executable($this->namespacePrefix . $matchedRoute->getClass(),
+                $matchedRoute->getFunction(),
+                $params);
 
             // Add found route/executable to middleware stack
             $this->middleware[] = $executable;
@@ -278,12 +287,12 @@ class Core extends Container implements CoreInterface
 
         // Execute middleware stack
         foreach ($this->middleware as $m) {
-            $m->execute();
+            $m->execute($this->resolver);
         }
 
         // Post routing/controller hook.
         if (isset($this->hooks['after.routing'])) {
-            $this->hooks['after.routing']->execute();
+            $this->hooks['after.routing']->execute($this->resolver);
         }
     }
 
@@ -300,7 +309,7 @@ class Core extends Container implements CoreInterface
 
         if (isset($this->hooks['not.found'])) {
             $this['not.found'] = $e;
-            $this->hooks['not.found']->execute();
+            $this->hooks['not.found']->execute($this->resolver);
         } else {
             $this['response']->setStatusCode(404);
             $this['response']->setBody($e->getMessage());
@@ -316,7 +325,7 @@ class Core extends Container implements CoreInterface
     {
         if (isset($this->hooks['internal.error'])) {
             $this['exception'] = $e;
-            $this->hooks['internal.error']->execute();
+            $this->hooks['internal.error']->execute($this->resolver);
         } else {
             $this['response']->setStatusCode(500);
             $this['response']->setBody('Internal error: ' . $e->getMessage());
@@ -340,7 +349,7 @@ class Core extends Container implements CoreInterface
 
         // Post response hook.
         if (isset($this->hooks['after.response'])) {
-            $this->hooks['after.response']->execute();
+            $this->hooks['after.response']->execute($this->resolver);
         }
 
         return $this;
@@ -359,7 +368,7 @@ class Core extends Container implements CoreInterface
     public function setHook($key, $class, $function = 'execute', array $params = [])
     {
         if (is_string($class) && is_string($function)) {
-            $this->hooks[$key] = (new Executable($class, $function, $params))->setApp($this);
+            $this->hooks[$key] = new Executable($class, $function, $params);
         } else {
             throw new InvalidArgumentException('Parameters must be string names of class/method to execute as hook');
         }
@@ -388,7 +397,7 @@ class Core extends Container implements CoreInterface
     public function addMiddleware($class, $function = 'execute', array $params = [])
     {
         if (is_string($class) && is_string($function)) {
-            $this->middleware[] = (new Executable($class, $function, $params))->setApp($this);
+            $this->middleware[] = new Executable($class, $function, $params);
         } else {
             throw new InvalidArgumentException('Parameters must be string names of class/method to execute as middleware');
         }
