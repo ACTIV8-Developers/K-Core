@@ -3,13 +3,12 @@ namespace Core\Core;
 
 use Core\Container\Container;
 use Core\Routing\Interfaces\ResolverInterface;
-use Core\Container\Interfaces\ContainerAwareInterface;
 
 /**
  * Class Resolver
  * @package Core\Core
  */
-class Resolver implements ResolverInterface, ContainerAwareInterface
+class Resolver implements ResolverInterface
 {
     /**
      * @var Container|null
@@ -22,24 +21,6 @@ class Resolver implements ResolverInterface, ContainerAwareInterface
     public function __construct(Container $app)
     {
         $this->app = $app;
-    }
-
-    /**
-     * @return Container
-     */
-    public function getApp()
-    {
-        return $this->app;
-    }
-
-    /**
-     * @param Container $app
-     * @return self
-     */
-    public function setApp(Container $app)
-    {
-        $this->app = $app;
-        return $this;
     }
 
     /**
