@@ -29,7 +29,7 @@ class Resolver implements ResolverInterface
      * @param string
      * @return object
      */
-    function resolve($classname)
+    public function resolve($classname)
     {
         // Resolve from container if possible
         if ($this->app->has($classname)) {
