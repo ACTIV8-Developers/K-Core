@@ -3,7 +3,6 @@ namespace Core\Core;
 
 use Core\Container\Container;
 use Core\Routing\Interfaces\ResolverInterface;
-use Core\Container\Interfaces\ContainerAwareInterface;
 
 /**
  * Class Resolver
@@ -30,7 +29,7 @@ class Resolver implements ResolverInterface
      * @param string
      * @return object
      */
-    function resolve($classname)
+    public function resolve($classname)
     {
         // Resolve from container if possible
         if ($this->app->has($classname)) {
