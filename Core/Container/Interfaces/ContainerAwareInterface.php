@@ -11,11 +11,6 @@ use Core\Container\Container;
 interface ContainerAwareInterface
 {
     /**
-     * @return Container
-     */
-    public function getApp();
-
-    /**
      * @param Container $app
      * @return self
      */
