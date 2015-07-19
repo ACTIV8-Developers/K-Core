@@ -2,6 +2,7 @@
 namespace Core\Core;
 
 use Core\Container\Container;
+use Core\Container\Interfaces\ContainerAwareInterface;
 use Core\Routing\Interfaces\ResolverInterface;
 
 /**
