@@ -163,14 +163,6 @@ abstract class Controller implements ContainerAwareInterface
     }
 
     /**
-     * @return Container
-     */
-    public function getApp()
-    {
-        return $this->app;
-    }
-
-    /**
      * @param Container $app
      * @return self
      */

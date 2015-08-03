@@ -209,4 +209,9 @@ class AnotherTestController extends Controller
     {
         return $this->uknown;
     }
+
+    public function getApp()
+    {
+        return $this->app;
+    }
 }

@@ -26,9 +26,15 @@ class SessionServiceProvider extends ServiceProvider
                     $handler = new EncryptedFileSessionHandler();
                     break;
                 case 'database':
-                    $name = $c['config']['session']['connName'];
-                    $conn = $this['db.' . $name]->getConnection();
+                    $name = isset($c['config']['session']['connName'])?$c['config']['session']['connName']:'db';
+                    $conn = $c[$name]->getConnection();
                     $handler = new DatabaseSessionHandler($conn);
+                    if (isset($c['config']['session']['gcLifetime'])) {
+                        $handler->setGcLifetime($c['config']['session']['gcLifetime']);
+                    }
+                    if (isset($c['config']['session']['tableName'])) {
+                        $handler->setTableName($c['config']['session']['tableName']);
+                    }
                     break;
             }
             $session = new Session($c['config']['session'], $handler);

@@ -61,6 +61,9 @@ class EncryptedFileSessionHandler implements \SessionHandlerInterface
      */
     protected $_keyName;
 
+    /**
+     * Class construct
+     */
     public function __construct()
     {
         // change the default session folder in a temporary dir
