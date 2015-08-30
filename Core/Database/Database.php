@@ -113,7 +113,7 @@ class Database extends AbstractDatabase
      * @param array $params
      * @return int
      */
-    public function delete($query, array $params)
+    public function delete($query, array $params = [])
     {
         $stmt = $this->connection->prepare($query);
         $stmt->execute($params);
@@ -127,7 +127,7 @@ class Database extends AbstractDatabase
      * @param array $params
      * @return int
      */
-    public function count($query, array $params)
+    public function count($query, array $params = [])
     {
         $stmt = $this->connection->prepare($query);
         $stmt->execute($params);

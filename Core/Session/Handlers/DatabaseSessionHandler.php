@@ -2,7 +2,7 @@
 namespace Core\Session\Handlers;
 
 /**
- *". $this->tableName  ."handler using database interface.
+ * DatabaseSessionHandler using database interface.
 CREATE TABLE session_storage (
 session_id CHAR(32) NOT NULL,
 session_data TEXT NOT NULL,
