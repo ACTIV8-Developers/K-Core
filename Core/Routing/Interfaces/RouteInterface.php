@@ -20,21 +20,7 @@ interface RouteInterface
     /**
      * Get parameters associated passed with route if matched
      *
-     * @return array
+     * @return ExecutableInterface
      */
-    public function getParams();
-
-    /**
-     * Get class associated with route
-     *
-     * @return string
-     */
-    public function getClass();
-
-    /**
-     * Get method/function associated with route
-     *
-     * @return string
-     */
-    public function getFunction();
+    public function getExecutable();
 }

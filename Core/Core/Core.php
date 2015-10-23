@@ -13,7 +13,6 @@ use Core\Core\Interfaces\CoreInterface;
 use Core\Core\Exceptions\StopException;
 use Core\Core\Exceptions\NotFoundException;
 use Core\Routing\Executable;
-use Core\Container\Interfaces\ExecutableInterface;
 
 /**
  * Core class.
@@ -29,7 +28,7 @@ class Core extends Container implements CoreInterface
      *
      * @var string
      */
-    const VERSION = '2.0.0';
+    const VERSION = '2.1.0';
 
     /**
      * @var Core
@@ -267,16 +266,15 @@ class Core extends Container implements CoreInterface
 
         // Execute route if found.
         if (null !== $matchedRoute) {
+            $executable = $matchedRoute->getExecutable();
             // Get passed route params
             $params = $matchedRoute->getParams();
 
             // Append passed params to GET array.
             $this['request']->get->add($params);
 
-            // Create executable from route
-            $executable = new Executable($this->namespacePrefix . $matchedRoute->getClass(),
-                $matchedRoute->getFunction(),
-                $params);
+            // Pass params to executable also
+            $executable->setParams($params);
 
             // Add found route/executable to middleware stack
             $this->middleware[] = $executable;

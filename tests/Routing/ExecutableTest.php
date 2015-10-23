@@ -6,14 +6,18 @@ class ExecutableTest extends PHPUnit_Framework_TestCase
     {
         $e = new \Core\Routing\Executable('TestClass', 'getFoo', ['test']);
 
-        $e->execute();
+        $params = ['foo'];
+
+        $e->addParams($params);
+
+        $this->assertEquals($e->execute(), 'test'.'foo');
     }
 }
 
 class TestClass extends \Core\Core\Controller
 {
-    public function getFoo()
+    public function getFoo($param1, $param2)
     {
-        return 'test';
+        return $param1 . $param2;
     }
 }

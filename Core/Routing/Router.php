@@ -32,7 +32,6 @@ class Router implements RouterInterface
      */
     public function execute($uri, $requestMethod)
     {
-        // Find correct route.
         foreach ($this->routes as $route) {
             if (true === $route->matches($uri, $requestMethod)) {
                 return $route;

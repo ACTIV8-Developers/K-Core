@@ -42,10 +42,26 @@ class Executable implements ExecutableInterface
     }
 
     /**
+     * @param array $params
+     */
+    public function setParams(array $params)
+    {
+        $this->params = $params;
+    }
+
+    /**
+     * @param array $params
+     */
+    public function addParams(array $params)
+    {
+        $this->params = array_merge($this->params, $params);
+    }
+
+    /**
      * Execute action
      *
      * @param ResolverInterface|null $resolver
-     * @return $this
+     * @return mixed
      */
     public function execute(ResolverInterface $resolver = null)
     {
@@ -60,7 +76,6 @@ class Executable implements ExecutableInterface
         }
 
         // Execute class method
-        call_user_func_array([$object, $this->method], $this->params);
-        return $this;
+        return call_user_func_array([$object, $this->method], $this->params);
     }
 }

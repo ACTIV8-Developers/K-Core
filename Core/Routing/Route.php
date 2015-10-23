@@ -2,6 +2,7 @@
 namespace Core\Routing;
 
 use Core\Routing\Interfaces\RouteInterface;
+use Core\Routing\Interfaces\ExecutableInterface;
 
 /**
  * Route class.
@@ -19,32 +20,33 @@ class Route implements RouteInterface
     protected $url = '';
 
     /**
-     * Controller/method assigned to be executed when route is matched.
-     *
-     * @var string
-     */
-    protected $class = null;
-
-    /**
-     * Function assigned to be executed when route is matched.
-     *
-     * @var string
-     */
-    protected $function = null;
-
-    /**
-     * List of parameters extracted from passed URI.
-     *
-     * @var array
-     */
-    protected $params = [];
-
-    /**
      * List of supported HTTP methods for this route (GET, POST etc.).
      *
      * @var array
      */
     protected $methods = [];
+
+    /**
+     * @var array
+     */
+    protected $params = [];
+
+    /**
+     * Controller/method assigned to be executed when route is matched.
+     *
+     * @var ExecutableInterface
+     */
+    protected $executable = null;
+
+    /**
+     * @var null|ExecutableInterface
+     */
+    protected $before = null;
+
+    /**
+     * @var null|ExecutableInterface
+     */
+    protected $after = null;
 
     /**
      * List of parameters conditions.
@@ -75,19 +77,16 @@ class Route implements RouteInterface
     const MATCHES_REGEX = '@:([\w]+)@';
 
     /**
-     * Class constructor.
-     *
-     * @param string $url
-     * @param string $class
-     * @param string $function
-     * @param string $requestMethod
+     * @param $url
+     * @param $requestMethod
+     * @param $class
+     * @param $function
      */
     public function __construct($url, $requestMethod, $class, $function)
     {
         $this->url = $url;
-        $this->class = $class;
-        $this->function = $function;
         $this->methods[] = $requestMethod;
+        $this->executable = ExecutableFactory::make($class, $function);
     }
 
     /**
@@ -212,8 +211,6 @@ class Route implements RouteInterface
     }
 
     /**
-     * Get parameters associated passed with route if matched
-     *
      * @return array
      */
     public function getParams()
@@ -222,22 +219,30 @@ class Route implements RouteInterface
     }
 
     /**
-     * Get class associated with route
+     * Get parameters associated passed with route if matched
      *
-     * @return string
+     * @return array
      */
-    public function getClass()
+    public function getExecutable()
     {
-        return $this->class;
+        return $this->executable;
     }
 
     /**
-     * Get method/function associated with route
-     *
-     * @return string
+     * @param $function
+     * @param $class
      */
-    public function getFunction()
+    public function executeAfter($function, $class)
     {
-        return $this->function;
+        $this->after = ExecutableFactory::make($function, $class);
+    }
+
+    /**
+     * @param $function
+     * @param $class
+     */
+    public function executeBefore($function, $class)
+    {
+        $this->before = ExecutableFactory::make($function, $class);
     }
 }
