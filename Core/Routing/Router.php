@@ -5,7 +5,7 @@ use Core\Routing\Interfaces\RouteInterface;
 use Core\Routing\Interfaces\RouterInterface;
 
 if (!defined('CONTROLLERS_ROOT')) {
-    define('CONTROLLERS_ROOT', 'App\Controllers');
+    define('CONTROLLERS_ROOT', 'App\Controllers\\');
 }
 /**
  * Router class.
