@@ -17,5 +17,7 @@ date_default_timezone_set('Europe/Belgrade');
 | Mockup request
 |--------------------------------------------------------------------------
 */
+define('CONTROLLERS_ROOT', '');
+
 $_SERVER['REQUEST_METHOD'] = 'GET';
 $_SERVER['REQUEST_URI'] = '/test/2';
