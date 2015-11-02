@@ -15,4 +15,14 @@ interface ExecutableInterface
      * @return self
      */
     function execute(ResolverInterface $resolver);
+
+    /**
+     * @param array $params
+     */
+    public function setParams(array $params);
+
+    /**
+     * @param array $params
+     */
+    public function addParams(array $params);
 }

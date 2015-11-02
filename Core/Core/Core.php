@@ -1,18 +1,20 @@
 <?php
 namespace Core\Core;
 
-use Core\Routing\Interfaces\ResolverInterface;
 use Exception;
 use Core\Http\Request;
 use Core\Http\Response;
 use Core\Routing\Router;
+use Core\Routing\Executable;
 use BadFunctionCallException;
 use InvalidArgumentException;
 use Core\Container\Container;
 use Core\Core\Interfaces\CoreInterface;
 use Core\Core\Exceptions\StopException;
 use Core\Core\Exceptions\NotFoundException;
-use Core\Routing\Executable;
+use Core\Routing\Interfaces\RouteInterface;
+use Core\Routing\Interfaces\ResolverInterface;
+use Core\Routing\Interfaces\ExecutableInterface;
 
 /**
  * Core class.
@@ -75,7 +77,7 @@ class Core extends Container implements CoreInterface
     /**
      * Array of middleware actions
      *
-     * @var array
+     * @var ExecutableInterface[]
      */
     protected $middleware = [];
 
@@ -87,7 +89,7 @@ class Core extends Container implements CoreInterface
     /**
      * Array of hooks to be applied.
      *
-     * @var array
+     * @var ExecutableInterface[]
      */
     protected $hooks = [
         'before.boot' => null,
@@ -262,10 +264,12 @@ class Core extends Container implements CoreInterface
         }
 
         // Route requests
+        /** @var RouteInterface $matchedRoute */
         $matchedRoute = $route->execute($this['request']->getUri(), $this['request']->getMethod());
 
         // Execute route if found.
         if (null !== $matchedRoute) {
+            /** @var  ExecutableInterface $executable */
             $executable = $matchedRoute->getExecutable();
             // Get passed route params
             $params = $matchedRoute->getParams();
@@ -276,8 +280,18 @@ class Core extends Container implements CoreInterface
             // Pass params to executable also
             $executable->setParams($params);
 
-            // Add found route/executable to middleware stack
+            // Add route pre executable
+            if (($before = $matchedRoute->getBeforeExecutable()) !== null) {
+                $this->middleware[] = $before;
+            }
+
+            // Add found route executable to middleware stack
             $this->middleware[] = $executable;
+
+            // Add route post executable
+            if (($after = $matchedRoute->getAfterExecutable()) !== null) {
+                $this->middleware[] = $after;
+            }
         } else {
             // If page not found display 404 error.
             $this->notFound();

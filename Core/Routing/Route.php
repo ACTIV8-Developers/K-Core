@@ -219,13 +219,33 @@ class Route implements RouteInterface
     }
 
     /**
-     * Get parameters associated passed with route if matched
+     * Get executable associated with route
      *
      * @return array
      */
     public function getExecutable()
     {
         return $this->executable;
+    }
+
+    /**
+     * Get after executable associated with route
+     *
+     * @return array
+     */
+    public function getAfterExecutable()
+    {
+        return $this->after;
+    }
+
+    /**
+     * Get pre executable associated with route
+     *
+     * @return array
+     */
+    public function getBeforeExecutable()
+    {
+        return $this->before;
     }
 
     /**

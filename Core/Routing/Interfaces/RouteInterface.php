@@ -12,15 +12,34 @@ interface RouteInterface
      * Check if requested URI and method matches this route.
      *
      * @param string $uri
-     * @param string method
+     * @param string $method
      * @return bool
      */
     public function matches($uri, $method);
 
     /**
-     * Get parameters associated passed with route if matched
+     * @return array
+     */
+    public function getParams();
+
+    /**
+     * Get executable associated with route
      *
-     * @return ExecutableInterface
+     * @return array
      */
     public function getExecutable();
+
+    /**
+     * Get after executable associated with route
+     *
+     * @return array
+     */
+    public function getAfterExecutable();
+
+    /**
+     * Get pre executable associated with route
+     *
+     * @return array
+     */
+    public function getBeforeExecutable();
 }
