@@ -2,30 +2,37 @@
 namespace Core\Container;
 
 use InvalidArgumentException;
+use Interop\Container\ContainerInterface;
 use Core\Container\Interfaces\ContainerAwareInterface;
 
 /**
  * Abstract class ContainerAware
  *
  * @author <milos@caenazzo.com>
- *
- * @property Core $app
  */
 abstract class ContainerAware implements ContainerAwareInterface
 {
     /**
-     * @var Container $app
+     * @var ContainerInterface $app
      */
-    protected $app = null;
+    protected $container = null;
 
     /**
-     * @param Container $app
+     * @param ContainerInterface $container
      * @return self
      */
-    public function setApp(Container $app)
+    public function setContainer(ContainerInterface $container)
     {
-        $this->app = $app;
+        $this->container = $container;
         return $this;
+    }
+
+    /**
+     * @return ContainerInterface
+     */
+    public function getContainer()
+    {
+        return $this->container;
     }
 
     /**
@@ -35,10 +42,6 @@ abstract class ContainerAware implements ContainerAwareInterface
      */
     public function __get($var)
     {
-        if (isset($this->app[$var])) {
-            return $this->app[$var];
-        } else {
-            throw new InvalidArgumentException(sprintf('Identifier "%s" is not defined.', $var));
-        }
+        return $this->container->get($var);
     }
 }

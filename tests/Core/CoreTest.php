@@ -40,8 +40,8 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
         // Check if construct made all required things.
         $this->assertInstanceOf('Core\Core\Core', $app);
-        $this->assertInstanceOf('Core\Http\Response', $app['response']);
-        $this->assertInstanceOf('Core\Http\Request', $app['request']);
+        $this->assertInstanceOf('Core\Http\Response', $app->getContainer()['response']);
+        $this->assertInstanceOf('Core\Http\Request', $app->getContainer()['request']);
     }
 
     public function testExecute()
@@ -61,7 +61,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
         // Make instance of app.
         $app = \Core\Core\Core::getNew(__DIR__ . '/../MockApp')->boot();
 
-        $app['response']->setBody('<div>Test</div>');
+        $app->getContainer()['response']->setBody('<div>Test</div>');
 
         //$this->expectOutputString('<div>Test</div>');
 
@@ -140,7 +140,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
         $app->boot();
 
-        $app['request']->setUri('uknown');
+        $app->getContainer()['request']->setUri('uknown');
 
         $app->execute();
     }
@@ -151,13 +151,13 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
         $app->boot();
 
-        $app['request']->setUri('notfound');
+        $app->getContainer()['request']->setUri('notfound');
 
-        $app['router']->addRoute(new \Core\Routing\Route('notfound','GET','TestController', 'notFound'));
+        $app->getContainer()['router']->addRoute(new \Core\Routing\Route('notfound','GET','TestController', 'notFound'));
 
         $app->execute();
 
-        $this->assertEquals('Not found', $app['response']->getBody());
+        $this->assertEquals('Not found', $app->getContainer()['response']->getBody());
     }
 
     public function testNotFoundHook()
@@ -168,7 +168,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
         $app->boot();
 
-        $app['request']->setUri('uknown');
+        $app->getContainer()['request']->setUri('uknown');
 
         $app->execute();
     }
@@ -179,13 +179,13 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
         $app->boot();
 
-        $app['request']->setUri('error');
+        $app->getContainer()['request']->setUri('error');
 
-        $app['router']->addRoute(new \Core\Routing\Route('error','GET','TestController', 'error'));
+        $app->getContainer()['router']->addRoute(new \Core\Routing\Route('error','GET','TestController', 'error'));
 
         $app->execute();
 
-        $this->assertEquals('Internal error: ' . 'Error', $app['response']->getBody());
+        $this->assertEquals('Internal error: ' . 'Error', $app->getContainer()['response']->getBody());
     }
 
     public function testControllerExceptionHook()
@@ -196,9 +196,9 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
         $app->boot();
 
-        $app['request']->setUri('error');
+        $app->getContainer()['request']->setUri('error');
 
-        $app['router']->addRoute(new \Core\Routing\Route('error','GET','TestController', 'error'));
+        $app->getContainer()['router']->addRoute(new \Core\Routing\Route('error','GET','TestController', 'error'));
 
         $app->execute();
     }

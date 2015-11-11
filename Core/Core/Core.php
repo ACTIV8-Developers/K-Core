@@ -1,6 +1,7 @@
 <?php
 namespace Core\Core;
 
+use Core\Container\ServiceProvider;
 use Exception;
 use Core\Http\Request;
 use Core\Http\Response;
@@ -9,8 +10,9 @@ use Core\Routing\Executable;
 use BadFunctionCallException;
 use InvalidArgumentException;
 use Core\Container\Container;
-use Core\Core\Interfaces\CoreInterface;
+use Core\Container\ContainerAware;
 use Core\Core\Exceptions\StopException;
+use Interop\Container\ContainerInterface;
 use Core\Core\Exceptions\NotFoundException;
 use Core\Routing\Interfaces\RouteInterface;
 use Core\Routing\Interfaces\ResolverInterface;
@@ -23,14 +25,14 @@ use Core\Routing\Interfaces\ExecutableInterface;
  *
  * @author <milos@caenazzo.com>
  */
-class Core extends Container implements CoreInterface
+class Core extends ContainerAware
 {
     /**
      * Core version.
      *
      * @var string
      */
-    const VERSION = '2.1.0';
+    const VERSION = '2.1.0 RC2';
 
     /**
      * @var Core
@@ -82,6 +84,11 @@ class Core extends Container implements CoreInterface
     protected $middleware = [];
 
     /**
+     * @var ContainerInterface
+     */
+    protected $container = null;
+
+    /**
      * @var ResolverInterface
      */
     protected $resolver = null;
@@ -102,15 +109,14 @@ class Core extends Container implements CoreInterface
     ];
 
     /**
-     * Class constructor.
+     * Core constructor.
      *
      * @param string $appPath
+     * @param ContainerInterface $container
+     * @param ResolverInterface $resolver
      */
-    public function __construct($appPath = '')
+    public function __construct($appPath = '', ContainerInterface $container = null, ResolverInterface $resolver = null)
     {
-        // Invoke container construct
-        parent::__construct();
-
         // Set app path
         $this->appPath = $appPath;
 
@@ -123,20 +129,34 @@ class Core extends Container implements CoreInterface
         // Set path where views are stored
         $this->viewsPath = $appPath . '/Views';
 
-        // Make class resolver
-        $this->resolver = new Resolver($this);
+        // Set container
+
+        // Set class resolver
+        if ($container === null) {
+            $this->container = new Container();
+        } else {
+            $this->container = $container;
+        }
+
+        if ($resolver === null) {
+            $this->resolver = new Resolver($this->container);
+        } else {
+            $this->resolver = $resolver;
+        }
     }
 
     /**
      * Get singleton instance of Core class.
      *
      * @param string $appPath
+     * @param ContainerInterface|null $container
+     * @param ResolverInterface|null $resolver
      * @return Core
      */
-    public static function getInstance($appPath = '')
+    public static function getInstance($appPath = '', ContainerInterface $container = null, ResolverInterface $resolver = null)
     {
         if (null === self::$instance) {
-            self::$instance = new Core($appPath);
+            self::$instance = new Core($appPath, $container, $resolver);
         }
         return self::$instance;
     }
@@ -157,11 +177,13 @@ class Core extends Container implements CoreInterface
      * Get new instance of Core class.
      *
      * @param string $appPath
+     * @param ContainerInterface|null $container
+     * @param ResolverInterface|null $resolver
      * @return Core
      */
-    public static function getNew($appPath = '')
+    public static function getNew($appPath = '', ContainerInterface $container = null, ResolverInterface $resolver = null)
     {
-        return new Core($appPath);
+        return new Core($appPath, $container, $resolver);
     }
 
     /**
@@ -180,33 +202,36 @@ class Core extends Container implements CoreInterface
 
             // Load application configuration.
             if (is_file($this->configPath)) {
-                $this['config'] = require $this->configPath;
+                $this->container['config'] = require $this->configPath;
             } else {
-                $this['config'] = [];
+                $this->container['config'] = [];
             }
 
             // Create request class closure.
-            $this['request'] = function () {
+            $this->container['request'] = function () {
                 return new Request($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
             };
 
             // Create response class closure.
-            $this['response'] = function ($c) {
+            $this->container['response'] = function ($c) {
                 $response = new Response();
                 $response->setProtocolVersion($c['request']->getProtocolVersion());
                 return $response;
             };
 
             // Create router class closure
-            $this['router'] = function () {
+            $this->container['router'] = function () {
                 return new Router();
             };
 
             // Register service providers.
             foreach ($this->services as $service) {
-                $s = new $service();
-                $s->setApp($this);
-                $s->register();
+                $s = $this->resolver->resolve($service);
+                if ($s instanceof ServiceProvider) {
+                    $s->register();
+                } else {
+                    throw new InvalidArgumentException(sprintf('%s must instance of ServiceProvider', $service));
+                }
             }
 
             // After boot hook
@@ -235,7 +260,7 @@ class Core extends Container implements CoreInterface
         try {
             $this->routeRequest();
         } catch (StopException $e) {
-            // Just stop
+            // Just stop execution of current route
         } catch (NotFoundException $e) {
             $this->notFound($e);
         } catch (Exception $e) {
@@ -251,7 +276,7 @@ class Core extends Container implements CoreInterface
     protected function routeRequest()
     {
         // Get router object
-        $route = $this['router'];
+        $route = $this->container['router'];
 
         // Collect routes list from file.
         if (is_file($this->routesPath)) {
@@ -265,7 +290,7 @@ class Core extends Container implements CoreInterface
 
         // Route requests
         /** @var RouteInterface $matchedRoute */
-        $matchedRoute = $route->execute($this['request']->getUri(), $this['request']->getMethod());
+        $matchedRoute = $route->execute($this->container['request']->getUri(), $this->container['request']->getMethod());
 
         // Execute route if found.
         if (null !== $matchedRoute) {
@@ -275,7 +300,7 @@ class Core extends Container implements CoreInterface
             $params = $matchedRoute->getParams();
 
             // Append passed params to GET array.
-            $this['request']->get->add($params);
+            $this->container['request']->get->add($params);
 
             // Pass params to executable also
             $executable->setParams($params);
@@ -309,42 +334,6 @@ class Core extends Container implements CoreInterface
     }
 
     /**
-     * Handle 404.
-     *
-     * @param NotFoundException $e
-     */
-    protected function notFound(NotFoundException $e = null)
-    {
-        if ($e === null) {
-            $e = new NotFoundException();
-        }
-
-        if (isset($this->hooks['not.found'])) {
-            $this['not.found'] = $e;
-            $this->hooks['not.found']->execute($this->resolver);
-        } else {
-            $this['response']->setStatusCode(404);
-            $this['response']->setBody($e->getMessage());
-        }
-    }
-
-    /**
-     * Handle exception.
-     *
-     * @param Exception $e
-     */
-    protected function internalError(Exception $e)
-    {
-        if (isset($this->hooks['internal.error'])) {
-            $this['exception'] = $e;
-            $this->hooks['internal.error']->execute($this->resolver);
-        } else {
-            $this['response']->setStatusCode(500);
-            $this['response']->setBody('Internal error: ' . $e->getMessage());
-        }
-    }
-
-    /**
      * Send application response.
      *
      * @throws BadFunctionCallException
@@ -357,7 +346,7 @@ class Core extends Container implements CoreInterface
         }
 
         // Send final response.
-        $this['response']->send();
+        $this->container['response']->send();
 
         // Post response hook.
         if (isset($this->hooks['after.response'])) {
@@ -365,6 +354,42 @@ class Core extends Container implements CoreInterface
         }
 
         return $this;
+    }
+
+    /**
+     * Handle 404.
+     *
+     * @param NotFoundException $e
+     */
+    protected function notFound(NotFoundException $e = null)
+    {
+        if ($e === null) {
+            $e = new NotFoundException();
+        }
+
+        if (isset($this->hooks['not.found'])) {
+            $this->container['not.found'] = $e;
+            $this->hooks['not.found']->execute($this->resolver);
+        } else {
+            $this->container['response']->setStatusCode(404);
+            $this->container['response']->setBody($e->getMessage());
+        }
+    }
+
+    /**
+     * Handle exception.
+     *
+     * @param Exception $e
+     */
+    protected function internalError(Exception $e)
+    {
+        if (isset($this->hooks['internal.error'])) {
+            $this->container['exception'] = $e;
+            $this->hooks['internal.error']->execute($this->resolver);
+        } else {
+            $this->container['response']->setStatusCode(500);
+            $this->container['response']->setBody('Internal error: ' . $e->getMessage());
+        }
     }
 
     /**

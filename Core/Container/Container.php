@@ -2,6 +2,7 @@
 namespace Core\Container;
 
 use InvalidArgumentException;
+use Interop\Container\ContainerInterface;
 use Pimple\Container as PimpleContainer;
 
 /**
@@ -9,7 +10,7 @@ use Pimple\Container as PimpleContainer;
  *
  * @author <milos@caenazzo.com>
  */
-class Container extends PimpleContainer
+class Container extends PimpleContainer implements ContainerInterface
 {
     /**
      * Get entry from container
@@ -25,6 +26,7 @@ class Container extends PimpleContainer
         }
         return $this->offsetGet($key);
     }
+
     /**
      * Check for existence in container
      *

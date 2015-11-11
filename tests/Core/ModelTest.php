@@ -13,11 +13,11 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         $model = new AnotherTestModel();
 
-        $model->setApp($app);
+        $model->setContainer($app->getContainer());
 
-        $this->assertSame($model->getApp(), $app);
-        $this->assertSame($app['request'], $model->getRequest());
-        $this->assertSame($app['response'], $model->getResponse());
+        $this->assertSame($model->getContainer(), $app->getContainer());
+        $this->assertSame($app->getContainer()['request'], $model->getRequest());
+        $this->assertSame($app->getContainer()['response'], $model->getResponse());
     }
 
     /**
@@ -28,7 +28,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $model = new AnotherTestModel;
 
         $container = new \Core\Container\Container();
-        $model->setApp($container);
+        $model->setContainer($container);
 
         $model->getUknown();
     }
@@ -38,7 +38,7 @@ class AnotherTestModel extends Model
 {
     public function getRequest()
     {
-        return $this->app['request'];
+        return $this->container['request'];
     }
 
     public function getResponse()

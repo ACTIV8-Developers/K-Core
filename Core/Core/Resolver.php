@@ -1,9 +1,9 @@
 <?php
 namespace Core\Core;
 
-use Core\Container\Container;
-use Core\Container\Interfaces\ContainerAwareInterface;
+use Interop\Container\ContainerInterface;
 use Core\Routing\Interfaces\ResolverInterface;
+use Core\Container\Interfaces\ContainerAwareInterface;
 
 /**
  * Class Resolver
@@ -12,16 +12,16 @@ use Core\Routing\Interfaces\ResolverInterface;
 class Resolver implements ResolverInterface
 {
     /**
-     * @var Container|null
+     * @var ContainerInterface|null
      */
-    private $app = null;
+    private $container = null;
 
     /**
-     * @param Container $app
+     * @param ContainerInterface $container
      */
-    public function __construct(Container $app)
+    public function __construct(ContainerInterface $container)
     {
-        $this->app = $app;
+        $this->container = $container;
     }
 
     /**
@@ -33,8 +33,8 @@ class Resolver implements ResolverInterface
     public function resolve($classname)
     {
         // Resolve from container if possible
-        if ($this->app->has($classname)) {
-            return $this->app->get($classname);
+        if ($this->container->has($classname)) {
+            return $this->container->get($classname);
         }
 
         // Add namespace prefix
@@ -45,7 +45,7 @@ class Resolver implements ResolverInterface
 
         // If class needs container inject it
         if ($object instanceof ContainerAwareInterface) {
-            $object->setApp($this->app);
+            $object->setContainer($this->container);
         }
         return $object;
     }

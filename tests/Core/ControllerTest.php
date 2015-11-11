@@ -8,24 +8,26 @@ class ControllerTest extends PHPUnit_Framework_TestCase
 
     public function __construct()
     {
-        $this->app = Core::getInstance(__DIR__ . '/../MockApp')
+        $core = Core::getInstance(__DIR__ . '/../MockApp')
             ->setViewsPath(__DIR__ . '/../MockApp/MockViews')
             ->boot();
+
+        $this->container = $core->getContainer();
     }
 
 	public function testGetContainerObjects()
 	{
 		$con = new AnotherTestController();
-        $con->setApp($this->app);
+        $con->setContainer($this->container);
 
-		$this->assertSame($this->app['request'], $con->getRequest());
-		$this->assertSame($this->app['response'], $con->getResponse());
+		$this->assertSame($this->container['request'], $con->getRequest());
+		$this->assertSame($this->container['response'], $con->getResponse());
 	}
 
 	public function testRender()
 	{
 		$con = new AnotherTestController();
-        $con->setApp($this->app);
+        $con->setContainer($this->container);
 
 		// Try rendering view with no passed data
 		$view = 'MockView';
@@ -40,7 +42,7 @@ class ControllerTest extends PHPUnit_Framework_TestCase
 	{
 		$con = new AnotherTestController();
 
-        $con->setApp($this->app);
+        $con->setContainer($this->container);
 
 		// Used view files
 		$view = 'MockDynamicView';
@@ -61,7 +63,7 @@ class ControllerTest extends PHPUnit_Framework_TestCase
     {
         $con = new AnotherTestController();
 
-        $con->setApp($this->app);
+        $con->setContainer($this->container);
 
         $view = 'MockView';
 
@@ -72,7 +74,7 @@ class ControllerTest extends PHPUnit_Framework_TestCase
     {
         $con = new AnotherTestController();
 
-        $con->setApp($this->app);
+        $con->setContainer($this->container);
 
         $data = $con->jsonIt(['foo' => 'bar']);
 
@@ -86,7 +88,7 @@ class ControllerTest extends PHPUnit_Framework_TestCase
     {
         $con = new AnotherTestController();
 
-        $con->setApp($this->app);
+        $con->setContainer($this->container);
 
         $con->notFoundIt();
     }
@@ -98,7 +100,7 @@ class ControllerTest extends PHPUnit_Framework_TestCase
     {
         $con = new AnotherTestController();
 
-        $con->setApp($this->app);
+        $con->setContainer($this->container);
 
         $con->stopIt();
     }
@@ -107,7 +109,7 @@ class ControllerTest extends PHPUnit_Framework_TestCase
     {
         $con = new AnotherTestController();
 
-        $con->setApp($this->app);
+        $con->setContainer($this->container);
 
         $con->input();
     }
@@ -117,7 +119,7 @@ class ControllerTest extends PHPUnit_Framework_TestCase
         $c = new AnotherTestController;
 
         $container = new \Core\Container\Container();
-        $c->setApp($container);
+        $c->setContainer($container);
 
         $this->assertEquals($container, $c->getApp());
 ;
@@ -131,7 +133,7 @@ class ControllerTest extends PHPUnit_Framework_TestCase
         $c = new AnotherTestController;
 
         $container = new \Core\Container\Container();
-        $c->setApp($container);
+        $c->setContainer($container);
 
         $c->getUknown();
     }
@@ -141,7 +143,7 @@ class AnotherTestController extends Controller
 {
 	public function getRequest()
 	{
-		return $this->app['request'];
+		return $this->container['request'];
 	}
 
 	public function getResponse()
@@ -202,7 +204,7 @@ class AnotherTestController extends Controller
 
     public function getFoo2()
     {
-        return $this->app['foo'];
+        return $this->container['foo'];
     }
 
     public function getUknown()
@@ -212,6 +214,6 @@ class AnotherTestController extends Controller
 
     public function getApp()
     {
-        return $this->app;
+        return $this->container;
     }
 }

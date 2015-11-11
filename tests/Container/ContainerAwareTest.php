@@ -9,7 +9,7 @@ class ContainerAwareTest extends PHPUnit_Framework_TestCase
         $container = new \Core\Container\Container();
         $container['foo'] = 'bar';
 
-        $c->setApp($container);
+        $c->setContainer($container);
 
         $this->assertEquals($c->getValue(), 'bar');
 
@@ -26,7 +26,7 @@ class ContainerAwareTest extends PHPUnit_Framework_TestCase
         $container = new \Core\Container\Container();
         $container['foo'] = 'bar';
 
-        $c->setApp($container);
+        $c->setContainer($container);
 
         $c->getUknown();
     }
@@ -41,7 +41,7 @@ class ContainerAwareTest extends PHPUnit_Framework_TestCase
         $container = new \Core\Container\Container();
         $container['foo'] = 'bar';
 
-        $c->setApp($container);
+        $c->setContainer($container);
 
         $c->getUknown2();
     }
@@ -51,7 +51,7 @@ class AnotherContainer extends \Core\Container\ContainerAware
 {
     public function getValue()
     {
-        return $this->app->get('foo');
+        return $this->container->get('foo');
     }
 
     public function getValue2()
@@ -61,7 +61,7 @@ class AnotherContainer extends \Core\Container\ContainerAware
 
     public function getUknown()
     {
-        return $this->app->get('uknown');
+        return $this->container->get('uknown');
     }
 
     public function getUknown2()

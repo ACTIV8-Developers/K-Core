@@ -1,9 +1,7 @@
 <?php
 namespace Core\Core;
 
-use InvalidArgumentException;
-use Core\Container\Container;
-use Core\Container\Interfaces\ContainerAwareInterface;
+use Core\Container\ContainerAware;
 use Core\Core\Exceptions\StopException;
 use Core\Core\Exceptions\NotFoundException;
 use Core\Http\Interfaces\RequestInterface;
@@ -12,7 +10,7 @@ use Core\Routing\Interfaces\RouterInterface;
 
 /**
  * Base controller abstract class.
- * Extend to get access to app main container and common functions.
+ * Extend to get access to container main container and common functions.
  *
  * @author <milos@caenazzo.com>
  *
@@ -21,13 +19,8 @@ use Core\Routing\Interfaces\RouterInterface;
  * @property RouterInterface $router
  * @property \ArrayAccess $config
  */
-abstract class Controller implements ContainerAwareInterface
+abstract class Controller extends ContainerAware
 {
-    /**
-     * @var Container $app
-     */
-    protected $app = null;
-
     /**
      * Get GET value from request object.
      *
@@ -37,9 +30,9 @@ abstract class Controller implements ContainerAwareInterface
     protected function get($key = null)
     {
         if ($key === null) {
-            return $this->app['request']->get->all();
+            return $this->container->get('request')->get->all();
         }
-        return $this->app['request']->get->get($key);
+        return $this->container->get('request')->get->get($key);
     }
 
     /**
@@ -51,9 +44,9 @@ abstract class Controller implements ContainerAwareInterface
     protected function post($key = null)
     {
         if ($key === null) {
-            return $this->app['request']->post->all();
+            return $this->container->get('request')->post->all();
         }
-        return $this->app['request']->post->get($key);
+        return $this->container->get('request')->post->get($key);
     }
 
     /**
@@ -65,9 +58,9 @@ abstract class Controller implements ContainerAwareInterface
     protected function cookies($key = null)
     {
         if ($key === null) {
-            return $this->app['request']->cookies->all();
+            return $this->container->get('request')->cookies->all();
         }
-        return $this->app['request']->cookies->get($key);
+        return $this->container->get('request')->cookies->get($key);
     }
 
     /**
@@ -79,9 +72,9 @@ abstract class Controller implements ContainerAwareInterface
     protected function files($key = null)
     {
         if ($key === null) {
-            return $this->app['request']->files->all();
+            return $this->container->get('request')->files->all();
         }
-        return $this->app['request']->files->get($key);
+        return $this->container->get('request')->files->get($key);
     }
 
     /**
@@ -99,10 +92,10 @@ abstract class Controller implements ContainerAwareInterface
         ob_start();
 
         // Load view file (root location is declared in viewPath var).
-        include $this->app->getViewsPath() . '/' . $view . '.php';
+        include Core::getInstance()->getViewsPath() . '/' . $view . '.php';
 
-        // Append to output body.
-        $this->app['response']->addBody(ob_get_contents());
+        // Add view to output body.
+        $this->container->get('response')->addBody(ob_get_contents());
         ob_end_clean();
     }
 
@@ -122,7 +115,7 @@ abstract class Controller implements ContainerAwareInterface
         ob_start();
 
         // Load view file (root location is declared in viewPath var).
-        include $this->app->getViewsPath() . '/' . $view . '.php';
+        include Core::getInstance()->getViewsPath() . '/' . $view . '.php';
 
         // Return string.       
         $buffer = ob_get_contents();
@@ -138,8 +131,8 @@ abstract class Controller implements ContainerAwareInterface
      */
     public function json($data, $options = 0)
     {
-        $this->app['response']->headers->set('Content-Type', 'application/json');
-        $this->app['response']->setBody(json_encode($data, $options));
+        $this->container->get('response')->headers->set('Content-Type', 'containerlication/json');
+        $this->container->get('response')->setBody(json_encode($data, $options));
     }
 
     /**
@@ -160,29 +153,5 @@ abstract class Controller implements ContainerAwareInterface
     protected function stop()
     {
         throw new StopException();
-    }
-
-    /**
-     * @param Container $app
-     * @return self
-     */
-    public function setApp(Container $app)
-    {
-        $this->app = $app;
-        return $this;
-    }
-
-    /**
-     * @param $var
-     * @return mixed
-     * @throws InvalidArgumentException
-     */
-    public function __get($var)
-    {
-        if (isset($this->app[$var])) {
-            return $this->app[$var];
-        } else {
-            throw new InvalidArgumentException(sprintf('Identifier "%s" is not defined.', $var));
-        }
     }
 }

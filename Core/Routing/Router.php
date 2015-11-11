@@ -7,6 +7,7 @@ use Core\Routing\Interfaces\RouterInterface;
 if (!defined('CONTROLLERS_ROOT')) {
     define('CONTROLLERS_ROOT', 'App\Controllers\\');
 }
+
 /**
  * Router class.
  *
