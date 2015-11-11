@@ -1,6 +1,7 @@
 <?php
 namespace Core\Database;
 
+use Core\Core\Core;
 use Core\Container\ServiceProvider;
 use Core\Database\Connections\MySQLConnection;
 
@@ -17,23 +18,23 @@ class DatabaseServiceProvider extends ServiceProvider
     public function register()
     {
         // Load database configuration.
-        if (is_file($this->app->getAppPath() . '/Config/Database.php')) {
-            $this->app['config.database'] = require $this->app->getAppPath() . '/Config/Database.php';
+        if (is_file(Core::getInstance()->getAppPath() . '/Config/Database.php')) {
+            $this->container['config.database'] = require Core::getInstance()->getAppPath() . '/Config/Database.php';
         } else {
-            $this->app['config.database'] = [];
+            $this->container['config.database'] = [];
         }
 
         // For each needed database create database class closure.
-        foreach ($this->app['config.database'] as $dbName => $dbConfig) {
+        foreach ($this->container['config.database'] as $dbName => $dbConfig) {
             if ($dbName === 'default') $dbName = '';
-            $this->app['db' . $dbName] = function () use ($dbConfig) {
+            $this->container['db' . $dbName] = function () use ($dbConfig) {
                 $db = null;
                 switch ($dbConfig['driver']) { // Choose connection and create it.
                     case 'mysql':
                         $db = new MySQLConnection($dbConfig);
                         break;
                     default:
-                        throw new InvalidArgumentException('Error! Unsupported database connection type.');
+                        throw new \InvalidArgumentException('Error! Unsupported database connection type.');
                 }
                 // Inject it into database class.
                 $database = new Database();
