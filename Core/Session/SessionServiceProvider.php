@@ -18,7 +18,7 @@ class SessionServiceProvider extends ServiceProvider
     public function register()
     {
         // Create session class closure.
-        $this->app['session'] = function ($c) {
+        $this->container['session'] = function ($c) {
             // Select session handler.
             $handler = null;
             switch ($c['config']['sessionHandler']) {
