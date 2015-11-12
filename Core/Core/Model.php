@@ -16,7 +16,4 @@ use Core\Routing\Interfaces\RouterInterface;
  * @property RouterInterface $router
  * @property \ArrayAccess $config
  */
-abstract class Model extends ContainerAware
-{
-
-}
+abstract class Model extends ContainerAware {}

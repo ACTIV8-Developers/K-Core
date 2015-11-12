@@ -1,7 +1,6 @@
 <?php
 namespace Core\Core;
 
-use Core\Container\ServiceProvider;
 use Exception;
 use Core\Http\Request;
 use Core\Http\Response;
@@ -11,6 +10,7 @@ use BadFunctionCallException;
 use InvalidArgumentException;
 use Core\Container\Container;
 use Core\Container\ContainerAware;
+use Core\Container\ServiceProvider;
 use Core\Core\Exceptions\StopException;
 use Interop\Container\ContainerInterface;
 use Core\Core\Exceptions\NotFoundException;
