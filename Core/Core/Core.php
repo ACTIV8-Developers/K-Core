@@ -32,17 +32,12 @@ class Core extends ContainerAware
      *
      * @var string
      */
-    const VERSION = '2.1.0 RC2';
+    const VERSION = '2.1.0 RC3';
 
     /**
      * @var Core
      */
     protected static $instance;
-
-    /**
-     * @var string
-     */
-    protected $namespacePrefix = '';
 
     /**
      * @var bool
@@ -53,21 +48,6 @@ class Core extends ContainerAware
      * @var string
      */
     protected $appPath = '';
-
-    /**
-     * @var string
-     */
-    protected $configPath = '';
-
-    /**
-     * @var string
-     */
-    protected $routesPath = '';
-
-    /**
-     * @var string
-     */
-    protected $viewsPath = '';
 
     /**
      * Array of service providers
@@ -120,29 +100,35 @@ class Core extends ContainerAware
         // Set app path
         $this->appPath = $appPath;
 
-        // Set config path
-        $this->configPath = $appPath . '/Config/Config.php';
-
-        // Set app routes path
-        $this->routesPath = $appPath . '/routes.php';
-
-        // Set path where views are stored
-        $this->viewsPath = $appPath . '/Views';
-
         // Set container
-
-        // Set class resolver
         if ($container === null) {
             $this->container = new Container();
         } else {
             $this->container = $container;
         }
 
+        // Set class resolver
         if ($resolver === null) {
             $this->resolver = new Resolver($this->container);
         } else {
             $this->resolver = $resolver;
         }
+
+        // Load application configuration.
+        if (is_file($appPath . '/Config/Config.php')) {
+            $config = require $appPath . '/Config/Config.php';
+        } else {
+            $config = [];
+        }
+
+        // Set app routes path
+        $config['routesPath'] = $appPath . '/routes.php';
+
+        // Set path where views are stored
+        $config['viewsPath'] = $appPath . '/Views';
+
+        // Store config
+        $this->container['config'] = $config;
     }
 
     /**
@@ -198,13 +184,6 @@ class Core extends ContainerAware
             // Pre boot hook.
             if (isset($this->hooks['before.boot'])) {
                 $this->hooks['before.boot']->execute($this->resolver);
-            }
-
-            // Load application configuration.
-            if (is_file($this->configPath)) {
-                $this->container['config'] = require $this->configPath;
-            } else {
-                $this->container['config'] = [];
             }
 
             // Create request class closure.
@@ -279,8 +258,8 @@ class Core extends ContainerAware
         $route = $this->container['router'];
 
         // Collect routes list from file.
-        if (is_file($this->routesPath)) {
-            include $this->routesPath;
+        if (is_file($this->container['config']['routesPath'])) {
+            include $this->container['config']['routesPath'];
         }
 
         // Pre routing/controller hook.
@@ -468,69 +447,5 @@ class Core extends ContainerAware
     public function getAppPath()
     {
         return $this->appPath;
-    }
-
-    /**
-     * @param string $configPath
-     * @return self
-     */
-    public function setConfigPath($configPath)
-    {
-        $this->configPath = $configPath;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getConfigPath()
-    {
-        return $this->configPath;
-    }
-
-    /**
-     * @param string $routesPath
-     * @return self
-     */
-    public function setRoutesPath($routesPath)
-    {
-        $this->routesPath = $routesPath;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getViewsPath()
-    {
-        return $this->viewsPath;
-    }
-
-    /**
-     * @param string $viewsPath
-     * @return self
-     */
-    public function setViewsPath($viewsPath)
-    {
-        $this->viewsPath = $viewsPath;
-        return $this;
-    }
-
-    /**
-     * @param string $namespacePrefix
-     * @return self
-     */
-    public function setNamespacePrefix($namespacePrefix)
-    {
-        $this->namespacePrefix = $namespacePrefix . '\\';
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getNamespacePrefix()
-    {
-        return $this->namespacePrefix;
     }
 }

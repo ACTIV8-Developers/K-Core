@@ -12,19 +12,10 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
         $app = \Core\Core\Core::getInstance(__DIR__ . '/../MockApp');
 
-        $app->setViewsPath('viewsPath');
-        $this->assertEquals('viewsPath', $app->getViewsPath());
-
-        $app->setConfigPath('configPath');
-        $this->assertEquals('configPath', $app->getConfigPath());
+        \Core\Routing\Router::$CONTROLLERS_ROOT = '';
 
         $app->setAppPath('appPath');
         $this->assertEquals('appPath', $app->getAppPath());
-
-        $app->setNamespacePrefix('namespace');
-        $this->assertEquals('namespace'. '\\', $app->getNamespacePrefix());
-
-        $app->setRoutesPath('routes');
 
         $app->boot();
 

@@ -92,7 +92,7 @@ abstract class Controller extends ContainerAware
         ob_start();
 
         // Load view file (root location is declared in viewPath var).
-        include Core::getInstance()->getViewsPath() . '/' . $view . '.php';
+        include $this->container->get('config')['viewsPath'] . '/' . $view . '.php';
 
         // Add view to output body.
         $this->container->get('response')->addBody(ob_get_contents());
@@ -115,7 +115,7 @@ abstract class Controller extends ContainerAware
         ob_start();
 
         // Load view file (root location is declared in viewPath var).
-        include Core::getInstance()->getViewsPath() . '/' . $view . '.php';
+        include $this->container->get('config')['viewsPath'] . '/' . $view . '.php';
 
         // Return string.       
         $buffer = ob_get_contents();

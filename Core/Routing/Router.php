@@ -4,10 +4,6 @@ namespace Core\Routing;
 use Core\Routing\Interfaces\RouteInterface;
 use Core\Routing\Interfaces\RouterInterface;
 
-if (!defined('CONTROLLERS_ROOT')) {
-    define('CONTROLLERS_ROOT', 'App\Controllers\\');
-}
-
 /**
  * Router class.
  *
@@ -19,6 +15,11 @@ if (!defined('CONTROLLERS_ROOT')) {
  */
 class Router implements RouterInterface
 {
+    /**
+     * @var string
+     */
+    public static $CONTROLLERS_ROOT = 'App\Controllers\\';
+
     /**
      * Collection of routes.
      *
@@ -54,7 +55,7 @@ class Router implements RouterInterface
      */
     public function get($url, $class, $function)
     {
-        $route = new Route($url, 'GET', CONTROLLERS_ROOT . $class, $function);
+        $route = new Route($url, 'GET', self::$CONTROLLERS_ROOT . $class, $function);
         $this->routes[] = $route;
         return $route;
     }
@@ -69,7 +70,7 @@ class Router implements RouterInterface
      */
     public function post($url, $class, $function)
     {
-        $route = new Route($url, 'POST', CONTROLLERS_ROOT . $class, $function);
+        $route = new Route($url, 'POST', self::$CONTROLLERS_ROOT . $class, $function);
         $this->routes[] = $route;
         return $route;
     }
@@ -84,7 +85,7 @@ class Router implements RouterInterface
      */
     public function put($url, $class, $function)
     {
-        $route = new Route($url, 'PUT', CONTROLLERS_ROOT . $class, $function);
+        $route = new Route($url, 'PUT', self::$CONTROLLERS_ROOT . $class, $function);
         $this->routes[] = $route;
         return $route;
     }
@@ -99,7 +100,7 @@ class Router implements RouterInterface
      */
     public function delete($url, $class, $function)
     {
-        $route = new Route($url, 'DELETE', CONTROLLERS_ROOT . $class, $function);
+        $route = new Route($url, 'DELETE', self::$CONTROLLERS_ROOT . $class, $function);
         $this->routes[] = $route;
         return $route;
     }

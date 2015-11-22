@@ -8,7 +8,6 @@ class ModelTest extends PHPUnit_Framework_TestCase
     public function testGetSet()
     {
         $app = Core::getInstance(__DIR__ . '/../MockApp')
-            ->setViewsPath(__DIR__ . '/../MockApp/MockViews')
             ->boot();
 
         $model = new AnotherTestModel();

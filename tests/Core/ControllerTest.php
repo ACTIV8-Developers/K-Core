@@ -1,7 +1,7 @@
 <?php
 
-use Core\Core\Controller;
 use Core\Core\Core;
+use Core\Core\Controller;
 
 class ControllerTest extends PHPUnit_Framework_TestCase
 {
@@ -9,10 +9,12 @@ class ControllerTest extends PHPUnit_Framework_TestCase
     public function __construct()
     {
         $core = Core::getInstance(__DIR__ . '/../MockApp')
-            ->setViewsPath(__DIR__ . '/../MockApp/MockViews')
             ->boot();
 
         $this->container = $core->getContainer();
+        $config = $this->container['config'];
+        $config['viewsPath'] = __DIR__ . '/../MockApp/MockViews';
+        $this->container['config'] = $config;
     }
 
 	public function testGetContainerObjects()
@@ -29,12 +31,13 @@ class ControllerTest extends PHPUnit_Framework_TestCase
 		$con = new AnotherTestController();
         $con->setContainer($this->container);
 
+
 		// Try rendering view with no passed data
 		$view = 'MockView';
 		$result = $con->bufferIt($view);
 
 		// Output string should be same as content of MockView.php file
-		$this->expectOutputString(file_get_contents(\Core\Core\Core::getInstance()->getViewsPath().'/'.$view.'.php'));
+		$this->expectOutputString(file_get_contents($this->container['config']['viewsPath'].'/'.$view.'.php'));
 		echo $result;
 	}
 
@@ -55,7 +58,7 @@ class ControllerTest extends PHPUnit_Framework_TestCase
 		$res = $con->bufferIt($view, $data);
 
 		// Output string should be same as content of MockNestedViewTest.php file
-		$this->expectOutputString(file_get_contents(\Core\Core\Core::getInstance()->getViewsPath().'/'.$compareView.'.php'));
+		$this->expectOutputString(file_get_contents($this->container['config']['viewsPath'].'/'.$compareView.'.php'));
 		echo $res;
 	}
 
