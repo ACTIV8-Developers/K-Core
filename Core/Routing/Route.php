@@ -219,6 +219,16 @@ class Route implements RouteInterface
     }
 
     /**
+     * @param $key
+     * @param $value
+     *
+     */
+    public function addParam($key, $value)
+    {
+        $this->params[$key] = $value;
+    }
+
+    /**
      * Get executable associated with route
      *
      * @return array
