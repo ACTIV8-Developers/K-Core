@@ -1,13 +1,18 @@
 <?php
 
+use Core\Container\ServiceProvider;
+
 class ServiceProviderTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @covers \Core\Container\ServiceProvider::register()
+     * @covers TestServiceClass::register
      */
     public function testRegister()
     {
         $stub = $this->getMockForAbstractClass('Core\Container\ServiceProvider');
+
+        $stub->expects($this->any())
+            ->method('register');
 
         $stub->register();
 
@@ -17,7 +22,7 @@ class ServiceProviderTest extends PHPUnit_Framework_TestCase
     }
 }
 
-class TestServiceClass extends \Core\Container\ServiceProvider
+class TestServiceClass extends ServiceProvider
 {
     public function register()
     {

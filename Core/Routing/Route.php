@@ -261,18 +261,22 @@ class Route implements RouteInterface
     /**
      * @param $function
      * @param $class
+     * @return self
      */
     public function executeAfter($function, $class)
     {
         $this->after = ExecutableFactory::make($function, $class);
+        return $this;
     }
 
     /**
      * @param $function
      * @param $class
+     * @return self
      */
     public function executeBefore($function, $class)
     {
         $this->before = ExecutableFactory::make($function, $class);
+        return $this;
     }
 }

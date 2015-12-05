@@ -6,6 +6,13 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
     public static $hookCounter = 0;
 
+    public function testCustomConstruct()
+    {
+        $container = new \Core\Container\Container();
+        $resolver = new \Core\Core\Resolver($container);
+        $core = new \Core\Core\Core('', $container, $resolver);
+    }
+
     public function testConstruct()
     {
         \Core\Core\Core::setInstance(null);
@@ -213,6 +220,20 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
         $app->addMiddleware([]);
     }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testInvalidServiceProvider()
+    {
+        $core = new \Core\Core\Core(__DIR__ . '/../MockApp');
+
+        $core->addService('TestServiceProvider');
+
+        $core->addService('TestInvalidServiceProvider');
+
+        $core->boot();
+    }
 }
 
 class TestController
@@ -264,5 +285,27 @@ class TestMiddleware
     public function execute()
     {
         // Execute middleware
+    }
+}
+
+class TestServiceProvider extends \Core\Container\ServiceProvider
+{
+    /**
+     * Register the service provider(s).
+     */
+    public function register()
+    {
+
+    }
+}
+
+class TestInvalidServiceProvider
+{
+    /**
+     * Register the service provider(s).
+     */
+    public function register()
+    {
+
     }
 }

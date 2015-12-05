@@ -169,6 +169,10 @@ class RouteTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue($route->matches('foo/bar','GET'));
 
 		$this->assertEquals(['param' => 'bar'], $route->getParams());
+
+		$route->addParam('param2', 'foo');
+
+		$this->assertEquals(['param' => 'bar', 'param2' => 'foo'], $route->getParams());
 	}
 
 	public function testAfterBefore()
