@@ -106,7 +106,7 @@ class DatabaseSessionHandler implements \SessionHandlerInterface
     /**
      * Destroy the session
      *
-     * @param int". $this->tableName  ."id
+     * @param int $id
      * @return bool
      */
     public function destroy($id)
@@ -121,7 +121,7 @@ class DatabaseSessionHandler implements \SessionHandlerInterface
     /**
      * Garbage Collector
      *
-     * @param int life time (sec.)
+     * @param int $max life time (sec.)
      * @return bool
      * @see session.gc_divisor 100
      * @see session.gc_maxlifetime 1440
@@ -138,6 +138,7 @@ class DatabaseSessionHandler implements \SessionHandlerInterface
             return;
         }
         $sql = "DELETE FROM ". $this->tableName  ." WHERE session_lastaccesstime < DATE_SUB(NOW(), INTERVAL " . $max . " SECOND)";
-        $this->db->query($sql);
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
     }
 }
