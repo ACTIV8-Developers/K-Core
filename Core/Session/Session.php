@@ -106,8 +106,13 @@ class Session
      */
     public function start()
     {
+        // If headers already sent can't do much
+        if (headers_sent()) {
+            return;
+        }
+
         // If no active session start one.
-        if (session_status() !== PHP_SESSION_ACTIVE && !headers_sent()) {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
             session_start();
         }
 
