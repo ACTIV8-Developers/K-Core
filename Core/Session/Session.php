@@ -83,7 +83,7 @@ class Session
         }
 
         // Set session cookie name.
-        session_name($this->name . '');
+        session_name($this->name);
 
         // Set the default secure value to whether the site is being accessed with SSL.
         $this->secure = $this->secure !== null ? $this->secure : isset($_SERVER['HTTPS']);

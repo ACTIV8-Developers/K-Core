@@ -7,10 +7,6 @@ class SessionTest extends PHPUnit_Framework_TestCase
         $config = [
             // Session Cookie Name
             'name' => 'K',
-            // Connection name (needed only if handler is database).
-            'connName' => 'default',
-            // Session table name (needed only if handler is database).
-            'tableName' => 'sessions',
             // Session Lifetime.
             'expiration' => 7200,
             // Match user agents on session requests.
@@ -21,9 +17,7 @@ class SessionTest extends PHPUnit_Framework_TestCase
             'updateFrequency' => 10
         ];
 
-        $handler = new \Core\Session\Handlers\EncryptedFileSessionHandler();
-
-        $this->session = new \Core\Session\Session($config, $handler);
+        $this->session = new \Core\Session\Session($config);
         $this->session->setHashKey('randomstring');
 
 		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Windows NT 6.1; WOW64)';
@@ -31,7 +25,7 @@ class SessionTest extends PHPUnit_Framework_TestCase
 
     public function testStart()
     {
-        //$this->session->start();
+        $this->session->start();
     }
 
 	public function testGetSet()
