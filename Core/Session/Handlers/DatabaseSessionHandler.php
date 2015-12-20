@@ -88,7 +88,7 @@ class DatabaseSessionHandler implements \SessionHandlerInterface
         $query = "SELECT session_data FROM ". $this->tableName  ." WHERE session_id = :id";
         $stmt = $this->db->prepare($query);
         $stmt->execute(['id' => $id]);
-        return $stmt->fetchColumn();
+        return base64_decode($stmt->fetchColumn());
     }
 
     /**
@@ -100,7 +100,7 @@ class DatabaseSessionHandler implements \SessionHandlerInterface
     {
         $query = "INSERT INTO ". $this->tableName  ." SET session_id = :id, session_data = :data ON DUPLICATE KEY UPDATE session_data = :data";
         $stmt = $this->db->prepare($query);
-        $stmt->execute(['id' => $id, 'data' => $data]);
+        $stmt->execute(['id' => $id, 'data' => base64_encode($data)]);
     }
 
     /**
