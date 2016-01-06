@@ -40,21 +40,9 @@ class Core extends ContainerAware
     protected static $instance;
 
     /**
-     * @var bool
-     */
-    protected $isBooted = false;
-
-    /**
      * @var string
      */
     protected $appPath = '';
-
-    /**
-     * Array of service providers
-     *
-     * @var array
-     */
-    protected $services = [];
 
     /**
      * Array of middleware actions
@@ -79,8 +67,7 @@ class Core extends ContainerAware
      * @var ExecutableInterface[]
      */
     protected $hooks = [
-        'before.boot' => null,
-        'after.boot' => null,
+        'before.execute' => null,
         'before.routing' => null,
         'after.routing' => null,
         'after.response' => null,
@@ -129,6 +116,23 @@ class Core extends ContainerAware
 
         // Store config
         $this->container['config'] = $config;
+
+        // Create request class closure.
+        $this->container['request'] = function () {
+            return new Request($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
+        };
+
+        // Create response class closure.
+        $this->container['response'] = function ($c) {
+            $response = new Response();
+            $response->setProtocolVersion($c['request']->getProtocolVersion());
+            return $response;
+        };
+
+        // Create router class closure
+        $this->container['router'] = function () {
+            return new Router();
+        };
     }
 
     /**
@@ -173,58 +177,6 @@ class Core extends ContainerAware
     }
 
     /**
-     * Boot application
-     *
-     * @return self
-     */
-    public function boot()
-    {
-        if (!$this->isBooted) {
-
-            // Pre boot hook.
-            if (isset($this->hooks['before.boot'])) {
-                $this->hooks['before.boot']->execute($this->resolver);
-            }
-
-            // Create request class closure.
-            $this->container['request'] = function () {
-                return new Request($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
-            };
-
-            // Create response class closure.
-            $this->container['response'] = function ($c) {
-                $response = new Response();
-                $response->setProtocolVersion($c['request']->getProtocolVersion());
-                return $response;
-            };
-
-            // Create router class closure
-            $this->container['router'] = function () {
-                return new Router();
-            };
-
-            // Register service providers.
-            foreach ($this->services as $service) {
-                $s = $this->resolver->resolve($service);
-                if ($s instanceof ServiceProvider) {
-                    $s->register();
-                } else {
-                    throw new InvalidArgumentException(sprintf('%s must instance of ServiceProvider', $service));
-                }
-            }
-
-            // After boot hook
-            if (isset($this->hooks['after.boot'])) {
-                $this->hooks['after.boot']->execute($this->resolver);
-            }
-
-            $this->isBooted = true;
-        }
-
-        return $this;
-    }
-
-    /**
      * Route request and execute associated action.
      *
      * @throws BadFunctionCallException
@@ -232,12 +184,68 @@ class Core extends ContainerAware
      */
     public function execute()
     {
-        if (!$this->isBooted) {
-            throw new BadFunctionCallException('Error! Application is not booted.');
+        // Pre execute hook.
+        if (isset($this->hooks['before.execute'])) {
+            $this->hooks['before.execute']->execute($this->resolver);
         }
-
+        
         try {
-            $this->routeRequest();
+            // Get router object
+            $route = $this->container['router'];
+    
+            // Collect routes list from file.
+            if (is_file($this->container['config']['routesPath'])) {
+                include $this->container['config']['routesPath'];
+            }
+    
+            // Pre routing/controller hook.
+            if (isset($this->hooks['before.routing'])) {
+                $this->hooks['before.routing']->execute($this->resolver);
+            }
+    
+            // Route requests
+            /** @var RouteInterface $matchedRoute */
+            $matchedRoute = $route->execute($this->container['request']->getUri(), $this->container['request']->getMethod());
+    
+            // Execute route if found.
+            if (null !== $matchedRoute) {
+                /** @var  ExecutableInterface $executable */
+                $executable = $matchedRoute->getExecutable();
+                // Get passed route params
+                $params = $matchedRoute->getParams();
+    
+                // Append passed params to GET array.
+                $this->container['request']->get->add($params);
+    
+                // Pass params to executable also
+                $executable->setParams($params);
+    
+                // Add route pre executable
+                if (($before = $matchedRoute->getBeforeExecutable()) !== null) {
+                    $this->middleware[] = $before;
+                }
+    
+                // Add found route executable to middleware stack
+                $this->middleware[] = $executable;
+    
+                // Add route post executable
+                if (($after = $matchedRoute->getAfterExecutable()) !== null) {
+                    $this->middleware[] = $after;
+                }
+            } else {
+                // If page not found display 404 error.
+                throw new NotFoundException();
+            }
+    
+            // Execute middleware stack
+            foreach ($this->middleware as $m) {
+                $m->execute($this->resolver);
+            }
+            
+            // Post routing/controller hook.
+            if (isset($this->hooks['after.routing'])) {
+                $this->hooks['after.routing']->execute($this->resolver);
+            }
         } catch (StopException $e) {
             // Just stop execution of current route
         } catch (NotFoundException $e) {
@@ -245,71 +253,8 @@ class Core extends ContainerAware
         } catch (Exception $e) {
             $this->internalError($e);
         }
-
+            
         return $this;
-    }
-
-    /**
-     * Route request and execute proper controller if route found.
-     */
-    protected function routeRequest()
-    {
-        // Get router object
-        $route = $this->container['router'];
-
-        // Collect routes list from file.
-        if (is_file($this->container['config']['routesPath'])) {
-            include $this->container['config']['routesPath'];
-        }
-
-        // Pre routing/controller hook.
-        if (isset($this->hooks['before.routing'])) {
-            $this->hooks['before.routing']->execute($this->resolver);
-        }
-
-        // Route requests
-        /** @var RouteInterface $matchedRoute */
-        $matchedRoute = $route->execute($this->container['request']->getUri(), $this->container['request']->getMethod());
-
-        // Execute route if found.
-        if (null !== $matchedRoute) {
-            /** @var  ExecutableInterface $executable */
-            $executable = $matchedRoute->getExecutable();
-            // Get passed route params
-            $params = $matchedRoute->getParams();
-
-            // Append passed params to GET array.
-            $this->container['request']->get->add($params);
-
-            // Pass params to executable also
-            $executable->setParams($params);
-
-            // Add route pre executable
-            if (($before = $matchedRoute->getBeforeExecutable()) !== null) {
-                $this->middleware[] = $before;
-            }
-
-            // Add found route executable to middleware stack
-            $this->middleware[] = $executable;
-
-            // Add route post executable
-            if (($after = $matchedRoute->getAfterExecutable()) !== null) {
-                $this->middleware[] = $after;
-            }
-        } else {
-            // If page not found display 404 error.
-            $this->notFound();
-        }
-
-        // Execute middleware stack
-        foreach ($this->middleware as $m) {
-            $m->execute($this->resolver);
-        }
-
-        // Post routing/controller hook.
-        if (isset($this->hooks['after.routing'])) {
-            $this->hooks['after.routing']->execute($this->resolver);
-        }
     }
 
     /**
@@ -320,10 +265,6 @@ class Core extends ContainerAware
      */
     public function sendResponse()
     {
-        if (!$this->isBooted) {
-            throw new BadFunctionCallException('Error! Application is not booted.');
-        }
-
         // Send final response.
         $this->container['response']->send();
 
@@ -383,11 +324,7 @@ class Core extends ContainerAware
      */
     public function setHook($key, $class, $function = 'execute', array $params = [])
     {
-        if (is_string($class) && is_string($function)) {
-            $this->hooks[$key] = new Executable($class, $function, $params);
-        } else {
-            throw new InvalidArgumentException('Parameters must be string names of class/method to execute as hook');
-        }
+        $this->hooks[$key] = new Executable($class, $function, $params);
 
         return $this;
     }
@@ -412,22 +349,7 @@ class Core extends ContainerAware
      */
     public function addMiddleware($class, $function = 'execute', array $params = [])
     {
-        if (is_string($class) && is_string($function)) {
-            $this->middleware[] = new Executable($class, $function, $params);
-        } else {
-            throw new InvalidArgumentException('Parameters must be string names of class/method to execute as middleware');
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param string $service
-     * @return self
-     */
-    public function addService($service)
-    {
-        $this->services[] = $service;
+        $this->middleware[] = new Executable($class, $function, $params);
         return $this;
     }
 
