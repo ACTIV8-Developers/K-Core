@@ -8,8 +8,7 @@ class ControllerTest extends PHPUnit_Framework_TestCase
 
     public function __construct()
     {
-        $core = Core::getInstance(__DIR__ . '/../MockApp')
-            ->boot();
+        $core = Core::getInstance(__DIR__ . '/../MockApp');
 
         $this->container = $core->getContainer();
         $config = $this->container['config'];

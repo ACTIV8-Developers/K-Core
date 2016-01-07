@@ -7,8 +7,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 {
     public function testGetSet()
     {
-        $app = Core::getInstance(__DIR__ . '/../MockApp')
-            ->boot();
+        $app = new \Core\Core\Core(__DIR__ . '/../MockApp');;
 
         $model = new AnotherTestModel();
 

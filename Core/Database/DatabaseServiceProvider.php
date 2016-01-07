@@ -2,7 +2,7 @@
 namespace Core\Database;
 
 use Core\Core\Core;
-use Core\Container\ServiceProvider;
+use Core\Container\ContainerAware;
 use Core\Database\Connections\MySQLConnection;
 
 /**
@@ -10,12 +10,12 @@ use Core\Database\Connections\MySQLConnection;
  *
  * @author <milos@caenazzo.com>
  */
-class DatabaseServiceProvider extends ServiceProvider
+class DatabaseServiceProvider extends ContainerAware
 {
     /**
      * Create Database class.
      */
-    public function register()
+    public function __invoke()
     {
         // Load database configuration.
         if (is_file(Core::getInstance()->getAppPath() . '/Config/Database.php')) {

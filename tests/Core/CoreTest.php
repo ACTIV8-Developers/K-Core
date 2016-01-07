@@ -15,26 +15,18 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
     public function testConstruct()
     {
-        \Core\Core\Core::setInstance(null);
-
-        $app = \Core\Core\Core::getInstance(__DIR__ . '/../MockApp');
+        $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
 
         \Core\Routing\Router::$CONTROLLERS_ROOT = '';
 
         $app->setAppPath('appPath');
         $this->assertEquals('appPath', $app->getAppPath());
-
-        $app->boot();
-
-        $app->setInstance(null);
     }
 
     public function testBoot()
     {
         // Make instance of app.
-        $app = \Core\Core\Core::getNew(__DIR__ . '/../MockApp');
-
-        $app->boot();
+        $app = new \Core\Core\Core(__DIR__ . '/../MockApp');;
 
         // Check if construct made all required things.
         $this->assertInstanceOf('Core\Core\Core', $app);
@@ -45,9 +37,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
     public function testExecute()
     {
         // Make instance of app.
-        $app = \Core\Core\Core::getNew(__DIR__ . '/../MockApp');
-
-        $app->boot();
+        $app = new \Core\Core\Core(__DIR__ . '/../MockApp');;
 
         $app->execute();
 
@@ -57,7 +47,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
     public function testSendResponse()
     {
         // Make instance of app.
-        $app = \Core\Core\Core::getNew(__DIR__ . '/../MockApp')->boot();
+        $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
 
         $app->getContainer()['response']->setBody('<div>Test</div>');
 
@@ -69,74 +59,39 @@ class CoreTest extends PHPUnit_Framework_TestCase
     public function testHooks()
     {
         // Make instance of app.
-        $app = \Core\Core\Core::getNew(__DIR__ . '/../MockApp');
+        $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
 
         // Make hooks.
-        $app->setHook('before.boot', 'TestHook', 'hook');
-        $app->setHook('after.boot', 'TestHook', 'hook');
+        $app->setHook('before.execute', 'TestHook', 'hook');
+        $app->setHook('after.execute', 'TestHook', 'hook');
         $app->setHook('before.routing', 'TestHook', 'hook');
         $app->setHook('after.routing', 'TestHook', 'hook');
         $app->setHook('after.response', 'TestHook', 'hook');
 
         // Test hooks.
-        $this->assertTrue($app->getHook('before.boot') instanceof \Core\Routing\Interfaces\ExecutableInterface);
-        $this->assertTrue($app->getHook('after.boot') instanceof \Core\Routing\Interfaces\ExecutableInterface);
+        $this->assertTrue($app->getHook('before.execute') instanceof \Core\Routing\Interfaces\ExecutableInterface);
+        $this->assertTrue($app->getHook('after.execute') instanceof \Core\Routing\Interfaces\ExecutableInterface);
         $this->assertTrue($app->getHook('before.routing') instanceof \Core\Routing\Interfaces\ExecutableInterface);
         $this->assertTrue($app->getHook('after.routing') instanceof \Core\Routing\Interfaces\ExecutableInterface);
         $this->assertTrue($app->getHook('after.response') instanceof \Core\Routing\Interfaces\ExecutableInterface);
 
-        $app->boot()->execute()->sendResponse();
+        $app->execute()->sendResponse();
 
         $this->assertEquals(5, self::$hookCounter);
     }
 
     public function testMiddleware()
     {
-        $app = \Core\Core\Core::getNew(__DIR__ . '/../MockApp');
+        $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
 
-        $app->addMiddleware('TestMiddleware');
-
-        $app->boot();
+        $app->addMiddleware('TestMiddleware');;
 
         $app->execute();
-    }
-
-    public function testService()
-    {
-        $app = \Core\Core\Core::getNew(__DIR__ . '/../MockApp');
-
-        $app->addService('TestService');
-
-        $app->boot();
-
-        $app->execute();
-    }
-
-    /**
-     * @expectedException BadFunctionCallException
-     */
-    public function testNotBooted()
-    {
-        $app = \Core\Core\Core::getNew(__DIR__ . '/../MockApp');
-
-        $app->execute();
-    }
-
-    /**
-     * @expectedException BadFunctionCallException
-     */
-    public function testNotBooted2()
-    {
-        $app = \Core\Core\Core::getNew(__DIR__ . '/../MockApp');
-
-        $app->sendResponse();
     }
 
     public function testNotFound()
     {
-        $app = \Core\Core\Core::getNew(__DIR__ . '/../MockApp');
-
-        $app->boot();
+        $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
 
         $app->getContainer()['request']->setUri('uknown');
 
@@ -145,9 +100,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
     public function testControllerNotFound()
     {
-        $app = \Core\Core\Core::getNew(__DIR__ . '/../MockApp');
-
-        $app->boot();
+        $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
 
         $app->getContainer()['request']->setUri('notfound');
 
@@ -160,11 +113,9 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
     public function testNotFoundHook()
     {
-        $app = \Core\Core\Core::getNew(__DIR__ . '/../MockApp');
+        $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
 
         $app->setHook('not.found', 'TestHook', 'notFound');
-
-        $app->boot();
 
         $app->getContainer()['request']->setUri('uknown');
 
@@ -173,9 +124,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
     public function testControllerException()
     {
-        $app = \Core\Core\Core::getNew(__DIR__ . '/../MockApp');
-
-        $app->boot();
+        $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
 
         $app->getContainer()['request']->setUri('error');
 
@@ -188,51 +137,15 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
     public function testControllerExceptionHook()
     {
-        $app = \Core\Core\Core::getNew(__DIR__ . '/../MockApp');
+        $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
 
         $app->setHook('internal.error', 'TestHook', 'error');
-
-        $app->boot();
 
         $app->getContainer()['request']->setUri('error');
 
         $app->getContainer()['router']->addRoute(new \Core\Routing\Route('error','GET','TestController', 'error'));
 
         $app->execute();
-    }
-
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testBadHook()
-    {
-        $app = \Core\Core\Core::getNew(__DIR__ . '/../MockApp');
-
-        $app->setHook('not.found', new TestController());
-    }
-
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testBadMiddleware()
-    {
-        $app = \Core\Core\Core::getNew(__DIR__ . '/../MockApp');
-
-        $app->addMiddleware([]);
-    }
-
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testInvalidServiceProvider()
-    {
-        $core = new \Core\Core\Core(__DIR__ . '/../MockApp');
-
-        $core->addService('TestServiceProvider');
-
-        $core->addService('TestInvalidServiceProvider');
-
-        $core->boot();
     }
 }
 
@@ -272,40 +185,10 @@ class TestHook
     }
 }
 
-class TestService extends \Core\Container\ServiceProvider
-{
-    public function register()
-    {
-        // Register some service
-    }
-}
-
 class TestMiddleware
 {
     public function execute()
     {
         // Execute middleware
-    }
-}
-
-class TestServiceProvider extends \Core\Container\ServiceProvider
-{
-    /**
-     * Register the service provider(s).
-     */
-    public function register()
-    {
-
-    }
-}
-
-class TestInvalidServiceProvider
-{
-    /**
-     * Register the service provider(s).
-     */
-    public function register()
-    {
-
     }
 }

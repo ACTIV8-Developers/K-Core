@@ -1,7 +1,7 @@
 <?php
 namespace Core\Session;
 
-use Core\Container\ServiceProvider;
+use Core\Container\ContainerAware;
 use Core\Session\Handlers\DatabaseSessionHandler;
 
 /**
@@ -9,12 +9,12 @@ use Core\Session\Handlers\DatabaseSessionHandler;
  *
  * @author <milos@caenazzo.com>
  */
-class SessionServiceProvider extends ServiceProvider
+class SessionServiceProvider extends ContainerAware
 {
     /**
      * Create Session class.
      */
-    public function register()
+    public function __invoke()
     {
         // Create session class closure.
         $this->container['session'] = function ($c) {

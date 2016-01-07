@@ -152,31 +152,6 @@ class Core extends ContainerAware
     }
 
     /**
-     * Set singleton instance of Core class.
-     *
-     * @param $instance
-     * @return mixed
-     */
-    public static function setInstance($instance)
-    {
-        self::$instance = $instance;
-        return $instance;
-    }
-
-    /**
-     * Get new instance of Core class.
-     *
-     * @param string $appPath
-     * @param ContainerInterface|null $container
-     * @param ResolverInterface|null $resolver
-     * @return Core
-     */
-    public static function getNew($appPath = '', ContainerInterface $container = null, ResolverInterface $resolver = null)
-    {
-        return new Core($appPath, $container, $resolver);
-    }
-
-    /**
      * Route request and execute associated action.
      *
      * @throws BadFunctionCallException
@@ -253,7 +228,12 @@ class Core extends ContainerAware
         } catch (Exception $e) {
             $this->internalError($e);
         }
-            
+
+        // After execute hook.
+        if (isset($this->hooks['after.execute'])) {
+            $this->hooks['after.execute']->execute($this->resolver);
+        }
+
         return $this;
     }
 

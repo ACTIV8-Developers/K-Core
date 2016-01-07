@@ -1,19 +1,19 @@
 <?php
 namespace Core\Auth;
 
-use Core\Container\ServiceProvider;
+use Core\Container\ContainerAware;
 
 /**
  * Class AuthServiceProvider.
  *
  * @author <milos@caenazzo.com>
  */
-class AuthServiceProvider extends ServiceProvider
+class AuthServiceProvider extends ContainerAware
 {
     /**
      * Create Auth class.
      */
-    public function register()
+    public function __invoke()
     {
         $this->container['auth'] = function ($c) {
             return new Auth($c['db']->getConnection(), $c['session'], new PasswordHash(8, false));

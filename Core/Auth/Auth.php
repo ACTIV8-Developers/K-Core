@@ -1,7 +1,6 @@
 <?php
 namespace Core\Auth;
 
-use Core\Database\AbstractDatabase;
 use Core\Session\Session;
 
 /**

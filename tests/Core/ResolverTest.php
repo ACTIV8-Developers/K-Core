@@ -1,8 +1,5 @@
 <?php
 
-use Core\Core\Model;
-use Core\Core\Core;
-
 class ResolverTest extends PHPUnit_Framework_TestCase
 {
     public function testGetSet()
@@ -27,7 +24,6 @@ class ResolverTest extends PHPUnit_Framework_TestCase
 class AnotherTestClass
 {
     private $foo = 'bar';
-
 
     public function getFoo()
     {

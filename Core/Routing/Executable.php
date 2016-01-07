@@ -76,6 +76,10 @@ class Executable implements ExecutableInterface
         }
 
         // Execute class method
-        return call_user_func_array([$object, $this->method], $this->params);
+        if ($this->method) {
+            return call_user_func_array([$object, $this->method], $this->params);
+        } else if (is_callable($object)) {
+            return $object($this->params);
+        }
     }
 }
