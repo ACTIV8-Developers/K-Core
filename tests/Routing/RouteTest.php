@@ -179,8 +179,8 @@ class RouteTest extends PHPUnit_Framework_TestCase
 	{
 		$route = new Route('foo/:param', 'GET', 'bar', 'foo');
 
-		$route->executeAfter('AfterClass', 'function');
+		$route->executeAfter(function($req, $res, $next) {});
 
-		$route->executeBefore('BeforeClass', 'function');
+		$route->executeBefore(function($req, $res, $next) {});
 	}
 }

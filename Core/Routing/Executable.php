@@ -10,7 +10,7 @@ use Core\Routing\Interfaces\ExecutableInterface;
  *
  * @author <milos@caenazzo.com>
  */
-class Executable implements ExecutableInterface
+class Executable
 {
     /**
      * @var string
@@ -26,6 +26,11 @@ class Executable implements ExecutableInterface
      * @var array
      */
     protected $params = [];
+
+    /**
+     * @var null|ResolverInterface
+     */
+    protected $resolver = null;
 
     /**
      * Class constructor.
@@ -58,28 +63,46 @@ class Executable implements ExecutableInterface
     }
 
     /**
-     * Execute action
-     *
+     * @param string $class
+     */
+    public function setClass($class)
+    {
+        $this->class = $class;
+    }
+
+    /**
+     * @param string $method
+     */
+    public function setMethod($method)
+    {
+        $this->method = $method;
+    }
+
+    /**
      * @param ResolverInterface|null $resolver
+     */
+    public function setResolver($resolver)
+    {
+        $this->resolver = $resolver;
+    }
+
+    /**
+     * Execute action
      * @return mixed
      */
-    public function execute(ResolverInterface $resolver = null)
+    public function __invoke()
     {
-        if ($resolver === null) {
+        if ($this->resolver === null) {
             // Add namespace prefix
             $class = '\\' . $this->class;
 
             // Create class
             $object = new $class();
         } else {
-            $object = $resolver->resolve($this->class);
+            $object = $this->resolver->resolve($this->class);
         }
 
         // Execute class method
-        if ($this->method) {
-            return call_user_func_array([$object, $this->method], $this->params);
-        } else if (is_callable($object)) {
-            return $object($this->params);
-        }
+        return call_user_func_array([$object, $this->method], $this->params);
     }
 }

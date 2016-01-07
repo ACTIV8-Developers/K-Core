@@ -39,12 +39,12 @@ class Route implements RouteInterface
     protected $executable = null;
 
     /**
-     * @var null|ExecutableInterface
+     * @var callable
      */
     protected $before = null;
 
     /**
-     * @var null|ExecutableInterface
+     * @var callable
      */
     protected $after = null;
 
@@ -86,7 +86,7 @@ class Route implements RouteInterface
     {
         $this->url = $url;
         $this->methods[] = $requestMethod;
-        $this->executable = ExecutableFactory::make($class, $function);
+        $this->executable = new Executable($class, $function);
     }
 
     /**
@@ -259,24 +259,22 @@ class Route implements RouteInterface
     }
 
     /**
-     * @param $function
-     * @param $class
-     * @return self
+     * @param callable $callable
+     * @return $this
      */
-    public function executeAfter($function, $class)
+    public function executeAfter(callable $callable)
     {
-        $this->after = ExecutableFactory::make($function, $class);
+        $this->after = $callable;
         return $this;
     }
 
     /**
-     * @param $function
-     * @param $class
-     * @return self
+     * @param callable $callable
+     * @return $this
      */
-    public function executeBefore($function, $class)
+    public function executeBefore(callable $callable)
     {
-        $this->before = ExecutableFactory::make($function, $class);
+        $this->before = $callable;
         return $this;
     }
 }

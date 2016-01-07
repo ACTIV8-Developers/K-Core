@@ -6,6 +6,8 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
     public static $hookCounter = 0;
 
+    public static $middlewareStack = '';
+
     public function testCustomConstruct()
     {
         $container = new \Core\Container\Container();
@@ -62,18 +64,18 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
 
         // Make hooks.
-        $app->setHook('before.execute', 'TestHook', 'hook');
-        $app->setHook('after.execute', 'TestHook', 'hook');
-        $app->setHook('before.routing', 'TestHook', 'hook');
-        $app->setHook('after.routing', 'TestHook', 'hook');
-        $app->setHook('after.response', 'TestHook', 'hook');
+        $app->setHook('before.execute', new TestHook());
+        $app->setHook('after.execute', new TestHook());
+        $app->setHook('before.routing', new TestHook());
+        $app->setHook('after.routing', new TestHook());
+        $app->setHook('after.response', new TestHook());
 
         // Test hooks.
-        $this->assertTrue($app->getHook('before.execute') instanceof \Core\Routing\Interfaces\ExecutableInterface);
-        $this->assertTrue($app->getHook('after.execute') instanceof \Core\Routing\Interfaces\ExecutableInterface);
-        $this->assertTrue($app->getHook('before.routing') instanceof \Core\Routing\Interfaces\ExecutableInterface);
-        $this->assertTrue($app->getHook('after.routing') instanceof \Core\Routing\Interfaces\ExecutableInterface);
-        $this->assertTrue($app->getHook('after.response') instanceof \Core\Routing\Interfaces\ExecutableInterface);
+        $this->assertTrue(is_callable($app->getHook('before.execute') ));
+        $this->assertTrue(is_callable($app->getHook('after.execute') ));
+        $this->assertTrue(is_callable($app->getHook('before.routing') ));
+        $this->assertTrue(is_callable($app->getHook('after.routing') ));
+        $this->assertTrue(is_callable($app->getHook('after.response') ));
 
         $app->execute()->sendResponse();
 
@@ -84,9 +86,13 @@ class CoreTest extends PHPUnit_Framework_TestCase
     {
         $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
 
-        $app->addMiddleware('TestMiddleware');;
+        $app->addMiddleware(new TestMiddleware3());
+        $app->addMiddleware(new TestMiddleware2());
+        $app->addMiddleware(new TestMiddleware1());
 
         $app->execute();
+
+        $this->assertEquals('123', self::$middlewareStack);
     }
 
     public function testNotFound()
@@ -115,7 +121,10 @@ class CoreTest extends PHPUnit_Framework_TestCase
     {
         $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
 
-        $app->setHook('not.found', 'TestHook', 'notFound');
+        $app->setHook('not.found', function() {
+                (new TestHook())->notFound();
+            }
+        );
 
         $app->getContainer()['request']->setUri('uknown');
 
@@ -139,7 +148,10 @@ class CoreTest extends PHPUnit_Framework_TestCase
     {
         $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
 
-        $app->setHook('internal.error', 'TestHook', 'error');
+        $app->setHook('internal.error', function() {
+                (new TestHook())->error();
+            }
+        );
 
         $app->getContainer()['request']->setUri('error');
 
@@ -165,11 +177,16 @@ class TestController
     {
         throw new Exception('Error');
     }
+
+    public function __invoke()
+    {
+        $this->index();
+    }
 }
 
 class TestHook
 {
-    public function hook()
+    public function index()
     {
         CoreTest::$hookCounter++;
     }
@@ -183,12 +200,39 @@ class TestHook
     {
 
     }
+
+    public function __invoke()
+    {
+        $this->index();
+    }
 }
 
-class TestMiddleware
+class TestMiddleware1
 {
-    public function execute()
+    public function __invoke($request, $response, $next)
     {
-        // Execute middleware
+        CoreTest::$middlewareStack .= '1';
+
+        $next($request, $response);
+    }
+}
+
+class TestMiddleware2
+{
+    public function __invoke($request, $response, $next)
+    {
+        CoreTest::$middlewareStack .= '2';
+
+        $next($request, $response);
+    }
+}
+
+class TestMiddleware3
+{
+    public function __invoke($request, $response, $next)
+    {
+        CoreTest::$middlewareStack .= '3';
+
+        $next($request, $response);
     }
 }

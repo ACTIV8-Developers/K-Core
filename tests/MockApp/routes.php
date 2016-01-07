@@ -1,3 +1,5 @@
 <?php
 // Test route
-$route->get('test/:id', 'TestController', 'index')->executeAfter('TestController', 'index')->executeBefore('TestController', 'index');
+$route->get('test/:id', 'TestController', 'index')
+    ->executeBefore(new TestController())
+    ->executeAfter(new TestController());

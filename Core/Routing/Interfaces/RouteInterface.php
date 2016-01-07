@@ -25,21 +25,21 @@ interface RouteInterface
     /**
      * Get executable associated with route
      *
-     * @return array
+     * @return callable
      */
     public function getExecutable();
 
     /**
      * Get after executable associated with route
      *
-     * @return array
+     * @return callable
      */
     public function getAfterExecutable();
 
     /**
      * Get pre executable associated with route
      *
-     * @return array
+     * @return callable
      */
     public function getBeforeExecutable();
 }

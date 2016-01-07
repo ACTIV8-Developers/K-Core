@@ -10,7 +10,7 @@ class ExecutableTest extends PHPUnit_Framework_TestCase
 
         $e->addParams($params);
 
-        $this->assertEquals($e->execute(), 'test'.'foo');
+        $this->assertEquals($e(), 'test'.'foo');
     }
 }
 
