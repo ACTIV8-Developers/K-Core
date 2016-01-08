@@ -9,13 +9,11 @@ use Core\Routing\Executable;
 use BadFunctionCallException;
 use Core\Container\Container;
 use Core\Container\ContainerAware;
-use Core\Container\ServiceProvider;
 use Core\Core\Exceptions\StopException;
 use Interop\Container\ContainerInterface;
 use Core\Core\Exceptions\NotFoundException;
 use Core\Routing\Interfaces\RouteInterface;
 use Core\Routing\Interfaces\ResolverInterface;
-use Core\Routing\Interfaces\ExecutableInterface;
 
 /**
  * Core class.
@@ -31,7 +29,7 @@ class Core extends ContainerAware
      *
      * @var string
      */
-    const VERSION = '2.1.0';
+    const VERSION = '3.0.0 RC1';
 
     /**
      * @var Core
@@ -46,8 +44,7 @@ class Core extends ContainerAware
     /**
      * Array of middleware actions
      *
-     * @var  \SplStack
-     * @link http://php.net/manual/class.splstack.php
+     * @var \SplStack
      */
     protected $middleware = [];
 
@@ -134,7 +131,7 @@ class Core extends ContainerAware
             return new Router();
         };
 
-        // Add routing process to top of middleware stack
+        // Create middleware stack
         $this->middleware = new \SplStack();
         $this->middleware->setIteratorMode(\SplDoublyLinkedList::IT_MODE_LIFO | \SplDoublyLinkedList::IT_MODE_KEEP);
     }
@@ -191,6 +188,7 @@ class Core extends ContainerAware
     }
 
     /**
+     * Find targeted controller and add its actions to middleware stack
      */
     public function executeRouting()
     {
@@ -202,7 +200,7 @@ class Core extends ContainerAware
             include $this->container['config']['routesPath'];
         }
 
-        // Pre routing/controller hook.
+        // Pre routing hook
         if (isset($this->hooks['before.routing'])) {
             $this->hooks['before.routing']();
         }
@@ -213,28 +211,29 @@ class Core extends ContainerAware
 
         // Execute route if found.
         if (null !== $matchedRoute) {
-            /** @var Executable $executable */
-            $executable = $matchedRoute->getExecutable();
-
-            // Get passed route params
-            $params = $matchedRoute->getParams();
-
-            // Append passed params to GET array.
-            $this->container['request']->get->add($params);
-
-            // Pass params to executable also
-            $executable->setParams($params);
-
-            // Add executable resolver
-            $executable->setResolver($this->resolver);
 
             // Add route post executable
             if (($after = $matchedRoute->getAfterExecutable()) !== null) {
                 $this->addMiddleware($after);
             }
 
-            // Add found route executable to middleware stack
-            $this->addMiddleware(function($request, $response, $next) use ($executable) {
+            // Add found route main executable to middleware stack
+            $this->addMiddleware(function($request, $response, $next) use ($matchedRoute) {
+                /** @var Executable $executable */
+                $executable = $matchedRoute->getExecutable();
+
+                // Get passed route params
+                $params = $matchedRoute->getParams();
+
+                // Append passed params to GET array.
+                $request->get->add($params);
+
+                // Pass params to executable also
+                $executable->setParams($params);
+
+                // Add executable resolver
+                $executable->setResolver($this->resolver);
+
                 $executable();
 
                 if ($next) {
@@ -247,13 +246,13 @@ class Core extends ContainerAware
                 $this->addMiddleware($before);
             }
         } else {
-            $this->addMiddleware(function($request, $response, $next) {
+            $this->addMiddleware(function() {
                 // If page not found display 404 error.
                 throw new NotFoundException();
             });
         }
 
-        // Post routing/controller hook.
+        // Post routing hook
         if (isset($this->hooks['after.routing'])) {
             $this->hooks['after.routing']();
         }
@@ -301,7 +300,7 @@ class Core extends ContainerAware
 
         if (isset($this->hooks['not.found'])) {
             $this->container['not.found'] = $e;
-            $this->hooks['not.found']($this->resolver);
+            $this->hooks['not.found']();
         } else {
             $this->container['response']->setStatusCode(404);
             $this->container['response']->setBody($e->getMessage());
@@ -317,7 +316,7 @@ class Core extends ContainerAware
     {
         if (isset($this->hooks['internal.error'])) {
             $this->container['exception'] = $e;
-            $this->hooks['internal.error']($this->resolver);
+            $this->hooks['internal.error']();
         } else {
             $this->container['response']->setStatusCode(500);
             $this->container['response']->setBody('Internal error: ' . $e->getMessage());
@@ -359,6 +358,7 @@ class Core extends ContainerAware
         if (!$this->middleware->isEmpty()) {
             $next = $this->middleware->top();
         }
+
         $this->middleware[] = function ($request, $response) use ($callable, $next) {
             return call_user_func($callable, $request, $response, $next);
         };
