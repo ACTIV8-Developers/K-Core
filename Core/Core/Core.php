@@ -2,8 +2,6 @@
 namespace Core\Core;
 
 use Exception;
-use Core\Http\Request;
-use Core\Http\Response;
 use Core\Routing\Router;
 use Core\Routing\Executable;
 use BadFunctionCallException;
@@ -14,6 +12,8 @@ use Interop\Container\ContainerInterface;
 use Core\Core\Exceptions\NotFoundException;
 use Core\Routing\Interfaces\RouteInterface;
 use Core\Routing\Interfaces\ResolverInterface;
+use Core\Http\ServerRequestFactory;
+use Zend\Diactoros\Response;
 
 /**
  * Core class.
@@ -116,14 +116,18 @@ class Core extends ContainerAware
 
         // Create request class closure.
         $this->container['request'] = function () {
-            return new Request($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
+            return ServerRequestFactory::fromGlobals(
+                $_SERVER,
+                $_GET,
+                $_POST,
+                $_COOKIE,
+                $_FILES
+            );
         };
 
         // Create response class closure.
-        $this->container['response'] = function ($c) {
-            $response = new Response();
-            $response->setProtocolVersion($c['request']->getProtocolVersion());
-            return $response;
+        $this->container['response'] = function () {
+            return new Response();
         };
 
         // Create router class closure
@@ -193,7 +197,7 @@ class Core extends ContainerAware
     public function executeRouting()
     {
         // Get router object
-        $route = $this->container['router'];
+        $route = $this->container->get('router');
 
         // Collect routes list from file.
         if (is_file($this->container['config']['routesPath'])) {
@@ -207,7 +211,7 @@ class Core extends ContainerAware
 
         // Route requests
         /** @var RouteInterface $matchedRoute */
-        $matchedRoute = $route->execute($this->container['request']->getUri(), $this->container['request']->getMethod());
+        $matchedRoute = $route->execute(trim($this->container['request']->getUri()->getPath(), '/'), $this->container['request']->getMethod());
 
         // Execute route if found.
         if (null !== $matchedRoute) {
@@ -226,7 +230,7 @@ class Core extends ContainerAware
                 $params = $matchedRoute->getParams();
 
                 // Append passed params to GET array.
-                $request->get->add($params);
+                //$request->get->add($params);
 
                 // Pass params to executable also
                 $executable->setParams($params);
@@ -276,8 +280,51 @@ class Core extends ContainerAware
      */
     public function sendResponse()
     {
-        // Send final response.
-        $this->container['response']->send();
+        // Send response
+        $response = $this->container->get('response');
+
+        // Headers
+        if (!headers_sent()) {
+            // Status
+            header(sprintf(
+                'HTTP/%s %s %s',
+                $response->getProtocolVersion(),
+                $response->getStatusCode(),
+                $response->getReasonPhrase()
+            ));
+            // Headers
+            foreach ($response->getHeaders() as $name => $values) {
+                foreach ($values as $value) {
+                    header(sprintf('%s: %s', $name, $value), false);
+                }
+            }
+        }
+
+        // Body
+        $body = $response->getBody();
+        if ($body->isSeekable()) {
+            $body->rewind();
+        }
+        $settings = $this->container->get('config');
+        $chunkSize = isset($settings['responseChunkSize']) ? $settings['responseChunkSize'] : 1024;
+        $contentLength = $response->getHeaderLine('Content-Length');
+
+        if (!$contentLength) {
+            $contentLength = $body->getSize();
+        }
+
+        $totalChunks = ceil($contentLength / $chunkSize);
+        $lastChunkSize = $contentLength % $chunkSize;
+        $currentChunk = 0;
+        while (!$body->eof() && $currentChunk < $totalChunks) {
+            if (++$currentChunk == $totalChunks && $lastChunkSize > 0) {
+                $chunkSize = $lastChunkSize;
+            }
+            echo $body->read($chunkSize);
+            if (connection_status() != CONNECTION_NORMAL) {
+                break;
+            }
+        }
 
         // Post response hook.
         if (isset($this->hooks['after.response'])) {
@@ -302,8 +349,8 @@ class Core extends ContainerAware
             $this->container['not.found'] = $e;
             $this->hooks['not.found']();
         } else {
-            $this->container['response']->setStatusCode(404);
-            $this->container['response']->setBody($e->getMessage());
+            //$this->container['response']->withStatus(404);
+            $this->container['response']->getBody()->write($e->getMessage());
         }
     }
 
@@ -318,8 +365,8 @@ class Core extends ContainerAware
             $this->container['exception'] = $e;
             $this->hooks['internal.error']();
         } else {
-            $this->container['response']->setStatusCode(500);
-            $this->container['response']->setBody('Internal error: ' . $e->getMessage());
+            //$this->container['response']->withStatus(404);
+            $this->container['response']->getBody()->write('Internal error: ' . $e->getMessage());
         }
     }
 

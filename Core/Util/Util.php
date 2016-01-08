@@ -75,28 +75,4 @@ class Util
     {
         return self::$base . self::$publicPath . '/images/' . $img;
     }
-
-    /**
-     * Redirect helper function.
-     *
-     * @var string $url
-     * @var int $statusCode
-     */
-    public static function redirect($url = '', $statusCode = 303)
-    {
-        header('Location: ' . self::base($url), true, $statusCode);
-        exit(0);
-    }
-
-    /**
-     * Redirect helper function.
-     *
-     * @var string $url
-     * @var int $statusCode
-     */
-    public static function redirectToUrl($url = '', $statusCode = 303)
-    {
-        header('Location: ' . $url, true, $statusCode);
-        exit(0);
-    }
 }

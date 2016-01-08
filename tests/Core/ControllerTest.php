@@ -72,17 +72,6 @@ class ControllerTest extends PHPUnit_Framework_TestCase
         $con->renderIt($view, []);
     }
 
-    public function testJson()
-    {
-        $con = new AnotherTestController();
-
-        $con->setContainer($this->container);
-
-        $data = $con->jsonIt(['foo' => 'bar']);
-
-        $this->assertEquals($data, json_encode(['foo' => 'bar']));
-    }
-
     /**
      * @expectedException Core\Core\Exceptions\NotFoundException
      */
@@ -105,15 +94,6 @@ class ControllerTest extends PHPUnit_Framework_TestCase
         $con->setContainer($this->container);
 
         $con->stopIt();
-    }
-
-    public function testInput()
-    {
-        $con = new AnotherTestController();
-
-        $con->setContainer($this->container);
-
-        $con->input();
     }
 
     public function testContainer()
@@ -163,13 +143,6 @@ class AnotherTestController extends Controller
         $this->render($view, $data);
     }
 
-    public function jsonIt($data = [])
-    {
-        $this->json($data);
-
-        return $this->response->getBody();
-    }
-
     public function notFoundIt()
     {
         $this->notFound();
@@ -178,25 +151,6 @@ class AnotherTestController extends Controller
     public function stopIt()
     {
         $this->stop();
-    }
-
-    public function input()
-    {
-        $this->get('uknown');
-
-        $this->post('uknown');
-
-        $this->cookies('uknown');
-
-        $this->files('uknown');
-
-        $this->get();
-
-        $this->post();
-
-        $this->cookies();
-
-        $this->files();
     }
 
     public function getFoo()

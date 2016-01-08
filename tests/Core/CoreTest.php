@@ -28,8 +28,8 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
         // Check if construct made all required things.
         $this->assertInstanceOf('Core\Core\Core', $app);
-        $this->assertInstanceOf('Core\Http\Response', $app->getContainer()['response']);
-        $this->assertInstanceOf('Core\Http\Request', $app->getContainer()['request']);
+        $this->assertInstanceOf('Psr\Http\Message\ResponseInterface', $app->getContainer()['response']);
+        $this->assertInstanceOf('Psr\Http\Message\ServerRequestInterface', $app->getContainer()['request']);
     }
 
     public function testExecute()
@@ -47,9 +47,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
         // Make instance of app.
         $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
 
-        $app->getContainer()['response']->setBody('<div>Test</div>');
-
-        //$this->expectOutputString('<div>Test</div>');
+        $app->getContainer()['response']->getBody()->write('<div>Test</div>');
 
         $app->sendResponse();
     }
@@ -97,28 +95,33 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
     public function testNotFound()
     {
-        $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_SERVER['REQUEST_URI'] = '/notfound';
 
-        $app->getContainer()['request']->setUri('uknown');
+        $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
 
         $app->execute();
     }
 
     public function testControllerNotFound()
     {
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_SERVER['REQUEST_URI'] = '/notfound';
+
         $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
 
-        $app->getContainer()['request']->setUri('notfound');
-
-        $app->getContainer()['router']->addRoute(new \Core\Routing\Route('notfound','GET','TestController', 'notFound'));
+        $app->getContainer()['router']->addRoute(new \Core\Routing\Route('notfound', 'GET', 'TestController', 'notFound'));
 
         $app->execute();
 
-        $this->assertEquals('Not found', $app->getContainer()['response']->getBody());
+        $this->assertEquals('Not found', (string)$app->getContainer()['response']->getBody());
     }
 
     public function testNotFoundHook()
     {
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_SERVER['REQUEST_URI'] = '/notfound';
+
         $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
 
         $app->setHook('not.found', function() {
@@ -126,34 +129,34 @@ class CoreTest extends PHPUnit_Framework_TestCase
             }
         );
 
-        $app->getContainer()['request']->setUri('uknown');
-
         $app->execute();
     }
 
     public function testControllerException()
     {
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_SERVER['REQUEST_URI'] = '/error';
+
         $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
 
-        $app->getContainer()['request']->setUri('error');
-
-        $app->getContainer()['router']->addRoute(new \Core\Routing\Route('error','GET','TestController', 'error'));
+        $app->getContainer()['router']->addRoute(new \Core\Routing\Route('error', 'GET','TestController', 'error'));
 
         $app->execute();
 
-        $this->assertEquals('Internal error: ' . 'Error', $app->getContainer()['response']->getBody());
+        $this->assertEquals('Internal error: ' . 'Error', (string)$app->getContainer()['response']->getBody());
     }
 
     public function testControllerExceptionHook()
     {
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_SERVER['REQUEST_URI'] = '/error';
+
         $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
 
         $app->setHook('internal.error', function() {
                 (new TestHook())->error();
             }
         );
-
-        $app->getContainer()['request']->setUri('error');
 
         $app->getContainer()['router']->addRoute(new \Core\Routing\Route('error','GET','TestController', 'error'));
 

@@ -22,62 +22,6 @@ use Core\Routing\Interfaces\RouterInterface;
 abstract class Controller extends ContainerAware
 {
     /**
-     * Get GET value from request object.
-     *
-     * @param string $key
-     * @return mixed
-     */
-    protected function get($key = null)
-    {
-        if ($key === null) {
-            return $this->container->get('request')->get->all();
-        }
-        return $this->container->get('request')->get->get($key);
-    }
-
-    /**
-     * Get POST value from request object.
-     *
-     * @param string $key
-     * @return mixed
-     */
-    protected function post($key = null)
-    {
-        if ($key === null) {
-            return $this->container->get('request')->post->all();
-        }
-        return $this->container->get('request')->post->get($key);
-    }
-
-    /**
-     * Get COOKIE value from request object.
-     *
-     * @param string $key
-     * @return mixed
-     */
-    protected function cookies($key = null)
-    {
-        if ($key === null) {
-            return $this->container->get('request')->cookies->all();
-        }
-        return $this->container->get('request')->cookies->get($key);
-    }
-
-    /**
-     * Get FILES value from request object.
-     *
-     * @param string $key
-     * @return mixed
-     */
-    protected function files($key = null)
-    {
-        if ($key === null) {
-            return $this->container->get('request')->files->all();
-        }
-        return $this->container->get('request')->files->get($key);
-    }
-
-    /**
      * Render output for display.
      *
      * @param string $view
@@ -95,7 +39,7 @@ abstract class Controller extends ContainerAware
         include $this->container->get('config')['viewsPath'] . '/' . $view . '.php';
 
         // Add view to output body.
-        $this->container->get('response')->addBody(ob_get_contents());
+        $this->container->get('response')->getBody()->write(ob_get_contents());
         ob_end_clean();
     }
 
@@ -121,18 +65,6 @@ abstract class Controller extends ContainerAware
         $buffer = ob_get_contents();
         ob_end_clean();
         return $buffer;
-    }
-
-    /**
-     * Set response type to JSON.
-     *
-     * @param array $data
-     * @param int $options
-     */
-    public function json($data, $options = 0)
-    {
-        $this->container->get('response')->headers->set('Content-Type', 'containerlication/json');
-        $this->container->get('response')->setBody(json_encode($data, $options));
     }
 
     /**
