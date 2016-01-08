@@ -7,7 +7,6 @@ use Core\Http\Response;
 use Core\Routing\Router;
 use Core\Routing\Executable;
 use BadFunctionCallException;
-use InvalidArgumentException;
 use Core\Container\Container;
 use Core\Container\ContainerAware;
 use Core\Container\ServiceProvider;
@@ -138,7 +137,6 @@ class Core extends ContainerAware
         // Add routing process to top of middleware stack
         $this->middleware = new \SplStack();
         $this->middleware->setIteratorMode(\SplDoublyLinkedList::IT_MODE_LIFO | \SplDoublyLinkedList::IT_MODE_KEEP);
-        $this->middleware[] = $this;
     }
 
     /**
@@ -167,13 +165,15 @@ class Core extends ContainerAware
     {
         // Pre execute hook.
         if (isset($this->hooks['before.execute'])) {
-            $this->hooks['before.execute']($this->resolver);
+            $this->hooks['before.execute']();
         }
-        
+
+        // Find targeted controller and append its actions to middleware stack
+        $this->executeRouting();
+
         try {
-            /** @var callable $start */
-            $start = $this->middleware->top();
-            $start($this->container['request'], $this->container['response']);
+            // Execute middleware stack
+            $this->executeMiddlewareStack();
         } catch (StopException $e) {
             // Just stop execution of current route
         } catch (NotFoundException $e) {
@@ -184,19 +184,15 @@ class Core extends ContainerAware
 
         // After execute hook.
         if (isset($this->hooks['after.execute'])) {
-            $this->hooks['after.execute']($this->resolver);
+            $this->hooks['after.execute']();
         }
 
         return $this;
     }
 
     /**
-     * @param $request
-     * @param $response
-     * @param $next
-     * @throws NotFoundException
      */
-    public function __invoke($request, $response, $next = null)
+    public function executeRouting()
     {
         // Get router object
         $route = $this->container['router'];
@@ -208,7 +204,7 @@ class Core extends ContainerAware
 
         // Pre routing/controller hook.
         if (isset($this->hooks['before.routing'])) {
-            $this->hooks['before.routing']($this->resolver);
+            $this->hooks['before.routing']();
         }
 
         // Route requests
@@ -217,7 +213,9 @@ class Core extends ContainerAware
 
         // Execute route if found.
         if (null !== $matchedRoute) {
+            /** @var Executable $executable */
             $executable = $matchedRoute->getExecutable();
+
             // Get passed route params
             $params = $matchedRoute->getParams();
 
@@ -230,31 +228,45 @@ class Core extends ContainerAware
             // Add executable resolver
             $executable->setResolver($this->resolver);
 
-            // Add route pre executable
-            if (($before = $matchedRoute->getBeforeExecutable()) !== null) {
-                $this->addMiddleware($before);
-            }
-
-            // Add found route executable to middleware stack
-            $this->addMiddleware($executable);
-
             // Add route post executable
             if (($after = $matchedRoute->getAfterExecutable()) !== null) {
                 $this->addMiddleware($after);
             }
 
-            /** @var callable $start */
-            $start = $this->middleware->top();
-            $start($request, $response);
+            // Add found route executable to middleware stack
+            $this->addMiddleware(function($request, $response, $next) use ($executable) {
+                $executable();
+
+                if ($next) {
+                    $next($request, $response);
+                }
+            });
+
+            // Add route pre executable
+            if (($before = $matchedRoute->getBeforeExecutable()) !== null) {
+                $this->addMiddleware($before);
+            }
         } else {
-            // If page not found display 404 error.
-            throw new NotFoundException();
+            $this->addMiddleware(function($request, $response, $next) {
+                // If page not found display 404 error.
+                throw new NotFoundException();
+            });
         }
 
         // Post routing/controller hook.
         if (isset($this->hooks['after.routing'])) {
-            $this->hooks['after.routing']($this->resolver);
+            $this->hooks['after.routing']();
         }
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function executeMiddlewareStack()
+    {
+        /** @var callable $start */
+        $start = $this->middleware->top();
+        $start($this->container['request'], $this->container['response']);
     }
 
     /**
@@ -270,7 +282,7 @@ class Core extends ContainerAware
 
         // Post response hook.
         if (isset($this->hooks['after.response'])) {
-            $this->hooks['after.response']($this->resolver);
+            $this->hooks['after.response']();
         }
 
         return $this;
@@ -343,10 +355,12 @@ class Core extends ContainerAware
      */
     public function addMiddleware(callable $callable)
     {
-        $next = $this->middleware->top();
+        $next = null;
+        if (!$this->middleware->isEmpty()) {
+            $next = $this->middleware->top();
+        }
         $this->middleware[] = function ($request, $response) use ($callable, $next) {
-            $result = call_user_func($callable, $request, $response, $next);
-            return $result;
+            return call_user_func($callable, $request, $response, $next);
         };
         return $this;
     }

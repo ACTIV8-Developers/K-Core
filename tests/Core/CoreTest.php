@@ -12,7 +12,9 @@ class CoreTest extends PHPUnit_Framework_TestCase
     {
         $container = new \Core\Container\Container();
         $resolver = new \Core\Core\Resolver($container);
-        $core = new \Core\Core\Core('', $container, $resolver);
+        $app = new \Core\Core\Core('', $container, $resolver);
+
+        $this->assertEquals($container, $app->getContainer());
     }
 
     public function testConstruct()
@@ -23,12 +25,6 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
         $app->setAppPath('appPath');
         $this->assertEquals('appPath', $app->getAppPath());
-    }
-
-    public function testBoot()
-    {
-        // Make instance of app.
-        $app = new \Core\Core\Core(__DIR__ . '/../MockApp');;
 
         // Check if construct made all required things.
         $this->assertInstanceOf('Core\Core\Core', $app);
@@ -43,7 +39,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
         $app->execute();
 
-        $this->assertEquals(self::$test, 'test');
+        $this->assertEquals(self::$test, 'testtesttest');
     }
 
     public function testSendResponse()
@@ -53,7 +49,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
         $app->getContainer()['response']->setBody('<div>Test</div>');
 
-        //$this->expectOutputString('<div>Test</div>');
+        $this->expectOutputString('<div>Test</div>');
 
         $app->sendResponse();
     }
@@ -80,6 +76,8 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $app->execute()->sendResponse();
 
         $this->assertEquals(5, self::$hookCounter);
+
+        $this->assertEquals(self::$test, 'testtesttesttesttesttest');
     }
 
     public function testMiddleware()
@@ -93,6 +91,8 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $app->execute();
 
         $this->assertEquals('123', self::$middlewareStack);
+
+        $this->assertEquals(self::$test, 'testtesttesttesttesttesttesttesttest');
     }
 
     public function testNotFound()
@@ -165,7 +165,7 @@ class TestController
 {
     public function index()
     {
-        CoreTest::$test = 'test';
+        CoreTest::$test .= 'test';
     }
 
     public function notFound()
@@ -178,9 +178,13 @@ class TestController
         throw new Exception('Error');
     }
 
-    public function __invoke()
+    public function __invoke($request, $response, $next)
     {
         $this->index();
+
+        if ($next) {
+            $next($request, $response);
+        }
     }
 }
 
@@ -213,7 +217,9 @@ class TestMiddleware1
     {
         CoreTest::$middlewareStack .= '1';
 
-        $next($request, $response);
+        if ($next) {
+            $next($request, $response);
+        }
     }
 }
 
@@ -223,7 +229,9 @@ class TestMiddleware2
     {
         CoreTest::$middlewareStack .= '2';
 
-        $next($request, $response);
+        if ($next) {
+            $next($request, $response);
+        }
     }
 }
 
@@ -233,6 +241,8 @@ class TestMiddleware3
     {
         CoreTest::$middlewareStack .= '3';
 
-        $next($request, $response);
+        if ($next) {
+            $next($request, $response);
+        }
     }
 }
