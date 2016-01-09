@@ -64,6 +64,7 @@ class Headers extends HttpBag
     {
         $all = parent::all();
         $out = [];
+
         foreach ($all as $key => $props) {
             $out[$props['originalKey']] = $props['value'];
         }

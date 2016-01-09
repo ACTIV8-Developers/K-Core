@@ -3,7 +3,6 @@ namespace Core\Http;
 
 /**
  * Simple container class for storing HTTP request data.
- * Inspired by Symfony HttpParameters class.
  */
 class HttpBag implements \IteratorAggregate, \Countable, \ArrayAccess
 {
@@ -21,7 +20,9 @@ class HttpBag implements \IteratorAggregate, \Countable, \ArrayAccess
      */
     public function __construct(array $elements = [])
     {
-        $this->elements = $elements;
+        foreach ($elements as $key => $value) {
+            $this->set($key, $value);
+        };
     }
 
     /**
@@ -186,7 +187,7 @@ class HttpBag implements \IteratorAggregate, \Countable, \ArrayAccess
      */
     public function offsetExists($offset)
     {
-        return isset($this->elements[$offset]);
+        return $this->has($offset);
     }
 
     /**
@@ -200,11 +201,7 @@ class HttpBag implements \IteratorAggregate, \Countable, \ArrayAccess
      */
     public function offsetGet($offset)
     {
-        if (isset($this->elements[$offset])) {
-            return $this->elements[$offset];
-        }
-
-        return null;
+        return $this->get($offset);
     }
 
     /**
@@ -221,7 +218,7 @@ class HttpBag implements \IteratorAggregate, \Countable, \ArrayAccess
      */
     public function offsetSet($offset, $value)
     {
-        $this->elements[$offset] = $value;
+        $this->set($offset, $value);
     }
 
     /**
@@ -235,6 +232,6 @@ class HttpBag implements \IteratorAggregate, \Countable, \ArrayAccess
      */
     public function offsetUnset($offset)
     {
-        unset($this->elements[$offset]);
+        $this->remove($offset);
     }
 }

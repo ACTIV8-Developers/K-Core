@@ -118,7 +118,7 @@ class Core extends ContainerAware
 
         // Create request class closure.
         $this->container['request'] = function () {
-            Request::createFromEnvironment(new Environment($_SERVER));
+            return Request::createFromEnvironment(new Environment($_SERVER));
         };
 
         // Create response class closure.

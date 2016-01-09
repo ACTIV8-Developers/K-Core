@@ -38,6 +38,7 @@ class Util
             $base_url .= '://' . $_SERVER['HTTP_HOST'];
             $base_url .= str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
             self::$base = $base_url;
+
             return $base_url . $path;
         }
         return '';

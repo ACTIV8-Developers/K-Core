@@ -152,7 +152,7 @@ class Request extends Message implements ServerRequestInterface
      *
      * @param string           $method        The request method
      * @param UriInterface     $uri           The request URI object
-     * @param HttpBag          $headers       The request headers collection
+     * @param Headers          $headers       The request headers collection
      * @param array            $cookies       The request cookies collection
      * @param array            $serverParams  The server environment variables
      * @param StreamInterface  $body          The request body object
@@ -161,7 +161,7 @@ class Request extends Message implements ServerRequestInterface
     public function __construct(
         $method,
         UriInterface $uri,
-        HttpBag $headers,
+        Headers $headers,
         array $cookies,
         array $serverParams,
         StreamInterface $body,
@@ -170,7 +170,7 @@ class Request extends Message implements ServerRequestInterface
         $this->originalMethod = $this->filterMethod($method);
         $this->uri = $uri;
         $this->headers = $headers;
-        $this->cookies = $cookies;
+        $this->cookies = new HttpBag($cookies);
         $this->serverParams = $serverParams;
         $this->attributes = new HttpBag();
         $this->body = $body;
