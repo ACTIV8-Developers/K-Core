@@ -66,16 +66,6 @@ class HttpBag implements \IteratorAggregate, \Countable, \ArrayAccess
     }
 
     /**
-     * Adds elements.
-     *
-     * @param array $elements
-     */
-    public function add(array $elements = [])
-    {
-        $this->elements = array_merge($this->elements, $elements);
-    }
-
-    /**
      * Sets a element by name.
      *
      * @param string $key
