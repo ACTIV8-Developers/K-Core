@@ -1,6 +1,10 @@
 <?php
 namespace Core\Core;
 
+use Core\Http\Environment;
+use Core\Http\Headers;
+use Core\Http\Request;
+use Core\Http\Response;
 use Exception;
 use Core\Routing\Router;
 use Core\Routing\Executable;
@@ -12,8 +16,6 @@ use Interop\Container\ContainerInterface;
 use Core\Core\Exceptions\NotFoundException;
 use Core\Routing\Interfaces\RouteInterface;
 use Core\Routing\Interfaces\ResolverInterface;
-use Core\Http\ServerRequestFactory;
-use Zend\Diactoros\Response;
 
 /**
  * Core class.
@@ -116,18 +118,14 @@ class Core extends ContainerAware
 
         // Create request class closure.
         $this->container['request'] = function () {
-            return ServerRequestFactory::fromGlobals(
-                $_SERVER,
-                $_GET,
-                $_POST,
-                $_COOKIE,
-                $_FILES
-            );
+            Request::createFromEnvironment(new Environment($_SERVER));
         };
 
         // Create response class closure.
-        $this->container['response'] = function () {
-            return new Response();
+        $this->container['response'] = function ($c) {
+            $headers = new Headers(['Content-Type' => 'text/html; charset=UTF-8']);
+            $response = new Response(200, $headers);
+            return $response->withProtocolVersion($c->get('request')->getProtocolVersion());
         };
 
         // Create router class closure
