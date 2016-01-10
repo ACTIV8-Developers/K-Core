@@ -22,36 +22,42 @@ class UploadedFile implements UploadedFileInterface
      * @var string
      */
     protected $name;
+
     /**
      * The client-provided media type of the file.
      *
      * @var string
      */
     protected $type;
+
     /**
      * The size of the file in bytes.
      *
      * @var int
      */
     protected $size;
+
     /**
      * A valid PHP UPLOAD_ERR_xxx code for the file upload.
      *
      * @var int
      */
     protected $error = UPLOAD_ERR_OK;
+
     /**
      * Indicates if the upload is from a SAPI environment.
      *
      * @var bool
      */
     protected $sapi = false;
+
     /**
      * An optional StreamInterface wrapping the file resource.
      *
      * @var StreamInterface
      */
     protected $stream;
+
     /**
      * Indicates if the uploaded file has already been moved.
      *
@@ -60,31 +66,13 @@ class UploadedFile implements UploadedFileInterface
     protected $moved = false;
 
     /**
-     * Create a normalized tree of UploadedFile instances from the Environment.
-     *
-     * @param Environment $env The environment
-     *
-     * @return array|null A normalized tree of UploadedFile instances or null if none are provided.
-     */
-    public static function createFromEnvironment(Environment $env)
-    {
-        if (is_array($env['slim.files']) && $env->has('slim.files')) {
-            return $env['slim.files'];
-        } elseif (isset($_FILES)) {
-            return static::parseUploadedFiles($_FILES);
-        }
-
-        return [];
-    }
-
-    /**
      * Parse a non-normalized, i.e. $_FILES superglobal, tree of uploaded file data.
      *
      * @param array $uploadedFiles The non-normalized tree of uploaded file data.
      *
      * @return array A normalized tree of UploadedFile instances.
      */
-    private static function parseUploadedFiles(array $uploadedFiles)
+    public static function parseUploadedFiles(array $uploadedFiles)
     {
         $parsed = [];
         foreach ($uploadedFiles as $field => $uploadedFile) {

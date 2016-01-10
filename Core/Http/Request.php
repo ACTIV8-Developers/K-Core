@@ -22,6 +22,49 @@ use Psr\Http\Message\StreamInterface;
  */
 class Request extends Message implements ServerRequestInterface
 {
+
+    /**
+     * The request query string params
+     *
+     * @var HttpBag
+     */
+    public $get;
+
+    /**
+     * The request body parsed (if possible) into a PHP array or object
+     *
+     * @var HttpBag
+     */
+    public $post;
+
+    /**
+     * The request cookies
+     *
+     * @var HttpBag
+     */
+    public $cookies;
+
+    /**
+     * The server environment variables at the time the request was created.
+     *
+     * @var HttpBag
+     */
+    public $server;
+
+    /**
+     * The request attributes (route segment names and values)
+     *
+     * @var HttpBag
+     */
+    public $attributes;
+
+    /**
+     * List of uploaded files
+     *
+     * @var UploadedFileInterface[]
+     */
+    public $files;
+
     /**
      * The request method
      *
@@ -51,53 +94,11 @@ class Request extends Message implements ServerRequestInterface
     protected $requestTarget;
 
     /**
-     * The request query string params
-     *
-     * @var array
-     */
-    protected $queryParams;
-
-    /**
-     * The request cookies
-     *
-     * @var array
-     */
-    protected $cookies;
-
-    /**
-     * The server environment variables at the time the request was created.
-     *
-     * @var array
-     */
-    protected $serverParams;
-
-    /**
-     * The request attributes (route segment names and values)
-     *
-     * @var HttpBag
-     */
-    protected $attributes;
-
-    /**
-     * The request body parsed (if possible) into a PHP array or object
-     *
-     * @var null|array|object
-     */
-    protected $bodyParsed;
-
-    /**
      * List of request body parsers (e.g., url-encoded, JSON, XML, multipart)
      *
      * @var callable[]
      */
     protected $bodyParsers = [];
-
-    /**
-     * List of uploaded files
-     *
-     * @var UploadedFileInterface[]
-     */
-    protected $uploadedFiles;
 
     /**
      * Valid request methods
@@ -132,7 +133,7 @@ class Request extends Message implements ServerRequestInterface
         $cookies = Cookies::parseHeader($headers->get('Cookie', []));
         $serverParams = $environment->all();
         $body = new RequestBody();
-        $uploadedFiles = UploadedFile::createFromEnvironment($environment);
+        $uploadedFiles = UploadedFile::parseUploadedFiles($_FILES);
 
         $request = new static($method, $uri, $headers, $cookies, $serverParams, $body, $uploadedFiles);
 
@@ -152,18 +153,18 @@ class Request extends Message implements ServerRequestInterface
      *
      * @param string           $method        The request method
      * @param UriInterface     $uri           The request URI object
-     * @param Headers          $headers       The request headers collection
+     * @param HttpBag          $headers       The request headers collection
      * @param array            $cookies       The request cookies collection
-     * @param array            $serverParams  The server environment variables
+     * @param array            $server  The server environment variables
      * @param StreamInterface  $body          The request body object
      * @param array            $uploadedFiles The request uploadedFiles collection
      */
     public function __construct(
         $method,
         UriInterface $uri,
-        Headers $headers,
+        HttpBag $headers,
         array $cookies,
-        array $serverParams,
+        array $server,
         StreamInterface $body,
         array $uploadedFiles = []
     ) {
@@ -171,13 +172,13 @@ class Request extends Message implements ServerRequestInterface
         $this->uri = $uri;
         $this->headers = $headers;
         $this->cookies = new HttpBag($cookies);
-        $this->serverParams = $serverParams;
+        $this->server = new HttpBag($server);
         $this->attributes = new HttpBag();
         $this->body = $body;
-        $this->uploadedFiles = $uploadedFiles;
+        $this->files = new HttpBag($uploadedFiles);
 
-        if (isset($serverParams['SERVER_PROTOCOL'])) {
-            $this->protocolVersion = str_replace('HTTP/', '', $serverParams['SERVER_PROTOCOL']);
+        if (isset($server['SERVER_PROTOCOL'])) {
+            $this->protocolVersion = str_replace('HTTP/', '', $server['SERVER_PROTOCOL']);
         }
 
         if (!$this->headers->has('Host') || $this->uri->getHost() !== '') {
@@ -206,6 +207,43 @@ class Request extends Message implements ServerRequestInterface
             parse_str($input, $data);
             return $data;
         });
+
+        parse_str($this->uri->getQuery(), $get);
+
+        $this->get = new HttpBag($get);
+
+        $mediaType = $this->getMediaType();
+        $body = (string)$this->getBody();
+
+        if (isset($this->bodyParsers[$mediaType]) === true) {
+            $parsed = $this->bodyParsers[$mediaType]($body);
+
+            if (!is_null($parsed) && !is_object($parsed) && !is_array($parsed)) {
+                throw new RuntimeException(
+                    'Request body media type parser return value must be an array, an object, or null'
+                );
+            }
+            $this->post = $parsed;
+        }
+
+        return $this->post;
+    }
+
+    /**
+     * Get request media type, if known.
+     *
+     * Note: This method is not part of the PSR-7 standard.
+     *
+     * @return string|null The request media type, minus content-type params
+     */
+    public function getMediaType()
+    {
+        $contentType = $this->getContentType();
+        if ($contentType) {
+            $contentTypeParts = preg_split('/\s*[;,]\s*/', $contentType);
+            return strtolower($contentTypeParts[0]);
+        }
+        return null;
     }
 
     /**
@@ -428,7 +466,7 @@ class Request extends Message implements ServerRequestInterface
      *
      * @return bool
      */
-    public function isXhr()
+    public function isAjax()
     {
         return $this->getHeaderLine('X-Requested-With') === 'XMLHttpRequest';
     }
@@ -584,48 +622,6 @@ class Request extends Message implements ServerRequestInterface
     }
 
     /**
-     * Get request media type, if known.
-     *
-     * Note: This method is not part of the PSR-7 standard.
-     *
-     * @return string|null The request media type, minus content-type params
-     */
-    public function getMediaType()
-    {
-        $contentType = $this->getContentType();
-        if ($contentType) {
-            $contentTypeParts = preg_split('/\s*[;,]\s*/', $contentType);
-
-            return strtolower($contentTypeParts[0]);
-        }
-
-        return null;
-    }
-
-    /**
-     * Get request media type params, if known.
-     *
-     * Note: This method is not part of the PSR-7 standard.
-     *
-     * @return array
-     */
-    public function getMediaTypeParams()
-    {
-        $contentType = $this->getContentType();
-        $contentTypeParams = [];
-        if ($contentType) {
-            $contentTypeParts = preg_split('/\s*[;,]\s*/', $contentType);
-            $contentTypePartsLength = count($contentTypeParts);
-            for ($i = 1; $i < $contentTypePartsLength; $i++) {
-                $paramParts = explode('=', $contentTypeParts[$i]);
-                $contentTypeParams[strtolower($paramParts[0])] = $paramParts[1];
-            }
-        }
-
-        return $contentTypeParams;
-    }
-
-    /**
      * Get request content character set, if known.
      *
      * Note: This method is not part of the PSR-7 standard.
@@ -695,7 +691,7 @@ class Request extends Message implements ServerRequestInterface
     public function withCookieParams(array $cookies)
     {
         $clone = clone $this;
-        $clone->cookies = $cookies;
+        $clone->cookies = new HttpBag($cookies);
 
         return $clone;
     }
@@ -718,17 +714,7 @@ class Request extends Message implements ServerRequestInterface
      */
     public function getQueryParams()
     {
-        if ($this->queryParams) {
-            return $this->queryParams;
-        }
-
-        if ($this->uri === null) {
-            return [];
-        }
-
-        parse_str($this->uri->getQuery(), $this->queryParams); // <-- URL decodes data
-
-        return $this->queryParams;
+        return $this->get;
     }
 
     /**
@@ -756,7 +742,7 @@ class Request extends Message implements ServerRequestInterface
     public function withQueryParams(array $query)
     {
         $clone = clone $this;
-        $clone->queryParams = $query;
+        $clone->get = new HttpBag($query);
 
         return $clone;
     }
@@ -779,7 +765,7 @@ class Request extends Message implements ServerRequestInterface
      */
     public function getUploadedFiles()
     {
-        return $this->uploadedFiles;
+        return $this->files;
     }
 
     /**
@@ -796,7 +782,7 @@ class Request extends Message implements ServerRequestInterface
     public function withUploadedFiles(array $uploadedFiles)
     {
         $clone = clone $this;
-        $clone->uploadedFiles = $uploadedFiles;
+        $clone->files = new HttpBag($uploadedFiles);
 
         return $clone;
     }
@@ -816,7 +802,7 @@ class Request extends Message implements ServerRequestInterface
      */
     public function getServerParams()
     {
-        return $this->serverParams;
+        return $this->server;
     }
 
     /*******************************************************************************
@@ -900,7 +886,7 @@ class Request extends Message implements ServerRequestInterface
     public function withAttributes(array $attributes)
     {
         $clone = clone $this;
-        $clone->attributes = new Collection($attributes);
+        $clone->attributes = new HttpBag($attributes);
 
         return $clone;
     }
@@ -949,29 +935,7 @@ class Request extends Message implements ServerRequestInterface
      */
     public function getParsedBody()
     {
-        if ($this->bodyParsed) {
-            return $this->bodyParsed;
-        }
-
-        if (!$this->body) {
-            return null;
-        }
-
-        $mediaType = $this->getMediaType();
-        $body = (string)$this->getBody();
-
-        if (isset($this->bodyParsers[$mediaType]) === true) {
-            $parsed = $this->bodyParsers[$mediaType]($body);
-
-            if (!is_null($parsed) && !is_object($parsed) && !is_array($parsed)) {
-                throw new RuntimeException(
-                    'Request body media type parser return value must be an array, an object, or null'
-                );
-            }
-            $this->bodyParsed = $parsed;
-        }
-
-        return $this->bodyParsed;
+        return $this->post;
     }
 
     /**
@@ -1009,7 +973,7 @@ class Request extends Message implements ServerRequestInterface
         }
 
         $clone = clone $this;
-        $clone->bodyParsed = $data;
+        $clone->post = $data;
 
         return $clone;
     }
@@ -1030,97 +994,5 @@ class Request extends Message implements ServerRequestInterface
             $callable = $callable->bindTo($this);
         }
         $this->bodyParsers[(string)$mediaType] = $callable;
-    }
-
-    /*******************************************************************************
-     * Parameters (e.g., POST and GET data)
-     ******************************************************************************/
-
-    /**
-     * Fetch request parameter value from body or query string (in that order).
-     *
-     * Note: This method is not part of the PSR-7 standard.
-     *
-     * @param  string $key The parameter key.
-     * @param  string $default The default value.
-     *
-     * @return mixed The parameter value.
-     */
-    public function getParam($key, $default = null)
-    {
-        $postParams = $this->getParsedBody();
-        $getParams = $this->getQueryParams();
-        $result = $default;
-        if (is_array($postParams) && isset($postParams[$key])) {
-            $result = $postParams[$key];
-        } elseif (is_object($postParams) && property_exists($postParams, $key)) {
-            $result = $postParams->$key;
-        } elseif (isset($getParams[$key])) {
-            $result = $getParams[$key];
-        }
-
-        return $result;
-    }
-
-    /**
-     * Fetch parameter value from request body.
-     *
-     * Note: This method is not part of the PSR-7 standard.
-     *
-     * @param      $key
-     * @param null $default
-     *
-     * @return null
-     */
-    public function getParsedBodyParam($key, $default = null)
-    {
-        $postParams = $this->getParsedBody();
-        $result = $default;
-        if (is_array($postParams) && isset($postParams[$key])) {
-            $result = $postParams[$key];
-        } elseif (is_object($postParams) && property_exists($postParams, $key)) {
-            $result = $postParams->$key;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Fetch parameter value from query string.
-     *
-     * Note: This method is not part of the PSR-7 standard.
-     *
-     * @param      $key
-     * @param null $default
-     *
-     * @return null
-     */
-    public function getQueryParam($key, $default = null)
-    {
-        $getParams = $this->getQueryParams();
-        $result = $default;
-        if (isset($getParams[$key])) {
-            $result = $getParams[$key];
-        }
-
-        return $result;
-    }
-
-    /**
-     * Fetch assocative array of body and query string parameters.
-     *
-     * Note: This method is not part of the PSR-7 standard.
-     *
-     * @return array
-     */
-    public function getParams()
-    {
-        $params = $this->getQueryParams();
-        $postParams = $this->getParsedBody();
-        if ($postParams) {
-            $params = array_merge($params, (array)$postParams);
-        }
-
-        return $params;
     }
 }
