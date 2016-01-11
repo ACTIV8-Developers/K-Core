@@ -2,7 +2,7 @@
 namespace Core\Routing;
 
 use Core\Routing\Interfaces\RouteInterface;
-use Core\Routing\Interfaces\ExecutableInterface;
+use Core\Routing\Interfaces\ResolverInterface;
 
 /**
  * Route class.
@@ -34,19 +34,16 @@ class Route implements RouteInterface
     /**
      * Controller/method assigned to be executed when route is matched.
      *
-     * @var ExecutableInterface
+     * @var Executable
      */
     protected $executable = null;
 
     /**
-     * @var callable
+     * Array of middleware actions
+     *
+     * @var \callable
      */
-    protected $before = null;
-
-    /**
-     * @var callable
-     */
-    protected $after = null;
+    protected $middleware = [];
 
     /**
      * List of parameters conditions.
@@ -90,6 +87,30 @@ class Route implements RouteInterface
     }
 
     /**
+     * Execute route
+     *
+     * @param ResolverInterface $resolver
+     */
+    public function __invoke(ResolverInterface $resolver = null)
+    {
+        $stack = new \SplStack();
+        $stack->setIteratorMode(\SplDoublyLinkedList::IT_MODE_LIFO | \SplDoublyLinkedList::IT_MODE_KEEP);
+        $stack[] = $this->executable
+                        ->setResolver($resolver);
+
+        foreach ($this->middleware as $callable) {
+            $next = $stack->top();
+            $stack[] = function () use ($callable, $next) {
+                return call_user_func($callable, $next);
+            };
+        }
+
+        /** @var $start callable */
+        $start = $stack->top();
+        $start();
+    }
+
+    /**
      * Check if requested URI and method matches this route.
      * Inspired by: http://blog.sosedoff.com/2009/09/20/rails-like-php-url-router/
      *
@@ -116,6 +137,10 @@ class Route implements RouteInterface
                 foreach ($paramNames[0] as $index => $value) {
                     $this->params[substr($value, 1)] = urldecode($paramValues[$index + 1]);
                 }
+
+                // Append passed params to executable
+                $this->executable->addParams($this->params);
+
                 // Everything is done return true.
                 return true;
             }
@@ -229,52 +254,12 @@ class Route implements RouteInterface
     }
 
     /**
-     * Get executable associated with route
-     *
-     * @return array
-     */
-    public function getExecutable()
-    {
-        return $this->executable;
-    }
-
-    /**
-     * Get after executable associated with route
-     *
-     * @return array
-     */
-    public function getAfterExecutable()
-    {
-        return $this->after;
-    }
-
-    /**
-     * Get pre executable associated with route
-     *
-     * @return array
-     */
-    public function getBeforeExecutable()
-    {
-        return $this->before;
-    }
-
-    /**
      * @param callable $callable
      * @return $this
      */
-    public function executeAfter(callable $callable)
+    public function addMiddleware(callable $callable)
     {
-        $this->after = $callable;
-        return $this;
-    }
-
-    /**
-     * @param callable $callable
-     * @return $this
-     */
-    public function executeBefore(callable $callable)
-    {
-        $this->before = $callable;
+        $this->middleware[] = $callable;
         return $this;
     }
 }

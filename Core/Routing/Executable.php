@@ -80,10 +80,12 @@ class Executable
 
     /**
      * @param ResolverInterface|null $resolver
+     * @return self
      */
     public function setResolver($resolver)
     {
         $this->resolver = $resolver;
+        return $this;
     }
 
     /**

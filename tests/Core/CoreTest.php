@@ -28,8 +28,6 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
         // Check if construct made all required things.
         $this->assertInstanceOf('Core\Core\Core', $app);
-        $this->assertInstanceOf('Psr\Http\Message\ResponseInterface', $app->getContainer()['response']);
-        $this->assertInstanceOf('Psr\Http\Message\ServerRequestInterface', $app->getContainer()['request']);
     }
 
     public function testExecute()
@@ -39,7 +37,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
         $app->execute();
 
-        $this->assertEquals(self::$test, 'testtesttest');
+        $this->assertEquals(self::$test, 'testtest');
     }
 
     public function testSendResponse()
@@ -47,7 +45,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
         // Make instance of app.
         $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
 
-        $app->getContainer()['response']->getBody()->write('<div>Test</div>');
+        $app->getContainer()['response']->addBody('<div>Test</div>');
 
         $app->sendResponse();
     }
@@ -75,7 +73,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(5, self::$hookCounter);
 
-        $this->assertEquals(self::$test, 'testtesttesttesttesttest');
+        $this->assertEquals(self::$test, 'testtesttesttest');
     }
 
     public function testMiddleware()
@@ -90,7 +88,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals('123', self::$middlewareStack);
 
-        $this->assertEquals(self::$test, 'testtesttesttesttesttesttesttesttest');
+        $this->assertEquals(self::$test, 'testtesttesttesttesttest');
     }
 
     public function testNotFound()
@@ -181,13 +179,11 @@ class TestController
         throw new Exception('Error');
     }
 
-    public function __invoke($request, $response, $next)
+    public function __invoke($next)
     {
         $this->index();
 
-        if ($next) {
-            $next($request, $response);
-        }
+        $next();
     }
 }
 
@@ -216,36 +212,30 @@ class TestHook
 
 class TestMiddleware1
 {
-    public function __invoke($request, $response, $next)
+    public function __invoke($next)
     {
         CoreTest::$middlewareStack .= '1';
 
-        if ($next) {
-            $next($request, $response);
-        }
+        $next();
     }
 }
 
 class TestMiddleware2
 {
-    public function __invoke($request, $response, $next)
+    public function __invoke($next)
     {
         CoreTest::$middlewareStack .= '2';
 
-        if ($next) {
-            $next($request, $response);
-        }
+        $next();
     }
 }
 
 class TestMiddleware3
 {
-    public function __invoke($request, $response, $next)
+    public function __invoke($next)
     {
         CoreTest::$middlewareStack .= '3';
 
-        if ($next) {
-            $next($request, $response);
-        }
+        $next();
     }
 }

@@ -175,12 +175,10 @@ class RouteTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(['param' => 'bar', 'param2' => 'foo'], $route->getParams());
 	}
 
-	public function testAfterBefore()
+	public function testMiddleware()
 	{
 		$route = new Route('foo/:param', 'GET', 'bar', 'foo');
 
-		$route->executeAfter(function($req, $res, $next) {});
-
-		$route->executeBefore(function($req, $res, $next) {});
+		$route->addMiddleware(function() {});
 	}
 }

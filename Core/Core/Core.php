@@ -1,11 +1,9 @@
 <?php
 namespace Core\Core;
 
-use Core\Http\Environment;
-use Core\Http\Headers;
+use Exception;
 use Core\Http\Request;
 use Core\Http\Response;
-use Exception;
 use Core\Routing\Router;
 use Core\Routing\Executable;
 use BadFunctionCallException;
@@ -31,7 +29,7 @@ class Core extends ContainerAware
      *
      * @var string
      */
-    const VERSION = '3.0.0 RC1';
+    const VERSION = '2.5.0 RC1';
 
     /**
      * @var Core
@@ -118,14 +116,14 @@ class Core extends ContainerAware
 
         // Create request class closure.
         $this->container['request'] = function () {
-            return Request::createFromEnvironment(new Environment($_SERVER));
+            return new Request($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
         };
 
         // Create response class closure.
         $this->container['response'] = function ($c) {
-            $headers = new Headers(['Content-Type' => 'text/html; charset=UTF-8']);
-            $response = new Response(200, $headers);
-            return $response->withProtocolVersion($c->get('request')->getProtocolVersion());
+            $response = new Response();
+            $response->setProtocolVersion($c['request']->getProtocolVersion());
+            return $response;
         };
 
         // Create router class closure
@@ -136,6 +134,9 @@ class Core extends ContainerAware
         // Create middleware stack
         $this->middleware = new \SplStack();
         $this->middleware->setIteratorMode(\SplDoublyLinkedList::IT_MODE_LIFO | \SplDoublyLinkedList::IT_MODE_KEEP);
+
+        // Add routing on top of the stack
+        $this->middleware[] = $this;
     }
 
     /**
@@ -162,17 +163,16 @@ class Core extends ContainerAware
      */
     public function execute()
     {
-        // Pre execute hook.
+        // Before execute hook.
         if (isset($this->hooks['before.execute'])) {
             $this->hooks['before.execute']();
         }
 
-        // Find targeted controller and append its actions to middleware stack
-        $this->executeRouting();
-
         try {
             // Execute middleware stack
-            $this->executeMiddlewareStack();
+            /** @var callable $start */
+            $start = $this->middleware->top();
+            $start();
         } catch (StopException $e) {
             // Just stop execution of current route
         } catch (NotFoundException $e) {
@@ -192,7 +192,7 @@ class Core extends ContainerAware
     /**
      * Find targeted controller and add its actions to middleware stack
      */
-    public function executeRouting()
+    public function __invoke()
     {
         // Get router object
         $route = $this->container->get('router');
@@ -209,65 +209,23 @@ class Core extends ContainerAware
 
         // Route requests
         /** @var RouteInterface $matchedRoute */
-        $matchedRoute = $route->execute(trim($this->container['request']->getUri()->getPath(), '/'), $this->container['request']->getMethod());
+        $matchedRoute = $route->execute($this->container->get('request')->getUri(), $this->container->get('request')->getMethod());
 
         // Execute route if found.
         if (null !== $matchedRoute) {
+            // Get passed route params and append it to request object
+            $this->container->get('request')->get->add($matchedRoute->getParams());
 
-            // Add route post executable
-            if (($after = $matchedRoute->getAfterExecutable()) !== null) {
-                $this->addMiddleware($after);
-            }
-
-            // Add found route main executable to middleware stack
-            $this->addMiddleware(function($request, $response, $next) use ($matchedRoute) {
-                /** @var Executable $executable */
-                $executable = $matchedRoute->getExecutable();
-
-                // Get passed route params
-                $params = $matchedRoute->getParams();
-
-                // Append passed params to GET array.
-                //$request->get->add($params);
-
-                // Pass params to executable also
-                $executable->setParams($params);
-
-                // Add executable resolver
-                $executable->setResolver($this->resolver);
-
-                $executable();
-
-                if ($next) {
-                    $next($request, $response);
-                }
-            });
-
-            // Add route pre executable
-            if (($before = $matchedRoute->getBeforeExecutable()) !== null) {
-                $this->addMiddleware($before);
-            }
+            // Execute matched route
+            $matchedRoute($this->resolver);
         } else {
-            $this->addMiddleware(function() {
-                // If page not found display 404 error.
-                throw new NotFoundException();
-            });
+            throw new NotFoundException();
         }
 
         // Post routing hook
         if (isset($this->hooks['after.routing'])) {
             $this->hooks['after.routing']();
         }
-    }
-
-    /**
-     * @return mixed
-     */
-    protected function executeMiddlewareStack()
-    {
-        /** @var callable $start */
-        $start = $this->middleware->top();
-        $start($this->container['request'], $this->container['response']);
     }
 
     /**
@@ -278,51 +236,9 @@ class Core extends ContainerAware
      */
     public function sendResponse()
     {
-        // Send response
-        $response = $this->container->get('response');
 
-        // Headers
-        if (!headers_sent()) {
-            // Status
-            header(sprintf(
-                'HTTP/%s %s %s',
-                $response->getProtocolVersion(),
-                $response->getStatusCode(),
-                $response->getReasonPhrase()
-            ));
-            // Headers
-            foreach ($response->getHeaders() as $name => $values) {
-                foreach ($values as $value) {
-                    header(sprintf('%s: %s', $name, $value), false);
-                }
-            }
-        }
-
-        // Body
-        $body = $response->getBody();
-        if ($body->isSeekable()) {
-            $body->rewind();
-        }
-        $settings = $this->container->get('config');
-        $chunkSize = isset($settings['responseChunkSize']) ? $settings['responseChunkSize'] : 1024;
-        $contentLength = $response->getHeaderLine('Content-Length');
-
-        if (!$contentLength) {
-            $contentLength = $body->getSize();
-        }
-
-        $totalChunks = ceil($contentLength / $chunkSize);
-        $lastChunkSize = $contentLength % $chunkSize;
-        $currentChunk = 0;
-        while (!$body->eof() && $currentChunk < $totalChunks) {
-            if (++$currentChunk == $totalChunks && $lastChunkSize > 0) {
-                $chunkSize = $lastChunkSize;
-            }
-            echo $body->read($chunkSize);
-            if (connection_status() != CONNECTION_NORMAL) {
-                break;
-            }
-        }
+        // Send final response.
+        $this->container['response']->send();
 
         // Post response hook.
         if (isset($this->hooks['after.response'])) {
@@ -347,8 +263,8 @@ class Core extends ContainerAware
             $this->container['not.found'] = $e;
             $this->hooks['not.found']();
         } else {
-            //$this->container['response']->withStatus(404);
-            $this->container['response']->getBody()->write($e->getMessage());
+            $this->container['response']->setStatusCode(404);
+            $this->container['response']->setBody($e->getMessage());
         }
     }
 
@@ -363,8 +279,8 @@ class Core extends ContainerAware
             $this->container['exception'] = $e;
             $this->hooks['internal.error']();
         } else {
-            //$this->container['response']->withStatus(404);
-            $this->container['response']->getBody()->write('Internal error: ' . $e->getMessage());
+            $this->container['response']->setStatusCode(500);
+            $this->container['response']->setBody('Internal error: ' . $e->getMessage());
         }
     }
 
@@ -399,13 +315,9 @@ class Core extends ContainerAware
      */
     public function addMiddleware(callable $callable)
     {
-        $next = null;
-        if (!$this->middleware->isEmpty()) {
-            $next = $this->middleware->top();
-        }
-
-        $this->middleware[] = function ($request, $response) use ($callable, $next) {
-            return call_user_func($callable, $request, $response, $next);
+        $next = $this->middleware->top();
+        $this->middleware[] = function () use ($callable, $next) {
+            return call_user_func($callable, $next);
         };
         return $this;
     }

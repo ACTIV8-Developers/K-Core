@@ -23,23 +23,9 @@ interface RouteInterface
     public function getParams();
 
     /**
-     * Get executable associated with route
+     * Execute route
      *
-     * @return callable
+     * @param ResolverInterface $resolver
      */
-    public function getExecutable();
-
-    /**
-     * Get after executable associated with route
-     *
-     * @return callable
-     */
-    public function getAfterExecutable();
-
-    /**
-     * Get pre executable associated with route
-     *
-     * @return callable
-     */
-    public function getBeforeExecutable();
+    public function __invoke(ResolverInterface $resolver);
 }
