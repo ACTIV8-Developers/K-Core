@@ -124,7 +124,7 @@ class Response implements ResponseInterface
      * @param string $part
      * @return self
      */
-    public function addBody($part)
+    public function writeBody($part)
     {
         $this->body .= $part;
         return $this;

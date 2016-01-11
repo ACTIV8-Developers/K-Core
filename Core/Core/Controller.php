@@ -39,7 +39,7 @@ abstract class Controller extends ContainerAware
         include $this->container->get('config')['viewsPath'] . '/' . $view . '.php';
 
         // Add view to output body.
-        $this->container->get('response')->addBody(ob_get_contents());
+        $this->container->get('response')->writeBody(ob_get_contents());
         ob_end_clean();
     }
 

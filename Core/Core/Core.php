@@ -6,7 +6,6 @@ use Core\Http\Request;
 use Core\Http\Response;
 use Core\Routing\Router;
 use Core\Routing\Executable;
-use BadFunctionCallException;
 use Core\Container\Container;
 use Core\Container\ContainerAware;
 use Core\Core\Exceptions\StopException;
@@ -85,22 +84,14 @@ class Core extends ContainerAware
         $this->appPath = $appPath;
 
         // Set container
-        if ($container === null) {
-            $this->container = new Container();
-        } else {
-            $this->container = $container;
-        }
+        $this->container = $container === null ? new Container() : $container;
 
         // Set class resolver
-        if ($resolver === null) {
-            $this->resolver = new Resolver($this->container);
-        } else {
-            $this->resolver = $resolver;
-        }
+        $this->resolver = $resolver === null ? new Resolver($this->container) : $resolver;
 
         // Load application configuration.
         if (is_file($appPath . '/Config/Config.php')) {
-            $config = require $appPath . '/Config/Config.php';
+            $config = include $appPath . '/Config/Config.php';
         } else {
             $config = [];
         }
@@ -158,7 +149,6 @@ class Core extends ContainerAware
     /**
      * Route request and execute associated action.
      *
-     * @throws BadFunctionCallException
      * @return self
      */
     public function execute()
@@ -191,6 +181,7 @@ class Core extends ContainerAware
 
     /**
      * Find targeted controller and add its actions to middleware stack
+     * @throws NotFoundException
      */
     public function __invoke()
     {
@@ -202,7 +193,7 @@ class Core extends ContainerAware
             include $this->container['config']['routesPath'];
         }
 
-        // Pre routing hook
+        // Before routing hook
         if (isset($this->hooks['before.routing'])) {
             $this->hooks['before.routing']();
         }
@@ -231,12 +222,10 @@ class Core extends ContainerAware
     /**
      * Send application response.
      *
-     * @throws BadFunctionCallException
      * @return self
      */
     public function sendResponse()
     {
-
         // Send final response.
         $this->container['response']->send();
 

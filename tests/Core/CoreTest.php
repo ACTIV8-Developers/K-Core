@@ -45,7 +45,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
         // Make instance of app.
         $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
 
-        $app->getContainer()['response']->addBody('<div>Test</div>');
+        $app->getContainer()['response']->writeBody('<div>Test</div>');
 
         $app->sendResponse();
     }

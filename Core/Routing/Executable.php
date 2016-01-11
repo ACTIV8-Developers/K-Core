@@ -2,7 +2,6 @@
 namespace Core\Routing;
 
 use Core\Routing\Interfaces\ResolverInterface;
-use Core\Routing\Interfaces\ExecutableInterface;
 
 /**
  * Executable class.
@@ -63,26 +62,10 @@ class Executable
     }
 
     /**
-     * @param string $class
-     */
-    public function setClass($class)
-    {
-        $this->class = $class;
-    }
-
-    /**
-     * @param string $method
-     */
-    public function setMethod($method)
-    {
-        $this->method = $method;
-    }
-
-    /**
      * @param ResolverInterface|null $resolver
      * @return self
      */
-    public function setResolver($resolver)
+    public function setResolver(ResolverInterface $resolver)
     {
         $this->resolver = $resolver;
         return $this;

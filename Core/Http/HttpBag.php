@@ -3,7 +3,6 @@ namespace Core\Http;
 
 /**
  * Simple container class for storing HTTP request data.
- * Inspired by Symfony HttpParameters class.
  */
 class HttpBag implements \IteratorAggregate, \Countable
 {
