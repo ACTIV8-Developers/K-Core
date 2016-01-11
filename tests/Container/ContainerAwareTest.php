@@ -6,7 +6,7 @@ class ContainerAwareTest extends PHPUnit_Framework_TestCase
     {
         $c = new AnotherContainer;
 
-        $container = new \Core\Container\Container();
+        $container = new \Core\Container\Container(__DIR__ . '/../MockApp');
         $container['foo'] = 'bar';
 
         $c->setContainer($container);
@@ -23,7 +23,7 @@ class ContainerAwareTest extends PHPUnit_Framework_TestCase
     {
         $c = new AnotherContainer;
 
-        $container = new \Core\Container\Container();
+        $container = new \Core\Container\Container(__DIR__ . '/../MockApp');
         $container['foo'] = 'bar';
 
         $c->setContainer($container);
@@ -38,7 +38,7 @@ class ContainerAwareTest extends PHPUnit_Framework_TestCase
     {
         $c = new AnotherContainer;
 
-        $container = new \Core\Container\Container();
+        $container = new \Core\Container\Container(__DIR__ . '/../MockApp');
         $container['foo'] = 'bar';
 
         $c->setContainer($container);

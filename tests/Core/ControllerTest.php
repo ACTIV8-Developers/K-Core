@@ -8,7 +8,7 @@ class ControllerTest extends PHPUnit_Framework_TestCase
 
     public function __construct()
     {
-        $core = Core::getInstance(__DIR__ . '/../MockApp');
+        $core = Core::getInstance(new \Core\Container\Container(__DIR__ . '/../MockApp'));
 
         $this->container = $core->getContainer();
         $config = $this->container['config'];
@@ -100,7 +100,7 @@ class ControllerTest extends PHPUnit_Framework_TestCase
     {
         $c = new AnotherTestController;
 
-        $container = new \Core\Container\Container();
+        $container = new \Core\Container\Container(__DIR__ . '/../MockApp');
         $c->setContainer($container);
 
         $this->assertEquals($container, $c->getApp());
@@ -114,7 +114,7 @@ class ControllerTest extends PHPUnit_Framework_TestCase
     {
         $c = new AnotherTestController;
 
-        $container = new \Core\Container\Container();
+        $container = new \Core\Container\Container(__DIR__ . '/../MockApp');
         $c->setContainer($container);
 
         $c->getUknown();

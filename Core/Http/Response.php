@@ -78,30 +78,35 @@ class Response implements ResponseInterface
      * @var \Core\Http\HttpBag
      */
     public $headers = null;
+
     /**
      * Array of cookies to be sent.
      *
      * @var \Core\Http\HttpBag
      */
     public $cookies = null;
+
     /**
      * HTTP response protocol version.
      *
      * @var string
      */
     protected $protocolVersion = 'HTTP/1.1';
+
     /**
      * HTTP response code.
      *
      * @var int
      */
     protected $statusCode = 200;
+
     /**
      * HTTP reason phrase.
      *
      * @var string|null
      */
     protected $reasonPhrase = null;
+
     /**
      * HTTP response body.
      *

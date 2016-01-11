@@ -7,7 +7,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 {
     public function testGetSet()
     {
-        $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
+        $app = new \Core\Core\Core(new \Core\Container\Container(__DIR__ . '/../MockApp'));
 
         $model = new AnotherTestModel();
 
@@ -25,7 +25,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
     {
         $model = new AnotherTestModel;
 
-        $container = new \Core\Container\Container();
+        $container = new \Core\Container\Container(__DIR__ . '/../MockApp');
         $model->setContainer($container);
 
         $model->getUknown();

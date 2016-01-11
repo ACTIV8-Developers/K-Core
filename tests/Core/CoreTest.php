@@ -1,5 +1,7 @@
 <?php
 
+use \Core\Container\Container;
+
 class CoreTest extends PHPUnit_Framework_TestCase
 {
     public static $test = '';
@@ -10,21 +12,18 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
     public function testCustomConstruct()
     {
-        $container = new \Core\Container\Container();
+        $container = new \Core\Container\Container(__DIR__ . '/../MockApp');
         $resolver = new \Core\Core\Resolver($container);
-        $app = new \Core\Core\Core('', $container, $resolver);
+        $app = new \Core\Core\Core($container, $resolver);
 
         $this->assertEquals($container, $app->getContainer());
     }
 
     public function testConstruct()
     {
-        $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
+        $app = new \Core\Core\Core(new Container(__DIR__ . '/../MockApp'));
 
         \Core\Routing\Router::$CONTROLLERS_ROOT = '';
-
-        $app->setAppPath('appPath');
-        $this->assertEquals('appPath', $app->getAppPath());
 
         // Check if construct made all required things.
         $this->assertInstanceOf('Core\Core\Core', $app);
@@ -33,7 +32,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
     public function testExecute()
     {
         // Make instance of app.
-        $app = new \Core\Core\Core(__DIR__ . '/../MockApp');;
+        $app = new \Core\Core\Core(new Container(__DIR__ . '/../MockApp'));;
 
         $app->execute();
 
@@ -43,7 +42,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
     public function testSendResponse()
     {
         // Make instance of app.
-        $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
+        $app = new \Core\Core\Core(new Container(__DIR__ . '/../MockApp'));
 
         $app->getContainer()['response']->writeBody('<div>Test</div>');
 
@@ -53,7 +52,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
     public function testHooks()
     {
         // Make instance of app.
-        $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
+        $app = new \Core\Core\Core(new Container(__DIR__ . '/../MockApp'));
 
         // Make hooks.
         $app->setHook('before.execute', new TestHook());
@@ -78,7 +77,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
     public function testMiddleware()
     {
-        $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
+        $app = new \Core\Core\Core(new Container(__DIR__ . '/../MockApp'));
 
         $app->addMiddleware(new TestMiddleware3());
         $app->addMiddleware(new TestMiddleware2());
@@ -96,7 +95,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $_SERVER['REQUEST_METHOD'] = 'GET';
         $_SERVER['REQUEST_URI'] = '/notfound';
 
-        $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
+        $app = new \Core\Core\Core(new Container(__DIR__ . '/../MockApp'));
 
         $app->execute();
     }
@@ -106,7 +105,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $_SERVER['REQUEST_METHOD'] = 'GET';
         $_SERVER['REQUEST_URI'] = '/notfound';
 
-        $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
+        $app = new \Core\Core\Core(new Container(__DIR__ . '/../MockApp'));
 
         $app->getContainer()['router']->addRoute(new \Core\Routing\Route('notfound', 'GET', 'TestController', 'notFound'));
 
@@ -120,7 +119,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $_SERVER['REQUEST_METHOD'] = 'GET';
         $_SERVER['REQUEST_URI'] = '/notfound';
 
-        $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
+        $app = new \Core\Core\Core(new Container(__DIR__ . '/../MockApp'));
 
         $app->setHook('not.found', function() {
                 (new TestHook())->notFound();
@@ -135,7 +134,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $_SERVER['REQUEST_METHOD'] = 'GET';
         $_SERVER['REQUEST_URI'] = '/error';
 
-        $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
+        $app = new \Core\Core\Core(new Container(__DIR__ . '/../MockApp'));
 
         $app->getContainer()['router']->addRoute(new \Core\Routing\Route('error', 'GET','TestController', 'error'));
 
@@ -149,7 +148,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $_SERVER['REQUEST_METHOD'] = 'GET';
         $_SERVER['REQUEST_URI'] = '/error';
 
-        $app = new \Core\Core\Core(__DIR__ . '/../MockApp');
+        $app = new \Core\Core\Core(new Container(__DIR__ . '/../MockApp'));
 
         $app->setHook('internal.error', function() {
                 (new TestHook())->error();

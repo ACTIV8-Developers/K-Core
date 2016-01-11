@@ -4,7 +4,7 @@ class ResolverTest extends PHPUnit_Framework_TestCase
 {
     public function testGetSet()
     {
-        $container = new \Core\Container\Container();
+        $container = new \Core\Container\Container(__DIR__ . '/../MockApp');
 
         $container['AnotherTestClass'] = function($c) {
             return new AnotherTestClass();

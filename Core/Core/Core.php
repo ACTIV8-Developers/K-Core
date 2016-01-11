@@ -2,17 +2,12 @@
 namespace Core\Core;
 
 use Exception;
-use Core\Http\Request;
-use Core\Http\Response;
-use Core\Routing\Router;
 use Core\Routing\Executable;
-use Core\Container\Container;
 use Core\Container\ContainerAware;
 use Core\Core\Exceptions\StopException;
 use Interop\Container\ContainerInterface;
 use Core\Core\Exceptions\NotFoundException;
 use Core\Routing\Interfaces\RouteInterface;
-use Core\Routing\Interfaces\ResolverInterface;
 
 /**
  * Core class.
@@ -28,17 +23,12 @@ class Core extends ContainerAware
      *
      * @var string
      */
-    const VERSION = '2.5.0 RC1';
+    const VERSION = '3.0.0';
 
     /**
      * @var Core
      */
     protected static $instance;
-
-    /**
-     * @var string
-     */
-    protected $appPath = '';
 
     /**
      * Array of middleware actions
@@ -51,11 +41,6 @@ class Core extends ContainerAware
      * @var ContainerInterface
      */
     protected $container = null;
-
-    /**
-     * @var ResolverInterface
-     */
-    protected $resolver = null;
 
     /**
      * Array of hooks to be applied.
@@ -74,74 +59,31 @@ class Core extends ContainerAware
     /**
      * Core constructor.
      *
-     * @param string $appPath
      * @param ContainerInterface $container
-     * @param ResolverInterface $resolver
      */
-    public function __construct($appPath = '', ContainerInterface $container = null, ResolverInterface $resolver = null)
+    public function __construct(ContainerInterface $container)
     {
-        // Set app path
-        $this->appPath = $appPath;
-
-        // Set container
-        $this->container = $container === null ? new Container() : $container;
-
-        // Set class resolver
-        $this->resolver = $resolver === null ? new Resolver($this->container) : $resolver;
-
-        // Load application configuration.
-        if (is_file($appPath . '/Config/Config.php')) {
-            $config = include $appPath . '/Config/Config.php';
-        } else {
-            $config = [];
-        }
-
-        // Set app routes path
-        $config['routesPath'] = $appPath . '/routes.php';
-
-        // Set path where views are stored
-        $config['viewsPath'] = $appPath . '/Views';
-
-        // Store config
-        $this->container['config'] = $config;
-
-        // Create request class closure.
-        $this->container['request'] = function () {
-            return new Request($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
-        };
-
-        // Create response class closure.
-        $this->container['response'] = function ($c) {
-            $response = new Response();
-            $response->setProtocolVersion($c['request']->getProtocolVersion());
-            return $response;
-        };
-
-        // Create router class closure
-        $this->container['router'] = function () {
-            return new Router();
-        };
+        // Set core container
+        $this->container = $container;
 
         // Create middleware stack
         $this->middleware = new \SplStack();
         $this->middleware->setIteratorMode(\SplDoublyLinkedList::IT_MODE_LIFO | \SplDoublyLinkedList::IT_MODE_KEEP);
 
-        // Add routing on top of the stack
+        // Add core on top of the middleware stack
         $this->middleware[] = $this;
     }
 
     /**
      * Get singleton instance of Core class.
      *
-     * @param string $appPath
      * @param ContainerInterface|null $container
-     * @param ResolverInterface|null $resolver
      * @return Core
      */
-    public static function getInstance($appPath = '', ContainerInterface $container = null, ResolverInterface $resolver = null)
+    public static function getInstance(ContainerInterface $container = null)
     {
         if (null === self::$instance) {
-            self::$instance = new Core($appPath, $container, $resolver);
+            self::$instance = new Core($container);
         }
         return self::$instance;
     }
@@ -164,7 +106,7 @@ class Core extends ContainerAware
             $start = $this->middleware->top();
             $start();
         } catch (StopException $e) {
-            // Just stop execution of current route
+            // Just stop execution of current stack
         } catch (NotFoundException $e) {
             $this->notFound($e);
         } catch (Exception $e) {
@@ -208,7 +150,8 @@ class Core extends ContainerAware
             $this->container->get('request')->get->add($matchedRoute->getParams());
 
             // Execute matched route
-            $matchedRoute($this->resolver);
+            $resolver = $this->container->has('resolver') ? $this->container->get('resolver') : null;
+            $matchedRoute($resolver);
         } else {
             throw new NotFoundException();
         }
@@ -309,23 +252,5 @@ class Core extends ContainerAware
             return call_user_func($callable, $next);
         };
         return $this;
-    }
-
-    /**
-     * @param string $appPath
-     * @return self
-     */
-    public function setAppPath($appPath)
-    {
-        $this->appPath = $appPath;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAppPath()
-    {
-        return $this->appPath;
     }
 }

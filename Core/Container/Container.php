@@ -1,6 +1,10 @@
 <?php
 namespace Core\Container;
 
+use Core\Core\Resolver;
+use Core\Http\Request;
+use Core\Http\Response;
+use Core\Routing\Router;
 use InvalidArgumentException;
 use Interop\Container\ContainerInterface;
 use Pimple\Container as PimpleContainer;
@@ -12,6 +16,57 @@ use Pimple\Container as PimpleContainer;
  */
 class Container extends PimpleContainer implements ContainerInterface
 {
+    /**
+     * Container constructor.
+     * @param string $basePath
+     * @param array $values
+     */
+    public function __construct($basePath = '', array $values = [])
+    {
+        parent::__construct($values);
+
+        // Set base path
+        $config['basePath'] = $basePath;
+
+        // Load application configuration.
+        if (is_file($basePath . '/Config/Config.php')) {
+            $config = include $basePath . '/Config/Config.php';
+        } else {
+            $config = [];
+        }
+
+        // Set app routes path
+        $config['routesPath'] = $basePath . '/routes.php';
+
+        // Set path where views are stored
+        $config['viewsPath'] = $basePath . '/Views';
+
+        // Store config
+        $this['config'] = $config;
+
+        // Create executable resolver
+        $this['resolver'] = function ($c) {
+            return new Resolver($c);
+        };
+
+        // Create request class closure.
+        $this['request'] = function () {
+            return new Request($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
+        };
+
+        // Create response class closure.
+        $this['response'] = function ($c) {
+            $response = new Response();
+            $response->setProtocolVersion($c['request']->getProtocolVersion());
+            return $response;
+        };
+
+        // Create router class closure
+        $this['router'] = function () {
+            return new Router();
+        };
+    }
+
     /**
      * Get entry from container
      *
