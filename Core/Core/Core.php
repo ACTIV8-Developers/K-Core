@@ -170,7 +170,7 @@ class Core extends ContainerAware
     public function sendResponse()
     {
         // Send final response.
-        $this->container['response']->send();
+        $this->container->get('response')->send();
 
         // Post response hook.
         if (isset($this->hooks['after.response'])) {
@@ -192,11 +192,10 @@ class Core extends ContainerAware
         }
 
         if (isset($this->hooks['not.found'])) {
-            $this->container['not.found'] = $e;
-            $this->hooks['not.found']();
+            $this->hooks['not.found']($e);
         } else {
-            $this->container['response']->setStatusCode(404);
-            $this->container['response']->setBody($e->getMessage());
+            $this->container->get('response')->setStatusCode(404);
+            $this->container->get('response')->setBody($e->getMessage());
         }
     }
 
@@ -208,11 +207,10 @@ class Core extends ContainerAware
     protected function internalError(Exception $e)
     {
         if (isset($this->hooks['internal.error'])) {
-            $this->container['exception'] = $e;
-            $this->hooks['internal.error']();
+            $this->hooks['internal.error']($e);
         } else {
-            $this->container['response']->setStatusCode(500);
-            $this->container['response']->setBody('Internal error: ' . $e->getMessage());
+            $this->container->get('response')->setStatusCode(500);
+            $this->container->get('response')->setBody('Internal error: ' . $e->getMessage());
         }
     }
 
