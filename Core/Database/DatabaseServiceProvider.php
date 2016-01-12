@@ -17,8 +17,8 @@ class DatabaseServiceProvider extends ContainerAware
     public function __invoke()
     {
         // Load database configuration.
-        if (is_file($this->container['basePath'] . '/Config/Database.php')) {
-            $this->container['config.database'] = require $this->container['basePath'] . '/Config/Database.php';
+        if (is_file($this->container['config']['basePath'] . '/Config/Database.php')) {
+            $this->container['config.database'] = require $this->container['config']['basePath'] . '/Config/Database.php';
         } else {
             $this->container['config.database'] = [];
         }
