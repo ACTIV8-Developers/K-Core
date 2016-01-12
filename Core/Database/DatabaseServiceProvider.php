@@ -1,7 +1,6 @@
 <?php
 namespace Core\Database;
 
-use Core\Core\Core;
 use Core\Container\ContainerAware;
 use Core\Database\Connections\MySQLConnection;
 
@@ -18,8 +17,8 @@ class DatabaseServiceProvider extends ContainerAware
     public function __invoke()
     {
         // Load database configuration.
-        if (is_file(Core::getInstance()->getAppPath() . '/Config/Database.php')) {
-            $this->container['config.database'] = require Core::getInstance()->getAppPath() . '/Config/Database.php';
+        if (is_file($this->container['appPath'] . '/Config/Database.php')) {
+            $this->container['config.database'] = require $this->container['appPath'] . '/Config/Database.php';
         } else {
             $this->container['config.database'] = [];
         }
