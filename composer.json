@@ -2,7 +2,7 @@
     "name": "kajna/k-core",
     "description": "Simple and lightweight yet powerful PHP framework",
     "keywords": ["framework", "k", "PHP", "lightweight", "simple", "router"],
-    "homepage": "http://kframework.co",
+    "homepage": "http://k-phpframework.com",
     "authors": [
         {
         "name": "Milos Kajnaco",
