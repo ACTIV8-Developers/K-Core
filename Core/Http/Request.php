@@ -401,4 +401,64 @@ class Request implements RequestInterface
     {
         return $this->headers->get('CONTENT_LENGTH');
     }
+
+    /**
+     * @param $key
+     * @return mixed
+     */
+    public function get($key)
+    {
+        if ($key !== null) {
+            return $this->get->get($key);
+        }
+        return $this->get->all();
+    }
+
+    /**
+     * @param $key
+     * @return mixed
+     */
+    public function post($key)
+    {
+        if ($key !== null) {
+            return $this->post->get($key);
+        }
+        return $this->post->all();
+    }
+
+    /**
+     * @param $key
+     * @return mixed
+     */
+    public function cookies($key)
+    {
+        if ($key !== null) {
+            return $this->cookies->get($key);
+        }
+        return $this->cookies->all();
+    }
+
+    /**
+     * @param $key
+     * @return mixed
+     */
+    public function files($key)
+    {
+        if ($key !== null) {
+            return $this->files->get($key);
+        }
+        return $this->files->all();
+    }
+
+    /**
+     * @param $key
+     * @return mixed
+     */
+    public function headers($key)
+    {
+        if ($key !== null) {
+            return $this->headers->get($key);
+        }
+        return $this->headers->all();
+    }
 }
