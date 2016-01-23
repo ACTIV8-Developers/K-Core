@@ -246,11 +246,12 @@ class Route implements RouteInterface
     /**
      * @param $key
      * @param $value
-     *
+     * @return self
      */
     public function addParam($key, $value)
     {
         $this->params[$key] = $value;
+        return $this;
     }
 
     /**
