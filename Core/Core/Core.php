@@ -104,7 +104,7 @@ class Core extends ContainerAware
             // Execute middleware stack
             /** @var callable $start */
             $start = $this->middleware->top();
-            $start();
+            $response = $start();
         } catch (StopException $e) {
             // Just stop execution of current stack
         } catch (NotFoundException $e) {
@@ -118,6 +118,9 @@ class Core extends ContainerAware
             $this->hooks['after.execute']();
         }
 
+        if (isset($response)) {
+            $this->container['response'] = $response;
+        }
         return $this;
     }
 
@@ -151,7 +154,7 @@ class Core extends ContainerAware
 
             // Execute matched route
             $resolver = $this->container->has('resolver') ? $this->container->get('resolver') : null;
-            $matchedRoute($resolver);
+            $response = $matchedRoute($resolver);
         } else {
             throw new NotFoundException();
         }
@@ -160,6 +163,8 @@ class Core extends ContainerAware
         if (isset($this->hooks['after.routing'])) {
             $this->hooks['after.routing']();
         }
+
+        return $response;
     }
 
     /**
