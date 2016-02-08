@@ -107,7 +107,7 @@ class Route implements RouteInterface
 
         /** @var $start callable */
         $start = $stack->top();
-        $start();
+        return $start();
     }
 
     /**

@@ -6,6 +6,7 @@ use Core\Core\Exceptions\StopException;
 use Core\Core\Exceptions\NotFoundException;
 use Core\Http\Interfaces\RequestInterface;
 use Core\Http\Interfaces\ResponseInterface;
+use Core\Http\Response;
 use Core\Routing\Interfaces\RouterInterface;
 
 /**
@@ -26,6 +27,7 @@ abstract class Controller extends ContainerAware
      *
      * @param string $view
      * @param array $data
+     * @return ResponseInterface
      */
     protected function render($view, array $data = [])
     {
@@ -38,9 +40,14 @@ abstract class Controller extends ContainerAware
         // Load view file (root location is declared in viewPath var).
         include $this->container->get('config')['viewsPath'] . '/' . $view . '.php';
 
-        // Add view to output body.
-        $this->container->get('response')->writeBody(ob_get_contents());
+        // Get buffered content
+        $body = ob_get_contents();
         ob_end_clean();
+
+        // Make response and add body to it
+        $response = new Response();
+        $response->writeBody($body);
+        return $response;
     }
 
     /**
@@ -58,7 +65,7 @@ abstract class Controller extends ContainerAware
         // Start buffering.
         ob_start();
 
-        // Load view file (root location is declared in viewPath var).
+        // Load view file (root location is declared in viewsPath var).
         include $this->container->get('config')['viewsPath'] . '/' . $view . '.php';
 
         // Return string.       

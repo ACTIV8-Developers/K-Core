@@ -1,6 +1,7 @@
 <?php
 namespace Core\Core;
 
+use Core\Http\Interfaces\ResponseInterface;
 use Exception;
 use Core\Routing\Executable;
 use Core\Container\ContainerAware;
@@ -50,7 +51,6 @@ class Core extends ContainerAware
     protected $hooks = [
         'before.execute' => null,
         'before.routing' => null,
-        'after.routing' => null,
         'after.response' => null,
         'not.found' => null,
         'internal.error' => null
@@ -108,14 +108,9 @@ class Core extends ContainerAware
         } catch (StopException $e) {
             // Just stop execution of current stack
         } catch (NotFoundException $e) {
-            $this->notFound($e);
+            $response = $this->notFound($e);
         } catch (Exception $e) {
-            $this->internalError($e);
-        }
-
-        // After execute hook.
-        if (isset($this->hooks['after.execute'])) {
-            $this->hooks['after.execute']();
+            $response = $this->internalError($e);
         }
 
         if (isset($response)) {
@@ -145,9 +140,10 @@ class Core extends ContainerAware
 
         // Route requests
         /** @var RouteInterface $matchedRoute */
-        $matchedRoute = $route->execute($this->container->get('request')->getUri(), $this->container->get('request')->getMethod());
+        $matchedRoute = $route->execute($this->container->get('request')->getUri(),
+            $this->container->get('request')->getMethod());
 
-        // Execute route if found.
+        // Execute route if found
         if (null !== $matchedRoute) {
             // Get passed route params and append it to request object
             $this->container->get('request')->get->add($matchedRoute->getParams());
@@ -157,11 +153,6 @@ class Core extends ContainerAware
             $response = $matchedRoute($resolver);
         } else {
             throw new NotFoundException();
-        }
-
-        // Post routing hook
-        if (isset($this->hooks['after.routing'])) {
-            $this->hooks['after.routing']();
         }
 
         return $response;
@@ -189,6 +180,7 @@ class Core extends ContainerAware
      * Handle 404.
      *
      * @param NotFoundException $e
+     * @return ResponseInterface
      */
     protected function notFound(NotFoundException $e = null)
     {
@@ -197,10 +189,11 @@ class Core extends ContainerAware
         }
 
         if (isset($this->hooks['not.found'])) {
-            $this->hooks['not.found']($e);
+            return $this->hooks['not.found']($e);
         } else {
             $this->container->get('response')->setStatusCode(404);
             $this->container->get('response')->setBody($e->getMessage());
+            return $this->container->get('response');
         }
     }
 
@@ -208,14 +201,16 @@ class Core extends ContainerAware
      * Handle exception.
      *
      * @param Exception $e
+     * @return ResponseInterface
      */
     protected function internalError(Exception $e)
     {
         if (isset($this->hooks['internal.error'])) {
-            $this->hooks['internal.error']($e);
+            return $this->hooks['internal.error']($e);
         } else {
             $this->container->get('response')->setStatusCode(500);
             $this->container->get('response')->setBody('Internal error: ' . $e->getMessage());
+            return $this->container->get('response');
         }
     }
 
