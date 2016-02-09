@@ -22,7 +22,6 @@ class ControllerTest extends PHPUnit_Framework_TestCase
         $con->setContainer($this->container);
 
 		$this->assertSame($this->container['request'], $con->getRequest());
-		$this->assertSame($this->container['response'], $con->getResponse());
 	}
 
 	public function testRender()

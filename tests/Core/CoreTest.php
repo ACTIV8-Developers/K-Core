@@ -34,19 +34,9 @@ class CoreTest extends PHPUnit_Framework_TestCase
         // Make instance of app.
         $app = new \Core\Core\Core(new Container(__DIR__ . '/../MockApp'));;
 
-        $app->execute();
+        $app->execute(true);
 
         $this->assertEquals(self::$test, 'testtest');
-    }
-
-    public function testSendResponse()
-    {
-        // Make instance of app.
-        $app = new \Core\Core\Core(new Container(__DIR__ . '/../MockApp'));
-
-        $app->getContainer()['response']->writeBody('<div>Test</div>');
-
-        $app->sendResponse();
     }
     
     public function testHooks()
@@ -64,7 +54,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(is_callable($app->getHook('before.routing') ));
         $this->assertTrue(is_callable($app->getHook('after.response') ));
 
-        $app->execute()->sendResponse();
+        $app->execute(true);
 
         $this->assertEquals(3, self::$hookCounter);
 
@@ -79,7 +69,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $app->addMiddleware(new TestMiddleware2());
         $app->addMiddleware(new TestMiddleware1());
 
-        $app->execute();
+        $app->execute(true);
 
         $this->assertEquals('123', self::$middlewareStack);
 
@@ -105,9 +95,9 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
         $app->getContainer()['router']->addRoute(new \Core\Routing\Route('notfound', 'GET', 'TestController', 'notFound'));
 
-        $app->execute();
+        $r = $app->execute(true);
 
-        $this->assertEquals('Not found', (string)$app->getContainer()['response']->getBody());
+        $this->assertEquals('Not found', (string)$r->getBody());
     }
 
     public function testNotFoundHook()
@@ -134,9 +124,9 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
         $app->getContainer()['router']->addRoute(new \Core\Routing\Route('error', 'GET','TestController', 'error'));
 
-        $app->execute();
+        $r = $app->execute(true);
 
-        $this->assertEquals('Internal error: ' . 'Error', (string)$app->getContainer()['response']->getBody());
+        $this->assertEquals('Internal error: ' . 'Error', (string)$r->getBody());
     }
 
     public function testControllerExceptionHook()
@@ -178,7 +168,7 @@ class TestController
     {
         $this->index();
 
-        $next();
+        return $next();
     }
 }
 
@@ -201,7 +191,7 @@ class TestHook
 
     public function __invoke()
     {
-        $this->index();
+        return $this->index();
     }
 }
 
@@ -211,7 +201,7 @@ class TestMiddleware1
     {
         CoreTest::$middlewareStack .= '1';
 
-        $next();
+        return $next();
     }
 }
 
@@ -221,7 +211,7 @@ class TestMiddleware2
     {
         CoreTest::$middlewareStack .= '2';
 
-        $next();
+        return $next();
     }
 }
 
@@ -231,6 +221,6 @@ class TestMiddleware3
     {
         CoreTest::$middlewareStack .= '3';
 
-        $next();
+        return $next();
     }
 }

@@ -54,12 +54,6 @@ class Container extends PimpleContainer implements ContainerInterface
             return new Request($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
         };
 
-        // Create response class closure.
-        $response = new Response();
-        $response->setProtocolVersion($this['request']->getProtocolVersion());
-        $this['response'] = $response;
-
-
         // Create router class closure
         $this['router'] = function () {
             return new Router();

@@ -2,6 +2,7 @@
 namespace Core\Core;
 
 use Core\Http\Interfaces\ResponseInterface;
+use Core\Http\Response;
 use Exception;
 use Core\Routing\Executable;
 use Core\Container\ContainerAware;
@@ -91,9 +92,10 @@ class Core extends ContainerAware
     /**
      * Route request and execute associated action.
      *
+     * @param bool
      * @return self
      */
-    public function execute()
+    public function execute($silent = false)
     {
         // Before execute hook.
         if (isset($this->hooks['before.execute'])) {
@@ -107,16 +109,24 @@ class Core extends ContainerAware
             $response = $start();
         } catch (StopException $e) {
             // Just stop execution of current stack
+            $response = null;
         } catch (NotFoundException $e) {
             $response = $this->notFound($e);
         } catch (Exception $e) {
             $response = $this->internalError($e);
         }
 
-        if (isset($response)) {
-            $this->container['response'] = $response;
+        // Send response
+        if (isset($response) && !$silent) {
+            $response->send();
         }
-        return $this;
+
+        // Post response hook.
+        if (isset($this->hooks['after.response'])) {
+            $this->hooks['after.response']();
+        }
+
+        return $response;
     }
 
     /**
@@ -159,24 +169,6 @@ class Core extends ContainerAware
     }
 
     /**
-     * Send application response.
-     *
-     * @return self
-     */
-    public function sendResponse()
-    {
-        // Send final response.
-        $this->container->get('response')->send();
-
-        // Post response hook.
-        if (isset($this->hooks['after.response'])) {
-            $this->hooks['after.response']();
-        }
-
-        return $this;
-    }
-
-    /**
      * Handle 404.
      *
      * @param NotFoundException $e
@@ -191,9 +183,8 @@ class Core extends ContainerAware
         if (isset($this->hooks['not.found'])) {
             return $this->hooks['not.found']($e);
         } else {
-            $this->container->get('response')->setStatusCode(404);
-            $this->container->get('response')->setBody($e->getMessage());
-            return $this->container->get('response');
+            return (new Response())->setStatusCode(404)
+                ->setBody($e->getMessage());
         }
     }
 
@@ -208,9 +199,8 @@ class Core extends ContainerAware
         if (isset($this->hooks['internal.error'])) {
             return $this->hooks['internal.error']($e);
         } else {
-            $this->container->get('response')->setStatusCode(500);
-            $this->container->get('response')->setBody('Internal error: ' . $e->getMessage());
-            return $this->container->get('response');
+            return (new Response())->setStatusCode(500)
+                ->setBody('Internal error: ' . $e->getMessage());
         }
     }
 

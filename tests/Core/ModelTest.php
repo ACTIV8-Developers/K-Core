@@ -15,7 +15,6 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame($model->getContainer(), $app->getContainer());
         $this->assertSame($app->getContainer()['request'], $model->getRequest());
-        $this->assertSame($app->getContainer()['response'], $model->getResponse());
     }
 
     /**
