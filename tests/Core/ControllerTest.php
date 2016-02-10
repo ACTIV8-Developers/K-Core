@@ -83,18 +83,6 @@ class ControllerTest extends PHPUnit_Framework_TestCase
         $con->notFoundIt();
     }
 
-    /**
-     * @expectedException Core\Core\Exceptions\StopException
-     */
-    public function testStop()
-    {
-        $con = new AnotherTestController();
-
-        $con->setContainer($this->container);
-
-        $con->stopIt();
-    }
-
     public function testContainer()
     {
         $c = new AnotherTestController;
@@ -103,7 +91,6 @@ class ControllerTest extends PHPUnit_Framework_TestCase
         $c->setContainer($container);
 
         $this->assertEquals($container, $c->getApp());
-;
     }
 
     /**
@@ -145,11 +132,6 @@ class AnotherTestController extends Controller
     public function notFoundIt()
     {
         $this->notFound();
-    }
-
-    public function stopIt()
-    {
-        $this->stop();
     }
 
     public function getFoo()

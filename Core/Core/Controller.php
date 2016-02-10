@@ -1,12 +1,12 @@
 <?php
 namespace Core\Core;
 
+use Core\Http\Response;
 use Core\Container\ContainerAware;
 use Core\Core\Exceptions\StopException;
 use Core\Core\Exceptions\NotFoundException;
 use Core\Http\Interfaces\RequestInterface;
 use Core\Http\Interfaces\ResponseInterface;
-use Core\Http\Response;
 use Core\Routing\Interfaces\RouterInterface;
 
 /**
@@ -16,7 +16,6 @@ use Core\Routing\Interfaces\RouterInterface;
  * @author <milos@caenazzo.com>
  *
  * @property RequestInterface $request
- * @property ResponseInterface $response
  * @property RouterInterface $router
  * @property \ArrayAccess $config
  */
@@ -82,15 +81,5 @@ abstract class Controller extends ContainerAware
     protected function notFound()
     {
         throw new NotFoundException();
-    }
-
-    /**
-     * Stop controller execution and render current response
-     *
-     * @throws \Core\Core\Exceptions\StopException
-     */
-    protected function stop()
-    {
-        throw new StopException();
     }
 }

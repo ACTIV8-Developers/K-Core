@@ -45,18 +45,14 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $app = new \Core\Core\Core(new Container(__DIR__ . '/../MockApp'));
 
         // Make hooks.
-        $app->setHook('before.execute', new TestHook());
-        $app->setHook('before.routing', new TestHook());
-        $app->setHook('after.response', new TestHook());
+        $app->setHook('after.execute', new TestHook());
 
         // Test hooks.
-        $this->assertTrue(is_callable($app->getHook('before.execute') ));
-        $this->assertTrue(is_callable($app->getHook('before.routing') ));
-        $this->assertTrue(is_callable($app->getHook('after.response') ));
+        $this->assertTrue(is_callable($app->getHook('after.execute')));
 
         $app->execute(true);
 
-        $this->assertEquals(3, self::$hookCounter);
+        $this->assertEquals(1, self::$hookCounter);
 
         $this->assertEquals(self::$test, 'testtesttesttest');
     }

@@ -1,15 +1,14 @@
 <?php
 namespace Core\Core;
 
-use Core\Http\Interfaces\ResponseInterface;
-use Core\Http\Response;
 use Exception;
+use Core\Http\Response;
 use Core\Routing\Executable;
 use Core\Container\ContainerAware;
-use Core\Core\Exceptions\StopException;
 use Interop\Container\ContainerInterface;
 use Core\Core\Exceptions\NotFoundException;
 use Core\Routing\Interfaces\RouteInterface;
+use Core\Http\Interfaces\ResponseInterface;
 
 /**
  * Core class.
@@ -50,9 +49,7 @@ class Core extends ContainerAware
      * @var callable[]
      */
     protected $hooks = [
-        'before.execute' => null,
-        'before.routing' => null,
-        'after.response' => null,
+        'after.execute' => null,
         'not.found' => null,
         'internal.error' => null
     ];
@@ -93,23 +90,15 @@ class Core extends ContainerAware
      * Route request and execute associated action.
      *
      * @param bool
-     * @return self
+     * @return ResponseInterface
      */
     public function execute($silent = false)
     {
-        // Before execute hook.
-        if (isset($this->hooks['before.execute'])) {
-            $this->hooks['before.execute']();
-        }
-
         try {
             // Execute middleware stack
             /** @var callable $start */
             $start = $this->middleware->top();
             $response = $start();
-        } catch (StopException $e) {
-            // Just stop execution of current stack
-            $response = null;
         } catch (NotFoundException $e) {
             $response = $this->notFound($e);
         } catch (Exception $e) {
@@ -122,8 +111,8 @@ class Core extends ContainerAware
         }
 
         // Post response hook.
-        if (isset($this->hooks['after.response'])) {
-            $this->hooks['after.response']();
+        if (isset($this->hooks['after.execute'])) {
+            $this->hooks['after.execute']();
         }
 
         return $response;
@@ -132,6 +121,7 @@ class Core extends ContainerAware
     /**
      * Find targeted controller and add its actions to middleware stack
      * @throws NotFoundException
+     * @return ResponseInterface
      */
     public function __invoke()
     {
@@ -143,14 +133,10 @@ class Core extends ContainerAware
             include $this->container['config']['routesPath'];
         }
 
-        // Before routing hook
-        if (isset($this->hooks['before.routing'])) {
-            $this->hooks['before.routing']();
-        }
-
         // Route requests
         /** @var RouteInterface $matchedRoute */
-        $matchedRoute = $route->execute($this->container->get('request')->getUri(),
+        $matchedRoute = $route
+            ->execute($this->container->get('request')->getUri(),
             $this->container->get('request')->getMethod());
 
         // Execute route if found
@@ -174,16 +160,13 @@ class Core extends ContainerAware
      * @param NotFoundException $e
      * @return ResponseInterface
      */
-    protected function notFound(NotFoundException $e = null)
+    protected function notFound(NotFoundException $e)
     {
-        if ($e === null) {
-            $e = new NotFoundException();
-        }
-
         if (isset($this->hooks['not.found'])) {
             return $this->hooks['not.found']($e);
         } else {
-            return (new Response())->setStatusCode(404)
+            return (new Response())
+                ->setStatusCode(404)
                 ->setBody($e->getMessage());
         }
     }
@@ -199,7 +182,8 @@ class Core extends ContainerAware
         if (isset($this->hooks['internal.error'])) {
             return $this->hooks['internal.error']($e);
         } else {
-            return (new Response())->setStatusCode(500)
+            return (new Response())
+                ->setStatusCode(500)
                 ->setBody('Internal error: ' . $e->getMessage());
         }
     }
