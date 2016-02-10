@@ -31,9 +31,6 @@ class Container extends PimpleContainer implements ContainerInterface
             $config = [];
         }
 
-        // Store config
-        $this['config'] = $config;
-
         // Set base path
         $config['basePath'] = $basePath;
 
@@ -42,6 +39,9 @@ class Container extends PimpleContainer implements ContainerInterface
 
         // Set path where views are stored
         $config['viewsPath'] = $basePath . '/Views';
+        
+        // Store config
+        $this['config'] = $config;
 
         // Create executable resolver
         $this['resolver'] = function ($c) {
