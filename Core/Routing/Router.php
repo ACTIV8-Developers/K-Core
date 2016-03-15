@@ -100,7 +100,37 @@ class Router implements RouterInterface
      */
     public function delete($url, $class, $function)
     {
-        $route = new Route($url, 'DELETE', self::$CONTROLLERS_ROOT . $class, $function);
+        $route = new Route($url, 'PATCH', self::$CONTROLLERS_ROOT . $class, $function);
+        $this->routes[] = $route;
+        return $route;
+    }
+
+    /**
+     * Add a route object to the router accepting DELETE request method.
+     *
+     * @param string $url
+     * @param string $class
+     * @param string $function
+     * @return RouteInterface
+     */
+    public function patch($url, $class, $function)
+    {
+        $route = new Route($url, 'PATCH', self::$CONTROLLERS_ROOT . $class, $function);
+        $this->routes[] = $route;
+        return $route;
+    }
+
+    /**
+     * Add a route object to the router accepting OPTIONS request method.
+     *
+     * @param string $url
+     * @param string $class
+     * @param string $function
+     * @return RouteInterface
+     */
+    public function options($url, $class, $function)
+    {
+        $route = new Route($url, 'OPTIONS', self::$CONTROLLERS_ROOT . $class, $function);
         $this->routes[] = $route;
         return $route;
     }
