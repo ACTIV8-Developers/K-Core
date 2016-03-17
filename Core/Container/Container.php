@@ -35,11 +35,15 @@ class Container extends PimpleContainer implements ContainerInterface
         $config['basePath'] = $basePath;
 
         // Set app routes path
-        $config['routesPath'] = $basePath . '/routes.php';
+        if (!isset($config['routesPath'])) {
+            $config['routesPath'] = $basePath . '/routes.php';
+        }
 
         // Set path where views are stored
-        $config['viewsPath'] = $basePath . '/Views';
-        
+        if (isset($config['viewsPath'])) {
+            $config['viewsPath'] = $basePath . '/Views';
+        }
+
         // Store config
         $this['config'] = $config;
 
