@@ -25,10 +25,8 @@ class Container extends PimpleContainer implements ContainerInterface
         parent::__construct($values);
 
         // Load application configuration.
-        if (is_file($basePath . '/Config/Config.php')) {
+        if (!isset($this['configPath'])) {
             $config = include $basePath . '/Config/Config.php';
-        } else {
-            $config = [];
         }
 
         // Set base path
