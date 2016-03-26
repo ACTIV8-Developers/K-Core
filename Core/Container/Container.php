@@ -38,8 +38,13 @@ class Container extends PimpleContainer implements ContainerInterface
         }
 
         // Set path where views are stored
-        if (isset($config['viewsPath'])) {
+        if (!isset($config['viewsPath'])) {
             $config['viewsPath'] = $basePath . '/Views';
+        }
+
+        // Set path where database configuration is stored
+        if (!isset($config['dbConfigPath'])) {
+            $config['dbConfigPath'] = $basePath . '/Config/Database.php';
         }
 
         // Store config

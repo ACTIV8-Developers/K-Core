@@ -1,13 +1,42 @@
 <?php
 namespace Core\Database;
 
+use Core\Database\Interfaces\DatabaseInterface;
+
 /**
- * Basic database class used for common CRUD operations.
+ * Basic database class used for common MySQL CRUD operations.
  *
  * @author <milos@caenazzo.com>
  */
-class Database extends AbstractDatabase
+class MySqlDatabase implements DatabaseInterface
 {
+    /**
+     * Database connection.
+     *
+     * @var \PDO
+     */
+    protected $connection = null;
+
+    /**
+     * Get connection variable.
+     *
+     * @return \PDO
+     */
+    public function getConnection()
+    {
+        return $this->connection;
+    }
+
+    /**
+     * Set connection variable.
+     *
+     * @param \PDO $conn
+     */
+    public function setConnection(\PDO $conn)
+    {
+        $this->connection = $conn;
+    }
+    
     /**
      * Begin database transaction.
      */
@@ -47,7 +76,18 @@ class Database extends AbstractDatabase
         // Return result resource variable
         return $stmt;
     }
-
+    
+    /**
+     * Set PDO attribute.
+     *
+     * @param int $attr
+     * @param mixed $value
+     */
+    public function setAttribute($attr, $value)
+    {
+        $this->connection->setAttribute($attr, $value);
+    }
+    
     /**
      * Select query.
      *

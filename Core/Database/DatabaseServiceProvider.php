@@ -17,8 +17,9 @@ class DatabaseServiceProvider extends ContainerAware
     public function __invoke()
     {
         // Load database configuration.
-        if (is_file($this->container['config']['basePath'] . '/Config/Database.php')) {
-            $this->container['config.database'] = require $this->container['config']['basePath'] . '/Config/Database.php';
+        if (isset($this->container['config']['dbConfigPath'])) {
+            $this->container['config.database'] =
+                include $this->container['config']['dbConfigPath'];
         } else {
             $this->container['config.database'] = [];
         }
@@ -28,16 +29,15 @@ class DatabaseServiceProvider extends ContainerAware
             if ($dbName === 'default') $dbName = '';
             $this->container['db' . $dbName] = function () use ($dbConfig) {
                 $db = null;
-                switch ($dbConfig['driver']) { // Choose connection and create it.
+                switch ($dbConfig['driver']) {
                     case 'mysql':
                         $db = new MySQLConnection($dbConfig);
+                        $database = new MySqlDatabase();
+                        $database->setConnection($db->connect());
                         break;
                     default:
                         throw new \InvalidArgumentException('Error! Unsupported database connection type.');
                 }
-                // Inject it into database class.
-                $database = new Database();
-                $database->setConnection($db->connect());
                 return $database;
             };
         }
