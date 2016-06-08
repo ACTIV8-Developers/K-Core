@@ -48,4 +48,40 @@ class RouterTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals([], $router->getRoutes());
 	}
+
+	public function testGroups()
+	{
+		// Create router object
+		$router = new Router();
+
+		$router->group('api', function($router) {
+			$router->get('foo/bar', '', '');
+
+			$router->get('bar/foo', '', '');
+		});
+
+		$router->get('test', '', '');
+
+		$router->group('api', function($router) {
+			$router->group('v2', function($router) {
+				$router->get('foo/bar', '', '');
+			});
+		});
+
+		$router->get('test/test', '', '');
+
+		$routes = $router->getRoutes();
+
+		$this->assertTrue($routes[0]->matches('api/foo/bar','GET'));
+
+		$this->assertTrue($routes[1]->matches('api/bar/foo','GET'));
+
+		$this->assertTrue($routes[2]->matches('test','GET'));
+
+		$this->assertTrue($routes[3]->matches('api/v2/foo/bar','GET'));
+
+		$this->assertTrue($routes[4]->matches('test/test','GET'));
+
+
+	}
 }
