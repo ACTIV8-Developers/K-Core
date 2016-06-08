@@ -89,8 +89,9 @@ class Core extends ContainerAware
     /**
      * Route request and execute associated action.
      *
-     * @param bool
+     * @param bool $silent
      * @return ResponseInterface
+     * @throws Exception
      */
     public function execute($silent = false)
     {
@@ -107,6 +108,9 @@ class Core extends ContainerAware
 
         // Send response
         if (isset($response) && !$silent) {
+            if (!$response instanceof ResponseInterface) {
+                throw new Exception("Controllers, hooks and middleware must return instance of ResponseInterface");
+            }
             $response->send();
         }
 

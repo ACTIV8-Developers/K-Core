@@ -25,4 +25,8 @@ interface ResponseInterface extends HttpInterface
      */
     public function setStatusCode($code, $reasonPhrase = null);
 
+    /**
+     * Send response back to browser
+     */
+    public function send();
 }

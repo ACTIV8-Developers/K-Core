@@ -112,7 +112,6 @@ class Route implements RouteInterface
 
     /**
      * Check if requested URI and method matches this route.
-     * Inspired by: http://blog.sosedoff.com/2009/09/20/rails-like-php-url-router/
      *
      * @param string $uri
      * @param string $method
