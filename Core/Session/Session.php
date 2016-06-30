@@ -163,6 +163,11 @@ class Session
      */
     public function regenerate()
     {
+        // If headers already sent can't do much
+        if (headers_sent()) {
+            return;
+        }
+        
         // Clear old session data
         $_SESSION = [];
         // Set session start time
