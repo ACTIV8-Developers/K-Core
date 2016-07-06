@@ -59,13 +59,15 @@ class DatabaseSessionHandler implements \SessionHandlerInterface
      *
      * @param string $save_path
      * @param string $session_id
-     * @return \PDOStatement
+     * @return bool
      */
     public function open($save_path, $session_id)
     {
-        $query = "INSERT INTO ". $this->tableName  ." SET session_id = :id, session_data = '' ON DUPLICATE KEY UPDATE session_lastaccesstime = NOW()";
-        $stmt = $this->db->prepare($query);
-        $stmt->execute(['id' => $session_id]);
+        $stmt = $this->db->prepare("INSERT INTO ". $this->tableName  . " SET session_id = :id, session_data = '' ON DUPLICATE KEY UPDATE session_lastaccesstime = NOW()");
+        if ($stmt->execute(['id' => $session_id])) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -85,8 +87,7 @@ class DatabaseSessionHandler implements \SessionHandlerInterface
      */
     public function read($id)
     {
-        $query = "SELECT session_data FROM ". $this->tableName  ." WHERE session_id = :id";
-        $stmt = $this->db->prepare($query);
+        $stmt = $this->db->prepare("SELECT session_data FROM " . $this->tableName . " WHERE session_id = :id");
         $stmt->execute(['id' => $id]);
         return base64_decode($stmt->fetchColumn());
     }
@@ -94,13 +95,15 @@ class DatabaseSessionHandler implements \SessionHandlerInterface
     /**
      * @param string $id
      * @param string $data
-     * @return array
+     * @return bool
      */
     public function write($id, $data)
     {
-        $query = "INSERT INTO ". $this->tableName  ." SET session_id = :id, session_data = :data ON DUPLICATE KEY UPDATE session_data = :data";
-        $stmt = $this->db->prepare($query);
-        $stmt->execute(['id' => $id, 'data' => base64_encode($data)]);
+        $stmt = $this->db->prepare("INSERT INTO " . $this->tableName . " SET session_id = :id, session_data = :data ON DUPLICATE KEY UPDATE session_data = :data");
+        if ($stmt->execute(['id' => $id, 'data' => base64_encode($data)])) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -111,11 +114,13 @@ class DatabaseSessionHandler implements \SessionHandlerInterface
      */
     public function destroy($id)
     {
-        $query = "DELETE FROM ". $this->tableName  ." WHERE session_id = :id";
+        $query = "DELETE FROM " . $this->tableName . " WHERE session_id = :id";
         $stmt = $this->db->prepare($query);
-        $stmt->execute(['id' => $id]);
-
         setcookie(session_name(), '', time() - 3600);
+        if ($stmt->execute(['id' => $id])) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -135,10 +140,13 @@ class DatabaseSessionHandler implements \SessionHandlerInterface
             $max = $this->gcLifetime;
         }
         if ($max == 0) {
-            return;
+            return true;
         }
-        $sql = "DELETE FROM ". $this->tableName  ." WHERE session_lastaccesstime < DATE_SUB(NOW(), INTERVAL " . $max . " SECOND)";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
+
+        $stmt = $this->db->prepare("DELETE FROM " . $this->tableName . " WHERE session_lastaccesstime < DATE_SUB(NOW(), INTERVAL " . $max . " SECOND)");
+        if ($stmt->execute()) {
+            return true;
+        }
+        return false;
     }
 }
