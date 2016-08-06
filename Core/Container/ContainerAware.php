@@ -1,9 +1,9 @@
 <?php
 namespace Core\Container;
 
-use InvalidArgumentException;
-use Interop\Container\ContainerInterface;
 use Core\Container\Interfaces\ContainerAwareInterface;
+use Interop\Container\ContainerInterface;
+use InvalidArgumentException;
 
 /**
  * Abstract class ContainerAware

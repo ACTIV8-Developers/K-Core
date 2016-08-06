@@ -1,7 +1,7 @@
 <?php
 
-use Core\Core\Core;
 use Core\Core\Controller;
+use Core\Core\Core;
 
 class ControllerTest extends PHPUnit_Framework_TestCase
 {

@@ -1,11 +1,11 @@
 <?php
 namespace Core\Core;
 
-use Core\Http\Response;
 use Core\Container\ContainerAware;
 use Core\Core\Exceptions\NotFoundException;
 use Core\Http\Interfaces\RequestInterface;
 use Core\Http\Interfaces\ResponseInterface;
+use Core\Http\Response;
 use Core\Routing\Interfaces\RouterInterface;
 
 /**

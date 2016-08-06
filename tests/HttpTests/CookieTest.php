@@ -48,6 +48,7 @@ class CookieTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider invalidNames
      * @expectedException \InvalidArgumentException
+     * @param $name
      */
     public function testInstantiationThrowsExceptionIfCookieNameContainsInvalidCharacters($name)
     {

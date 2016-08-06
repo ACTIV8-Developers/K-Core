@@ -1,8 +1,8 @@
 <?php
 namespace Core\Routing;
 
-use Core\Routing\Interfaces\RouteInterface;
 use Core\Routing\Interfaces\ResolverInterface;
+use Core\Routing\Interfaces\RouteInterface;
 
 /**
  * Route class.

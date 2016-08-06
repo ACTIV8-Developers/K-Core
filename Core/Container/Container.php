@@ -4,8 +4,8 @@ namespace Core\Container;
 use Core\Core\Resolver;
 use Core\Http\Request;
 use Core\Routing\Router;
-use InvalidArgumentException;
 use Interop\Container\ContainerInterface;
+use InvalidArgumentException;
 use Pimple\Container as PimpleContainer;
 
 /**

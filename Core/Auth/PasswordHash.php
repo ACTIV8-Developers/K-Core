@@ -59,7 +59,8 @@ class PasswordHash
     }
 
     /**
-     * @param String $password
+     * @param $password
+     * @return string
      */
     public function HashPassword($password)
     {

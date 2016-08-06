@@ -1,7 +1,6 @@
 <?php
 
 use Core\Core\Model;
-use Core\Core\Core;
 
 class ModelTest extends PHPUnit_Framework_TestCase
 {

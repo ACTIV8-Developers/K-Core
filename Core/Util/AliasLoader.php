@@ -92,13 +92,14 @@ class AliasLoader
      * Load a class alias if it is registered.
      *
      * @param string $alias
-     * @return string
+     * @return string|null
      */
     public function load($alias)
     {
         if (isset($this->aliases[$alias])) {
             return class_alias($this->aliases[$alias], $alias);
         }
+        return null;
     }
 
     /**

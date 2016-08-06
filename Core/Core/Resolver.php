@@ -1,9 +1,9 @@
 <?php
 namespace Core\Core;
 
-use Interop\Container\ContainerInterface;
-use Core\Routing\Interfaces\ResolverInterface;
 use Core\Container\Interfaces\ContainerAwareInterface;
+use Core\Routing\Interfaces\ResolverInterface;
+use Interop\Container\ContainerInterface;
 
 /**
  * Class Resolver

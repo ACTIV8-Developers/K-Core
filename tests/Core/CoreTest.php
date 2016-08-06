@@ -1,6 +1,6 @@
 <?php
 
-use \Core\Container\Container;
+use Core\Container\Container;
 
 class CoreTest extends PHPUnit_Framework_TestCase
 {
@@ -187,7 +187,7 @@ class TestHook
 
     public function __invoke()
     {
-        return $this->index();
+        $this->index();
     }
 }
 

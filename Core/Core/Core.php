@@ -1,14 +1,14 @@
 <?php
 namespace Core\Core;
 
-use Exception;
+use Core\Container\ContainerAware;
+use Core\Core\Exceptions\NotFoundException;
+use Core\Http\Interfaces\ResponseInterface;
 use Core\Http\Response;
 use Core\Routing\Executable;
-use Core\Container\ContainerAware;
-use Interop\Container\ContainerInterface;
-use Core\Core\Exceptions\NotFoundException;
 use Core\Routing\Interfaces\RouteInterface;
-use Core\Http\Interfaces\ResponseInterface;
+use Exception;
+use Interop\Container\ContainerInterface;
 
 /**
  * Core class.
