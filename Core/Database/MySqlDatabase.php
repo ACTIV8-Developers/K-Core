@@ -66,7 +66,7 @@ class MySqlDatabase implements DatabaseInterface
      *
      * @param string $query
      * @param array $params
-     * @return resource
+     * @return \PDOStatement|resource
      */
     public function query($query, array $params = [])
     {

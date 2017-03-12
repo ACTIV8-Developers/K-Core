@@ -185,7 +185,7 @@ class HttpBag implements \IteratorAggregate, \Countable, \ArrayAccess
      */
     public function offsetExists($offset)
     {
-        // TODO: Implement offsetExists() method.
+        return isset($this->elements[$offset]);
     }
 
     /**

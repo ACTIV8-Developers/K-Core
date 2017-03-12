@@ -68,7 +68,11 @@ class RouterTest extends PHPUnit_Framework_TestCase
 			});
 		});
 
-		$router->get('test/test', '', '');
+        $router->get('test/test', '', '');
+
+        $router->group('', function($router) {
+            $router->get('no_prefix', '', '');
+        });
 
 		$routes = $router->getRoutes();
 
@@ -82,6 +86,6 @@ class RouterTest extends PHPUnit_Framework_TestCase
 
 		$this->assertTrue($routes[4]->matches('test/test','GET'));
 
-
+        $this->assertTrue($routes[5]->matches('no_prefix','GET'));
 	}
 }

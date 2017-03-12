@@ -147,7 +147,11 @@ class Router implements RouterInterface
      */
     public function group($prefix, callable $closure)
     {
-        $this->urlPrefix .= $prefix . '/';
+        if ($prefix) {
+            $this->urlPrefix .= $prefix . '/';
+        } else {
+            $this->urlPrefix = '';
+        }
         $closure($this);
         $this->urlPrefix = '';
         return $this;

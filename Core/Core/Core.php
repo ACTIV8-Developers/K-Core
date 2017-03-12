@@ -133,7 +133,8 @@ class Core extends ContainerAware
         $route = $this->container->get('router');
 
         // Collect routes list from file.
-        if (is_file($this->container['config']['routesPath'])) {
+        if (isset($this->container['config']['routesPath']) && is_file($this->container['config']['routesPath'])) {
+            /** @noinspection PhpIncludeInspection */
             include $this->container['config']['routesPath'];
         }
 
