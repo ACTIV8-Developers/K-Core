@@ -9,12 +9,9 @@ php:
 
 sudo: false
 
-before_install:
+before_script:
   - if [[ "$TRAVIS_PHP_VERSION" == '5.6' ]]; then composer require satooshi/php-coveralls:1.* squizlabs/php_codesniffer:2.* -n ; fi
   - if [[ "$TRAVIS_PHP_VERSION" != '5.6' ]]; then composer install -n ; fi
-  
-before_script:
-  - composer install
 
 script:
   - phpunit --configuration tests/phpunit.xml
