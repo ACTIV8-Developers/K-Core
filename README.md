@@ -7,5 +7,3 @@ Simple and lightweight yet powerful MVC framework
 **Albert Einstein**
 
 ###This is core repository, template app can be found [here](https://github.com/Kajna/K)
-
-More info on http://k-phpframework.com/
