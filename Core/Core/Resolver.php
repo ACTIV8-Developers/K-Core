@@ -1,9 +1,9 @@
 <?php
 namespace Core\Core;
 
+use Core\Container\Container;
 use Core\Container\Interfaces\ContainerAwareInterface;
 use Core\Routing\Interfaces\ResolverInterface;
-use Interop\Container\ContainerInterface;
 
 /**
  * Class Resolver
@@ -12,14 +12,14 @@ use Interop\Container\ContainerInterface;
 class Resolver implements ResolverInterface
 {
     /**
-     * @var ContainerInterface|null
+     * @var Container|null
      */
     private $container = null;
 
     /**
-     * @param ContainerInterface $container
+     * @param Container $container
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(Container $container)
     {
         $this->container = $container;
     }

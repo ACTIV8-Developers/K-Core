@@ -1,6 +1,7 @@
 <?php
 namespace Core\Core;
 
+use Core\Container\Container;
 use Core\Container\ContainerAware;
 use Core\Core\Exceptions\NotFoundException;
 use Core\Http\Interfaces\ResponseInterface;
@@ -8,7 +9,6 @@ use Core\Http\Response;
 use Core\Routing\Executable;
 use Core\Routing\Interfaces\RouteInterface;
 use Exception;
-use Interop\Container\ContainerInterface;
 
 /**
  * Core class.
@@ -24,7 +24,7 @@ class Core extends ContainerAware
      *
      * @var string
      */
-    const VERSION = '3.1.0';
+    const VERSION = '3.2.0';
 
     /**
      * @var Core
@@ -57,9 +57,9 @@ class Core extends ContainerAware
     /**
      * Core constructor.
      *
-     * @param ContainerInterface $container
+     * @param Container|ContainerInterface $container
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(Container $container)
     {
         // Set core container
         $this->container = $container;
@@ -75,10 +75,10 @@ class Core extends ContainerAware
     /**
      * Get singleton instance of Core class.
      *
-     * @param ContainerInterface|null $container
+     * @param Container|null $container
      * @return Core
      */
-    public static function getInstance(ContainerInterface $container = null)
+    public static function getInstance(Container $container = null)
     {
         if (null === self::$instance) {
             self::$instance = new Core($container);

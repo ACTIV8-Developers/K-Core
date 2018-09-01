@@ -3,10 +3,10 @@
 use Core\Core\Controller;
 use Core\Core\Core;
 
-class ControllerTest extends PHPUnit_Framework_TestCase
+class ControllerTest extends \PHPUnit\Framework\TestCase
 {
 
-    public function __construct()
+    public function setUp()
     {
         $core = Core::getInstance(new \Core\Container\Container(__DIR__ . '/../MockApp'));
 
@@ -68,7 +68,16 @@ class ControllerTest extends PHPUnit_Framework_TestCase
 
         $view = 'MockView';
 
-        $con->renderIt($view, []);
+        $this->assertEquals($con->renderIt($view, [])->getBody(), <<<TAG
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+</body>
+</html>
+TAG
+);
     }
 
     /**
@@ -126,7 +135,7 @@ class AnotherTestController extends Controller
 
     public function renderIt($view, $data = [])
     {
-        $this->render($view, $data);
+        return $this->render($view, $data);
     }
 
     public function notFoundIt()

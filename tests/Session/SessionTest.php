@@ -1,8 +1,8 @@
 <?php
 
-class SessionTest extends PHPUnit_Framework_TestCase
+class SessionTest extends \PHPUnit\Framework\TestCase
 {
-	public function __construct()
+	public function setUp()
 	{
         $config = [
             // Session Cookie Name
@@ -23,13 +23,15 @@ class SessionTest extends PHPUnit_Framework_TestCase
 		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Windows NT 6.1; WOW64)';
 	}
 
-    public function testStart()
+    public function tearDown()
     {
-        $this->session->start();
+        session_write_close();
     }
 
 	public function testGetSet()
 	{
+        $this->session->start();
+
 		$_SESSION['foo'] = 'bar';
 
         $this->assertEquals($_SESSION, $this->session->all());

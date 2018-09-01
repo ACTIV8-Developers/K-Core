@@ -1,7 +1,7 @@
 <?php
 use Core\Http\Request;
 
-class RequestTest extends PHPUnit_Framework_TestCase
+class RequestTest extends \PHPUnit\Framework\TestCase
 {
 	public function testConstruct()
 	{
@@ -184,6 +184,8 @@ class RequestTest extends PHPUnit_Framework_TestCase
      */
     public function testInvalidRequest()
     {
+        $this->expectException(InvalidArgumentException::class);
+
         $_TEST_SERVER = [];
         new Request($_TEST_SERVER);
     }
@@ -197,6 +199,9 @@ class RequestTest extends PHPUnit_Framework_TestCase
         $_TEST_SERVER['CONTENT_TYPE'] = 'application/x-www-form-urlencoded';
         $_TEST_SERVER['HTTP_CONTENT_LENGTH'] = 0;
 
-        new Request($_TEST_SERVER);
+        $req = new Request($_TEST_SERVER);
+
+        $this->assertEquals('PUT', $req->getMethod());
+        $this->assertEquals('application/x-www-form-urlencoded', $req->getContentType());
     }
 }

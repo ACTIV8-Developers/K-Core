@@ -1,6 +1,6 @@
 <?php
 
-class ContainerAwareTest extends PHPUnit_Framework_TestCase
+class ContainerAwareTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetSet()
     {

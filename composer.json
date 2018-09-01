@@ -1,8 +1,9 @@
 {
     "name": "kajna/k-core",
+    "version": "3.2.0",
     "description": "Simple and lightweight yet powerful PHP framework",
     "keywords": ["framework", "k", "PHP", "lightweight", "simple", "router"],
-    "homepage": "http://k-phpframework.com",
+    "homepage": "http://k.codetest.space.com",
     "authors": [
         {
         "name": "Milos Kajnaco",
@@ -12,18 +13,16 @@
     "license": "MIT",
     "require":{
         "php": ">=5.4.0",
-        "pimple/pimple": "3.0.*@dev",
-        "container-interop/container-interop": "^1.1"
+        "pimple/pimple": "3.0.*@dev"
     },
     "suggest": {
-        "phpunit/php-timer": "Benchmark",
+        "kajna/purli": "HTTP client",
         "predis/predis": "Redis client",
         "monolog/monolog": "Allows more advanced logging of the application flow",
         "swiftmailer/swiftmailer": "Great mailer library",
         "codeguy/upload": "Handle file uploads with extensible validation and storage strategies",
         "gregwar/image": "Image handling",
         "nesbot/carbon": "A simple API extension for DateTime.",
-        "patchwork/utf8": "Portable and performant UTF-8, Unicode and Grapheme Clusters for PHP",
         "mpdf/mpdf": "PDF creation library"
     },
     "minimum-stability": "dev",

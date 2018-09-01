@@ -1,6 +1,6 @@
 <?php
 
-class PaginationTest extends PHPUnit_Framework_TestCase
+class PaginationTest extends \PHPUnit\Framework\TestCase
 {
     public function testEmptyPagination()
     {
@@ -17,7 +17,7 @@ class PaginationTest extends PHPUnit_Framework_TestCase
             'baseUrl'     => ''
         ];
 
-        $pagination = \Core\Pagination\Pagination::getNew($config)->create();
+        $this->assertEquals('', \Core\Pagination\Pagination::getNew([])->create());
     }
 
     public function testLastLinkPagination()
@@ -34,7 +34,10 @@ class PaginationTest extends PHPUnit_Framework_TestCase
                                     ->totalRows(10)
                                     ->perPage(2)
                                     ->numLinks(1)
-                                    ->curOffset(5);
+                                    ->curOffset(5)->create();
+
+        $this->assertInternalType('string', $pagination);
+
     }
 
     /**

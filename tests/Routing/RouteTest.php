@@ -1,7 +1,7 @@
 <?php
 use Core\Routing\Route;
 
-class RouteTest extends PHPUnit_Framework_TestCase
+class RouteTest extends \PHPUnit\Framework\TestCase
 {
 	public function testConstructAndGet()
 	{
@@ -180,5 +180,7 @@ class RouteTest extends PHPUnit_Framework_TestCase
 		$route = new Route('foo/:param', 'GET', 'bar', 'foo');
 
 		$route->addMiddleware(function() {});
+
+        $this->assertEquals($route, $route);
 	}
 }

@@ -2,7 +2,6 @@
 namespace Core\Container;
 
 use Core\Container\Interfaces\ContainerAwareInterface;
-use Interop\Container\ContainerInterface;
 use InvalidArgumentException;
 
 /**
@@ -13,22 +12,22 @@ use InvalidArgumentException;
 abstract class ContainerAware implements ContainerAwareInterface
 {
     /**
-     * @var ContainerInterface $app
+     * @var Container $container
      */
     protected $container = null;
 
     /**
-     * @param ContainerInterface $container
+     * @param Container $container
      * @return self
      */
-    public function setContainer(ContainerInterface $container)
+    public function setContainer(Container $container)
     {
         $this->container = $container;
         return $this;
     }
 
     /**
-     * @return ContainerInterface
+     * @return Container
      */
     public function getContainer()
     {

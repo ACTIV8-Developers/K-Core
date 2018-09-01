@@ -3,10 +3,12 @@
 	backupStaticAttributes="false"
 	syntaxCheck="true"
 	colors="true"
-	bootstrap="bootstrap.php" processIsolation="false" stopOnFailure="false"
-		 convertErrorsToExceptions="true"
-		 convertNoticesToExceptions="true"
-		 convertWarningsToExceptions="true"
+	bootstrap="bootstrap.php"
+	processIsolation="false"
+	stopOnFailure="false"
+	convertErrorsToExceptions="true"
+	convertNoticesToExceptions="true"
+	convertWarningsToExceptions="true"
 	>
 	<testsuites>
 		<testsuite name="K Test Suite">

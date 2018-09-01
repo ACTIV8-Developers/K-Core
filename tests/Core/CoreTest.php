@@ -2,7 +2,7 @@
 
 use Core\Container\Container;
 
-class CoreTest extends PHPUnit_Framework_TestCase
+class CoreTest extends \PHPUnit\Framework\TestCase
 {
     public static $test = '';
 
@@ -79,7 +79,9 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
         $app = new \Core\Core\Core(new Container(__DIR__ . '/../MockApp'));
 
-        $app->execute();
+        $response = $app->execute();
+
+        $this->assertEquals($response->getStatusCode(), 404);
     }
 
     public function testControllerNotFound()
@@ -109,6 +111,8 @@ class CoreTest extends PHPUnit_Framework_TestCase
         );
 
         $app->execute();
+
+        $this->assertInternalType('callable', $app->getHook('not.found'));
     }
 
     public function testControllerException()
@@ -140,6 +144,8 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $app->getContainer()['router']->addRoute(new \Core\Routing\Route('error','GET','TestController', 'error'));
 
         $app->execute();
+
+        $this->assertInternalType('callable', $app->getHook('internal.error'));
     }
 }
 

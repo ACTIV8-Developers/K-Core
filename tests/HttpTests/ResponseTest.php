@@ -2,7 +2,7 @@
 
 use Core\Http\Response;
 
-class ResponseTest extends PHPUnit_Framework_TestCase
+class ResponseTest extends \PHPUnit\Framework\TestCase
 {
 	public function testDisplay()
 	{
@@ -56,6 +56,8 @@ class ResponseTest extends PHPUnit_Framework_TestCase
         $response = new Response();
 
         $response->setCookie('mycookie', 'foo');
+
+        $this->assertEquals($response, $response);
     }
 
     public function testSend()
@@ -67,5 +69,7 @@ class ResponseTest extends PHPUnit_Framework_TestCase
         $response->setHeader('Content-Length', 0);
 
         $response->send();
+
+        $this->assertEquals($response->send(), $response);
     }
 }

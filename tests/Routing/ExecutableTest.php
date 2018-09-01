@@ -1,6 +1,6 @@
 <?php
 
-class ExecutableTest extends PHPUnit_Framework_TestCase
+class ExecutableTest extends \PHPUnit\Framework\TestCase
 {
     public function testGettersSetters()
     {
