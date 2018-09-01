@@ -24,7 +24,7 @@ class Core extends ContainerAware
      *
      * @var string
      */
-    const VERSION = '3.2.0';
+    const VERSION = '3.1.1';
 
     /**
      * @var Core
