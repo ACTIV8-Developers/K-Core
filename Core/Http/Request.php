@@ -99,7 +99,7 @@ class Request implements RequestInterface
         if (!empty($_SERVER['QUERY_STRING'])) {
             $server['REQUEST_URI'] = str_replace('?' . $_SERVER['QUERY_STRING'], '', $server['REQUEST_URI']);
         }
-        $server['REQUEST_URI'] = trim($server['REQUEST_URI'], '/');
+        $server['REQUEST_URI'] = rawurldecode(trim($server['REQUEST_URI'], '/'));
 
         // Parse request headers and environment variables.
         $this->headers = new HttpBag();

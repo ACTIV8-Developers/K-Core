@@ -53,12 +53,20 @@ class Route implements RouteInterface
     protected $conditions = [];
 
     /**
+     * Wheter to match unicode characters or not
+     *
+     * @var bool
+     */
+    protected $matchUnicode = false;
+
+    /**
      * List of regex to use when matching conditions.
      *
      * @param array
      */
     protected static $conditionRegex = [
         'default' => '[a-zA-Z0-9_\-]+', // Default allows letters, numbers, underscores and dashes.
+        'unicode' => '[\p{L}0-9_\-]+', // Allow unicode characters as well
         'alpha-numeric' => '[a-zA-Z0-9]+', // Numbers and letters.
         'numeric' => '[0-9]+', // Numbers only.
         'alpha' => '[a-zA-Z]+', // Letters only.
@@ -96,7 +104,7 @@ class Route implements RouteInterface
         $stack = new \SplStack();
         $stack->setIteratorMode(\SplDoublyLinkedList::IT_MODE_LIFO | \SplDoublyLinkedList::IT_MODE_KEEP);
         $stack[] = $this->executable
-                        ->setResolver($resolver);
+            ->setResolver($resolver);
 
         foreach ($this->middleware as $callable) {
             $next = $stack->top();
@@ -127,7 +135,8 @@ class Route implements RouteInterface
             $urlRegex = preg_replace_callback(self::MATCHES_REGEX, [$this, 'regexUrl'], $this->url);
 
             // Check if URI matches and if it matches put results in values array.
-            if (preg_match('@^' . $urlRegex . '/?$@', $uri, $paramValues) === 1) {// There is a match.
+            $pattern = '@^' . $urlRegex . '/?$@' . ($this->matchUnicode?'u':'');
+            if (preg_match($pattern, $uri, $paramValues) === 1) {// There is a match.
                 // Extract parameter names.
                 $paramNames = [];
                 preg_match_all(self::MATCHES_REGEX, $this->url, $paramNames, PREG_PATTERN_ORDER);
@@ -162,6 +171,16 @@ class Route implements RouteInterface
         } else {
             return '(' . self::$conditionRegex['default'] . ')';
         }
+    }
+
+    /**
+     * Should match unicode characters
+     *
+     * @return self
+     */
+    public function matchUnicode() {
+        $this->matchUnicode = true;
+        return $this;
     }
 
     /**

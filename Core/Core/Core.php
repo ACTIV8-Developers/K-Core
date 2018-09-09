@@ -24,7 +24,7 @@ class Core extends ContainerAware
      *
      * @var string
      */
-    const VERSION = '3.1.1';
+    const VERSION = '3.2.0';
 
     /**
      * @var Core
@@ -39,7 +39,7 @@ class Core extends ContainerAware
     protected $middleware = [];
 
     /**
-     * @var ContainerInterface
+     * @var Container
      */
     protected $container = null;
 
@@ -57,7 +57,7 @@ class Core extends ContainerAware
     /**
      * Core constructor.
      *
-     * @param Container|ContainerInterface $container
+     * @param Container|Container $container
      */
     public function __construct(Container $container)
     {
