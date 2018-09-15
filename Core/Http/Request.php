@@ -461,4 +461,26 @@ class Request implements RequestInterface
         }
         return $this->headers->all();
     }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        $result = '';
+
+        foreach ($this->headers as $header => $value) {
+            $result .= sprintf('%s: %s', $header, $value) . "\n";
+        }
+        foreach ($this->get as $header => $value) {
+            $result .= sprintf('%s: %s', $header, $value) . "\n";
+        }
+        foreach ($this->post as $header => $value) {
+            $result .= sprintf('%s: %s', $header, $value) . "\n";
+        }
+
+        $result .= $this->getBody() . "\n";
+
+        return $result;
+    }
 }

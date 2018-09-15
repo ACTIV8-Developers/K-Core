@@ -295,4 +295,22 @@ class Response implements ResponseInterface
 
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        $result = '';
+
+        $result .= sprintf('%s %s', $this->protocolVersion, $this->reasonPhrase) . "\n";
+
+        foreach ($this->headers as $header => $value) {
+            $result .= sprintf('%s: %s', $header, $value) . "\n";
+        }
+
+        $result .= $this->body;
+
+        return $result;
+    }
 }
