@@ -1,7 +1,7 @@
 <?php
 namespace Core\Container\Interfaces;
 
-use Core\Container\Container;
+use Psr\Container\ContainerInterface;
 
 /**
  * Interface ContainerAwareInterface
@@ -11,10 +11,10 @@ use Core\Container\Container;
 interface ContainerAwareInterface
 {
     /**
-     * @param Container $app
+     * @param ContainerInterface $app
      * @return self
      */
-    public function setContainer(Container $app);
+    public function setContainer(ContainerInterface $app);
 
     /**
      * @return Container

@@ -6,13 +6,14 @@ use Core\Http\Request;
 use Core\Routing\Router;
 use InvalidArgumentException;
 use Pimple\Container as PimpleContainer;
+use Psr\Container\ContainerInterface;
 
 /**
  * Container
  *
  * @author <milos@caenazzo.com>
  */
-class Container extends PimpleContainer
+class Container extends PimpleContainer implements ContainerInterface
 {
     /**
      * Container constructor.

@@ -23,6 +23,12 @@ interface RouteInterface
     public function getParams();
 
     /**
+     * @param callable $callable
+     * @return $this
+     */
+    public function addMiddleware(callable $callable);
+
+    /**
      * Execute route
      *
      * @param ResolverInterface $resolver

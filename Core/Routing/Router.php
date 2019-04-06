@@ -31,7 +31,12 @@ class Router implements RouterInterface
      * @var string
      */
     protected $urlPrefix = '';
-    
+
+    /**
+     * @var array
+     */
+    protected $middlewares = [];
+
     /**
      * Check routes and returns matching one if found,
      * otherwise return null.
@@ -61,7 +66,7 @@ class Router implements RouterInterface
     public function get($url, $class, $function)
     {
         $route = new Route($this->urlPrefix . $url, 'GET', self::$CONTROLLERS_ROOT . $class, $function);
-        $this->routes[] = $route;
+        $this->addRoute($route);
         return $route;
     }
 
@@ -76,7 +81,7 @@ class Router implements RouterInterface
     public function post($url, $class, $function)
     {
         $route = new Route($this->urlPrefix . $url, 'POST', self::$CONTROLLERS_ROOT . $class, $function);
-        $this->routes[] = $route;
+        $this->addRoute($route);
         return $route;
     }
 
@@ -91,7 +96,7 @@ class Router implements RouterInterface
     public function put($url, $class, $function)
     {
         $route = new Route($this->urlPrefix . $url, 'PUT', self::$CONTROLLERS_ROOT . $class, $function);
-        $this->routes[] = $route;
+        $this->addRoute($route);
         return $route;
     }
 
@@ -106,7 +111,7 @@ class Router implements RouterInterface
     public function delete($url, $class, $function)
     {
         $route = new Route($this->urlPrefix . $url, 'PATCH', self::$CONTROLLERS_ROOT . $class, $function);
-        $this->routes[] = $route;
+        $this->addRoute($route);
         return $route;
     }
 
@@ -121,7 +126,7 @@ class Router implements RouterInterface
     public function patch($url, $class, $function)
     {
         $route = new Route($this->urlPrefix . $url, 'PATCH', self::$CONTROLLERS_ROOT . $class, $function);
-        $this->routes[] = $route;
+        $this->addRoute($route);
         return $route;
     }
 
@@ -136,23 +141,26 @@ class Router implements RouterInterface
     public function options($url, $class, $function)
     {
         $route = new Route($this->urlPrefix . $url, 'OPTIONS', self::$CONTROLLERS_ROOT . $class, $function);
-        $this->routes[] = $route;
+        $this->addRoute($route);
         return $route;
     }
 
     /**
      * @param $prefix
      * @param callable $closure
+     * @param array $middleware
      * @return $this
      */
-    public function group($prefix, callable $closure)
+    public function group($prefix, callable $closure, $middleware = [])
     {
         if ($prefix) {
             $this->urlPrefix .= $prefix . '/';
         } else {
             $this->urlPrefix = '';
         }
+        $this->middlewares = $middleware;
         $closure($this);
+        $this->middlewares = [];
         $this->urlPrefix = '';
         return $this;
     }
@@ -165,6 +173,9 @@ class Router implements RouterInterface
      */
     public function addRoute(RouteInterface $route)
     {
+        foreach ($this->middlewares as $m) {
+            $route->addMiddleware($m);
+        }
         $this->routes[] = $route;
         return $this;
     }

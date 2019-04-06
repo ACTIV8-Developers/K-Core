@@ -2,6 +2,7 @@
 namespace Core\Database;
 
 use Core\Container\ContainerAware;
+use Core\Database\Connections\MSSQLConnection;
 use Core\Database\Connections\MySQLConnection;
 
 /**
@@ -33,6 +34,11 @@ class DatabaseServiceProvider extends ContainerAware
                     case 'mysql':
                         $db = new MySQLConnection($dbConfig);
                         $database = new MySqlDatabase();
+                        $database->setConnection($db->connect());
+                        break;
+                    case 'mssql':
+                        $db = new MSSQLConnection($dbConfig);
+                        $database = new MSSqlDatabase();
                         $database->setConnection($db->connect());
                         break;
                     default:
