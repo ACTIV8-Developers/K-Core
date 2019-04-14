@@ -10,9 +10,6 @@ use Core\Database\Interfaces\DatabaseInterface;
  */
 class MSSqlDatabase implements DatabaseInterface
 {
-    private $cTransID;
-    private $childTrans = array();
-
     /**
      * Database connection.
      *
@@ -45,15 +42,7 @@ class MSSqlDatabase implements DatabaseInterface
      */
     public function beginTransaction()
     {
-
-        $cAlphanum = "AaBbCc0Dd1EeF2fG3gH4hI5iJ6jK7kLlM8mN9nOoPpQqRrSsTtUuVvWwXxYyZz";
-        $this->cTransID = "T".substr(str_shuffle($cAlphanum), 0, 7);
-
-        array_unshift($this->childTrans, $this->cTransID);
-
-        $stmt = $this->db->prepare("BEGIN TRAN [$this->cTransID];");
-        return $stmt->execute();
-
+        $this->connection->beginTransaction();
     }
 
     /**
@@ -61,13 +50,7 @@ class MSSqlDatabase implements DatabaseInterface
      */
     public function commit()
     {
-        while(count($this->childTrans) > 0){
-            $cTmp = array_shift($this->childTrans);
-            $stmt = $this->db->prepare("COMMIT TRAN [$cTmp];");
-            $stmt->execute();
-        }
-
-        return  $stmt;
+        $this->connection->commit();
     }
 
     /**
@@ -75,13 +58,7 @@ class MSSqlDatabase implements DatabaseInterface
      */
     public function rollback()
     {
-        while(count($this->childTrans) > 0){
-            $cTmp = array_shift($this->childTrans);
-            $stmt = $this->db->prepare("ROLLBACK TRAN [$cTmp];");
-            $stmt->execute();
-        }
-
-        return $stmt;
+        $this->connection->rollBack();
     }
 
     /**

@@ -65,4 +65,18 @@ interface RouterInterface
      * @return self
      */
     public function addRoute(RouteInterface $route);
+
+    /**
+     * Get list of routes.
+     *
+     * @return RouteInterface[]
+     */
+    public function getRoutes();
+
+    /**
+     * Clear all routes.
+     *
+     * @return self
+     */
+    public function clearRoutes();
 }

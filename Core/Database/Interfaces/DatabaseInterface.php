@@ -64,6 +64,14 @@ interface DatabaseInterface
     public function insert($query, array $params);
 
     /**
+     * Wrapper for PDO last insert id.
+     *
+     * @param string $name (optional)
+     * @return int
+     */
+    public function lastInsertId($name = null);
+
+    /**
      * Update query.
      *
      * @param string $query
@@ -99,4 +107,14 @@ interface DatabaseInterface
      * @return int
      */
     public function createTable($name, array $fields, $options = null);
+
+    /**
+     * Add index to table column.
+     *
+     * @param string $table
+     * @param string $column
+     * @param string $name
+     * @return bool
+     */
+    public function addIndex($table, $column, $name);
 }

@@ -281,4 +281,12 @@ class Route implements RouteInterface
         $this->middleware[] = $callable;
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
 }
