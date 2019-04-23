@@ -110,7 +110,7 @@ class Router implements RouterInterface
      */
     public function delete($url, $class, $function)
     {
-        $route = new Route($this->urlPrefix . $url, 'PATCH', self::$CONTROLLERS_ROOT . $class, $function);
+        $route = new Route($this->urlPrefix . $url, 'DELETE', self::$CONTROLLERS_ROOT . $class, $function);
         $this->addRoute($route);
         return $route;
     }
