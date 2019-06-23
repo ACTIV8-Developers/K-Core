@@ -9,6 +9,7 @@ use Core\Http\Response;
 use Core\Routing\Executable;
 use Core\Routing\Interfaces\RouteInterface;
 use Exception;
+use Psr\Container\ContainerInterface;
 
 /**
  * Core class.
@@ -57,9 +58,9 @@ class Core extends ContainerAware
     /**
      * Core constructor.
      *
-     * @param Container|Container $container
+     * @param ContainerInterface|ContainerInterface $container
      */
-    public function __construct(Container $container)
+    public function __construct(ContainerInterface $container)
     {
         // Set core container
         $this->container = $container;
@@ -75,10 +76,10 @@ class Core extends ContainerAware
     /**
      * Get singleton instance of Core class.
      *
-     * @param Container|null $container
+     * @param ContainerInterface|null $container
      * @return Core
      */
-    public static function getInstance(Container $container = null)
+    public static function getInstance(ContainerInterface $container = null)
     {
         if (null === self::$instance) {
             self::$instance = new Core($container);
