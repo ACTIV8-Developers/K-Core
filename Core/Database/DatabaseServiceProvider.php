@@ -3,6 +3,7 @@ namespace Core\Database;
 
 use Core\Container\ContainerAware;
 use Core\Database\Connections\MSSQLConnection;
+use Core\Database\Connections\MSSqlDBLIBConnection;
 use Core\Database\Connections\MySQLConnection;
 
 /**
@@ -41,6 +42,12 @@ class DatabaseServiceProvider extends ContainerAware
                         $database = new MSSqlDatabase();
                         $database->setConnection($db->connect());
                         break;
+                    case 'mssql-dblib':
+                        $db = new MSSqlDBLIBConnection($dbConfig);
+                        $database = new MSSqlDatabase();
+                        $database->setConnection($db->connect());
+                        break;
+
                     default:
                         throw new \InvalidArgumentException('Error! Unsupported database connection type.');
                 }
