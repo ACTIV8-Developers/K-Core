@@ -2,7 +2,7 @@
 
 class SessionTest extends \PHPUnit\Framework\TestCase
 {
-	public function setUp()
+	public function setUp() : void
 	{
         $config = [
             // Session Cookie Name

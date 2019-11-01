@@ -6,7 +6,7 @@ use Core\Core\Core;
 class ControllerTest extends \PHPUnit\Framework\TestCase
 {
 
-    public function setUp()
+    public function setUp() : void
     {
         $core = Core::getInstance(new \Core\Container\Container(__DIR__ . '/../MockApp'));
 
