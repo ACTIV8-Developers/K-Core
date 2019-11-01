@@ -23,7 +23,7 @@ class SessionTest extends \PHPUnit\Framework\TestCase
 		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Windows NT 6.1; WOW64)';
 	}
 
-    public function tearDown()
+    public function tearDown() : void
     {
         session_write_close();
     }
