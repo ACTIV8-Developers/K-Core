@@ -1,6 +1,6 @@
 {
     "name": "kajna/k-core",
-    "version": "3.3.0",
+    "version": "3.5.0",
     "description": "Simple and lightweight yet powerful PHP framework",
     "keywords": ["framework", "k", "PHP", "lightweight", "simple", "router"],
     "homepage": "https://github.com/Kajna/K-Core",
@@ -12,23 +12,19 @@
     ],
     "license": "MIT",
     "require":{
-        "php": ">=5.4.0",
+        "php": ">=7.0.0",
         "pimple/pimple": "3.0.*@dev",
         "psr/container": "1.0.0",
         "psr/simple-cache": "^1.0@dev",
         "predis/predis": "^2.0@dev",
-        "swiftmailer/swiftmailer": "v6.1.2"
+        "swiftmailer/swiftmailer": "v6.1.2",
+        "bshaffer/oauth2-server-php": "v1.11.1",
+        "kajna/purli": "dev-master"
     },
     "suggest": {
-        "kajna/purli": "HTTP client",
-        "predis/predis": "Redis client",
-        "monolog/monolog": "Allows more advanced logging of the application flow",
-        "swiftmailer/swiftmailer": "Great mailer library",
-        "codeguy/upload": "Handle file uploads with extensible validation and storage strategies",
         "gregwar/image": "Image handling",
         "nesbot/carbon": "A simple API extension for DateTime.",
-        "mpdf/mpdf": "PDF creation library",
-        "bshaffer/oauth2-server-php":  "OAuth2 server"
+        "mpdf/mpdf": "PDF creation library"
     },
     "minimum-stability": "dev",
     "autoload": {

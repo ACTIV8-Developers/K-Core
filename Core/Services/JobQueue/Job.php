@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\JobQueue;
+namespace Core\Services\JobQueue;
 
 
 use Core\Services\FileUpload\FileUpload;
