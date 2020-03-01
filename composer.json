@@ -1,13 +1,17 @@
 {
-    "name": "kajna/k-core",
+    "name": "ACTIV8-Developers/k-core",
     "version": "3.5.0",
     "description": "Simple and lightweight yet powerful PHP framework",
     "keywords": ["framework", "k", "PHP", "lightweight", "simple", "router"],
-    "homepage": "https://github.com/Kajna/K-Core",
+    "homepage": "https://github.com/ACTIV8-Developers/K-Core",
     "authors": [
         {
         "name": "Milos Kajnaco",
-        "email": "milos@caenazzo.com"
+        "email": "milos@activ8.rs"
+        },
+        {
+        "name": "Vedran Milakovic",
+        "email": "vedran@activ8.rs"
         }
     ],
     "license": "MIT",
@@ -19,7 +23,7 @@
         "predis/predis": "^2.0@dev",
         "swiftmailer/swiftmailer": "v6.1.2",
         "bshaffer/oauth2-server-php": "v1.11.1",
-        "kajna/purli": "dev-master"
+        "ACTIV8-Developers/purli": "dev-master"
     },
     "suggest": {
         "gregwar/image": "Image handling",
