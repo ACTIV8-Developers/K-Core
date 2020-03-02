@@ -19,7 +19,7 @@ phpunit --configuration tests/phpunit.xml
 
 ## How to Contribute
 
-Check out GitHub repositories located on https://github.com/Kajna/K and https://github.com/Kajna/K-Core.
+Check out GitHub repositories located on (https://github.com/ACTIV8-Developers/K)[https://github.com/ACTIV8-Developers/K] and (https://github.com/ACTIV8-Developers/K-Core)[https://github.com/ACTIV8-Developers/K-Core].
 
 All pull requests must adhere to the PSR-2 standard.
 
@@ -27,7 +27,7 @@ All pull requests must be accompanied by passing unit tests and complete code co
 
 ### Author
 Author of framework is Milos Kajnaco 
-milos@caenazzo.com
+milos@activ8.rs
 
 ### Licence
 The K Framework is released under the [MIT](http://opensource.org/licenses/MIT) public license.
