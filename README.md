@@ -9,7 +9,7 @@ K is simple mini framework, made with simplicity and performance in mind.
 
 ## Getting started
 
-To get started, you can follow the installation instructions and template app that is located [here](https://github.com/Kajna/K)
+To get started, you can follow the installation instructions and template app that is located [here](https://github.com/ACTIV8-Developers/K)
 
 ## Running tests
 
