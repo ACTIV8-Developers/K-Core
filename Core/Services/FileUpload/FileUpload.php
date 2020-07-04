@@ -229,7 +229,7 @@ class FileUpload
         $ext = array_pop($parts);
         $filename = array_shift($parts);
         foreach ($parts as $part) {
-            if (!in_array(strtolower($part), $this->allowedTypes) && $this->mimes_types(strtolower($part)) === FALSE) {
+            if (!in_array(strtolower($part), $this->allowedTypes)) {
                 $filename .= '.' . $part . '_';
             } else {
                 $filename .= '.' . $part;
