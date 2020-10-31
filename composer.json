@@ -16,7 +16,7 @@
     ],
     "license": "MIT",
     "require":{
-        "php": ">=7.0.0",
+        "php": ">=5.5.0",
         "pimple/pimple": "3.0.*@dev",
         "psr/container": "1.0.0",
         "psr/simple-cache": "^1.0@dev",
