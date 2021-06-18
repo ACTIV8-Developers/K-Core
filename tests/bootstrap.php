@@ -17,6 +17,8 @@ date_default_timezone_set('UTC');
 | Mock up request
 |--------------------------------------------------------------------------
 */
+\Core\Routing\Router::$CONTROLLERS_ROOT = '';
+
 $_SERVER = [
     'SERVER_PROTOCOL'      => 'HTTP/1.1',
     'REQUEST_METHOD'       => 'GET',

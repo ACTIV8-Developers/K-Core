@@ -36,15 +36,14 @@ class PaginationTest extends \PHPUnit\Framework\TestCase
                                     ->numLinks(1)
                                     ->curOffset(5)->create();
 
-        $this->assertInternalType('string', $pagination);
+        $this->assertIsString($pagination);
 
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testInvalidConfig()
     {
+        $this->expectException(InvalidArgumentException::class);
+
         $pagination = \Core\Pagination\Pagination::getNew()
             ->uknown(10);
     }

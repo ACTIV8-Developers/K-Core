@@ -24,7 +24,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
 			'REQUEST_METHOD' => 'PUT'
 		];
 
-		$request1 = new Request($server, [], [], [], [], []);
+		$request1 = new Request($server, [], [], [], []);
 
 		// Test URI
 		$this->assertEquals($request1->getUri(), 'foo/bar/2');
@@ -95,6 +95,8 @@ class RequestTest extends \PHPUnit\Framework\TestCase
 
         $this->assertFalse($request3->isAjax());
 
+        $this->assertIsString($request3->__toString());
+
 		// Mock random request
 		$server['REQUEST_URI'] = '/public/foo/bar/';
 		$server['SCRIPT_NAME'] = '/public/index.php';
@@ -128,9 +130,18 @@ class RequestTest extends \PHPUnit\Framework\TestCase
 	
 		$this->assertEquals($request->post->get('foo'), 'bar');
 
+        $this->assertEquals($request->post('foo'), 'bar');
+
+        $this->assertTrue($request->post->has('foo'));
+
+        $this->assertFalse($request->post->has('3123213'));
+
 		$this->assertEquals($request->post->all(), ['foo'=>'bar','bar'=>'foo']);
 
+
 		$this->assertEquals($request->get->get('goo'), 'gar');
+
+        $this->assertEquals($request->get('goo'), 'gar');
 
         $request->setUri('test/2');
 
@@ -172,6 +183,9 @@ class RequestTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals($req->getHeaders(), $headers);
         $this->assertEquals('gzip', $req->headers->get('HTTP_ACCEPT_ENCODING'));
+        $this->assertEquals('gzip', $req->headers('HTTP_ACCEPT_ENCODING'));
+        $this->assertTrue($req->headers->has('HTTP_ACCEPT_ENCODING'));
+        $this->assertFalse($req->headers->has('HTTP_ACCEPT_ENCODING22'));
         $this->assertEquals(100, $req->getHeader('CONTENT_LENGTH'));
         $this->assertEquals(100, $req->getContentLength());
         $req->setHeader('HTTP_REFERRER', 'www.test.com');
@@ -179,9 +193,6 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('application/x-www-form-urlencoded', $req->getContentType());
 	}
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function testInvalidRequest()
     {
         $this->expectException(InvalidArgumentException::class);

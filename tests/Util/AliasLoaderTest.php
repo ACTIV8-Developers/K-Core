@@ -1,5 +1,7 @@
 <?php
 
+use Core\Util\Util;
+
 class AliasLoaderTest extends \PHPUnit\Framework\TestCase
 {
     public function testLoaderCanBeCreatedAndRegisteredOnce()
@@ -30,6 +32,6 @@ class AliasLoaderTest extends \PHPUnit\Framework\TestCase
     {
         \Core\Util\AliasLoader::getInstance()->alias('Util', 'Core\Util\Util');
         ;
-        $this->assertEquals(Util::base(''), Util::base(''));
+        $this->assertEquals(Util::base(''), \Core\Util\Util::base(''));
     }
 }

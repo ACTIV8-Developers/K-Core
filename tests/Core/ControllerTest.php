@@ -80,11 +80,10 @@ TAG
 );
     }
 
-    /**
-     * @expectedException Core\Core\Exceptions\NotFoundException
-     */
     public function testNotFound()
     {
+        $this->expectException(\Core\Core\Exceptions\NotFoundException::class);
+
         $con = new AnotherTestController();
 
         $con->setContainer($this->container);
@@ -102,11 +101,10 @@ TAG
         $this->assertEquals($container, $c->getApp());
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function testInvalidArgument()
     {
+        $this->expectException(InvalidArgumentException::class);
+
         $c = new AnotherTestController;
 
         $container = new \Core\Container\Container(__DIR__ . '/../MockApp');

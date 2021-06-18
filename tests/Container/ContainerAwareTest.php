@@ -16,11 +16,9 @@ class ContainerAwareTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($c->getValue2(), 'bar');
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function testInvalidArgument()
     {
+        $this->expectException(InvalidArgumentException::class);
         $c = new AnotherContainer;
 
         $container = new \Core\Container\Container(__DIR__ . '/../MockApp');
@@ -31,11 +29,10 @@ class ContainerAwareTest extends \PHPUnit\Framework\TestCase
         $c->getUknown();
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
+
     public function testInvalidArgument2()
     {
+        $this->expectException(InvalidArgumentException::class);
         $c = new AnotherContainer;
 
         $container = new \Core\Container\Container(__DIR__ . '/../MockApp');

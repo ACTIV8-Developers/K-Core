@@ -6,6 +6,7 @@ use Core\Container\Container;
 use Core\Container\ContainerAware;
 use Core\Http\Request;
 use Core\Http\Response;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class CorsMiddleware
@@ -16,9 +17,9 @@ class CorsMiddleware extends ContainerAware
     /**
      * LoggingMiddleware constructor.
      *
-     * @param Container $container
+     * @param ContainerInterface $container
      */
-    public function __construct(Container $container)
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
@@ -27,7 +28,7 @@ class CorsMiddleware extends ContainerAware
      * @param callable $next
      * @return Response
      */
-    public function __invoke($next)
+    public function __invoke(callable $next)
     {
         if ($this->request->isOptions()) {
             return (new Response())
@@ -46,6 +47,7 @@ class CorsMiddleware extends ContainerAware
             $response->setHeader('Access-Control-Allow-Credentials', 'true');
         }
 
+        error_log(print_r($response, 1));
         return $response;
     }
 }

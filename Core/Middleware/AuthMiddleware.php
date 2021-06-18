@@ -7,6 +7,7 @@ use Core\Container\ContainerAware;
 use Core\Http\Response;
 use OAuth2\Request;
 use OAuth2\Server;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class AuthMiddleware
@@ -18,9 +19,9 @@ class AuthMiddleware extends ContainerAware
     /**
      * AuthMiddleware constructor.
      *
-     * @param Container $container
+     * @param ContainerInterface $container
      */
-    public function __construct(Container $container)
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }

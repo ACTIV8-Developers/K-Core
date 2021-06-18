@@ -6,6 +6,7 @@ use Core\Container\Container;
 use Core\Container\ContainerAware;
 use Core\Http\Request;
 use Core\Http\Response;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class JSONParserMiddleware
@@ -16,9 +17,9 @@ class JSONParserMiddleware extends ContainerAware
     /**
      * LoggingMiddleware constructor.
      *
-     * @param Container $container
+     * @param ContainerInterface $container
      */
-    public function __construct(Container $container)
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
@@ -27,7 +28,7 @@ class JSONParserMiddleware extends ContainerAware
      * @param callable $next
      * @return Response
      */
-    public function __invoke($next)
+    public function __invoke(callable $next)
     {
         if (strpos($this->request->getContentType(), "json") !== false) {
             $this->container['data'] = json_decode($this->request->getBody(), true);

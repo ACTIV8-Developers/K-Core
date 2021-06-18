@@ -151,7 +151,7 @@ class Response implements ResponseInterface
      * @param string $body
      * @return self
      */
-    public function setBody(string $body)
+    public function setBody($body)
     {
         $this->body = $body;
         return $this;
@@ -175,7 +175,7 @@ class Response implements ResponseInterface
      *     provided status code; if none is provided default one associated with code will be used
      * @return self
      */
-    public function setStatusCode(int $code, $reasonPhrase = null)
+    public function setStatusCode($code, $reasonPhrase = null)
     {
         $this->statusCode = $code;
         $this->reasonPhrase = $reasonPhrase;
@@ -198,7 +198,7 @@ class Response implements ResponseInterface
      * @param string $version
      * @return self
      */
-    public function setProtocolVersion(string $version)
+    public function setProtocolVersion($version)
     {
         $this->protocolVersion = $version;
         return $this;
@@ -224,7 +224,7 @@ class Response implements ResponseInterface
      * @param string $value Header value
      * @return self
      */
-    public function setHeader(string $key, string $value)
+    public function setHeader($key, $value)
     {
         $this->headers->set($key, $value);
         return $this;
@@ -236,7 +236,7 @@ class Response implements ResponseInterface
      * @param string $key Case-insensitive header field name
      * @return string
      */
-    public function getHeader(string $key)
+    public function getHeader($key)
     {
         return $this->headers->get($key);
     }

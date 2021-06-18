@@ -6,6 +6,7 @@ use Core\Services\JobQueue\JobExecutor;
 use Core\Container\Container;
 use Core\Container\ContainerAware;
 use Core\Http\Response;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class CommandLineMiddleware
@@ -22,10 +23,10 @@ class CommandLineMiddleware extends ContainerAware
     /**
      * AuthMiddleware constructor.
      *
-     * @param Container $container
+     * @param CommandLineMiddleware $container
      * @param array $argv
      */
-    public function __construct(Container $container, array $argv)
+    public function __construct(ContainerInterface $container, array $argv)
     {
         $this->argv = $argv;
         $this->container = $container;

@@ -16,11 +16,10 @@ class ModelTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($app->getContainer()['request'], $model->getRequest());
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function testInvalidArgument()
     {
+        $this->expectException(InvalidArgumentException::class);
+
         $model = new AnotherTestModel;
 
         $container = new \Core\Container\Container(__DIR__ . '/../MockApp');

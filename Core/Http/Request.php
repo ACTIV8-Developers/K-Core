@@ -153,7 +153,7 @@ class Request implements RequestInterface
      * @param string $body
      * @return self
      */
-    public function setBody(string $body)
+    public function setBody($body)
     {
         $this->body = $body;
         return $this;
@@ -212,7 +212,7 @@ class Request implements RequestInterface
      * @param string $version
      * @return self
      */
-    public function setProtocolVersion(string $version)
+    public function setProtocolVersion($version)
     {
         $this->server->set('SERVER_PROTOCOL', $version);
         return $this;
@@ -345,7 +345,7 @@ class Request implements RequestInterface
      * @param string $value Header value
      * @return self
      */
-    public function setHeader(string $key, string $value)
+    public function setHeader($key, $value)
     {
         $this->headers->set($key, $value);
         return $this;
@@ -357,7 +357,7 @@ class Request implements RequestInterface
      * @param string $key Case-insensitive header field name
      * @return string
      */
-    public function getHeader(string $key)
+    public function getHeader($key)
     {
         return $this->headers->get($key);
     }

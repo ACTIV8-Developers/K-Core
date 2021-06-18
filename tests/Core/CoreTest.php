@@ -1,6 +1,7 @@
 <?php
 
 use Core\Container\Container;
+use Core\Middleware\CorsMiddleware;
 
 class CoreTest extends \PHPUnit\Framework\TestCase
 {
@@ -14,7 +15,7 @@ class CoreTest extends \PHPUnit\Framework\TestCase
     {
         $container = new \Core\Container\Container(__DIR__ . '/../MockApp');
         $resolver = new \Core\Core\Resolver($container);
-        $app = new \Core\Core\Core($container, $resolver);
+        $app = new \Core\Core\Core($container);
 
         $this->assertEquals($container, $app->getContainer());
     }
@@ -29,15 +30,6 @@ class CoreTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf('Core\Core\Core', $app);
     }
 
-    public function testExecute()
-    {
-        // Make instance of app.
-        $app = new \Core\Core\Core(new Container(__DIR__ . '/../MockApp'));;
-
-        $app->execute(true);
-
-        $this->assertEquals(self::$test, 'testtest');
-    }
     
     public function testHooks()
     {
@@ -53,23 +45,19 @@ class CoreTest extends \PHPUnit\Framework\TestCase
         $app->execute(true);
 
         $this->assertEquals(1, self::$hookCounter);
-
-        $this->assertEquals(self::$test, 'testtesttesttest');
     }
 
     public function testMiddleware()
     {
-        $app = new \Core\Core\Core(new Container(__DIR__ . '/../MockApp'));
+        $cont = new Container(__DIR__ . '/../MockApp');
+        $app = new \Core\Core\Core($cont);
 
-        $app->addMiddleware(new TestMiddleware3());
-        $app->addMiddleware(new TestMiddleware2());
-        $app->addMiddleware(new TestMiddleware1());
+        $app->addMiddleware(new CorsMiddleware($cont));
+        $app->addMiddleware(new \Core\Middleware\JSONParserMiddleware($cont));
 
-        $app->execute(true);
+        $response = $app->execute(true);
 
-        $this->assertEquals('123', self::$middlewareStack);
-
-        $this->assertEquals(self::$test, 'testtesttesttesttesttest');
+        $this->assertEquals($response, null);
     }
 
     public function testNotFound()
@@ -79,7 +67,7 @@ class CoreTest extends \PHPUnit\Framework\TestCase
 
         $app = new \Core\Core\Core(new Container(__DIR__ . '/../MockApp'));
 
-        $response = $app->execute();
+        $response = $app->execute(true);
 
         $this->assertEquals($response->getStatusCode(), 404);
     }
@@ -92,6 +80,12 @@ class CoreTest extends \PHPUnit\Framework\TestCase
         $app = new \Core\Core\Core(new Container(__DIR__ . '/../MockApp'));
 
         $app->getContainer()['router']->addRoute(new \Core\Routing\Route('notfound', 'GET', 'TestController', 'notFound'));
+
+
+        $app->setHook('not.found', function($e) {
+                return (new \Core\Http\Response())->writeBody('Not found');
+            }
+        );
 
         $r = $app->execute(true);
 
@@ -112,7 +106,7 @@ class CoreTest extends \PHPUnit\Framework\TestCase
 
         $app->execute();
 
-        $this->assertInternalType('callable', $app->getHook('not.found'));
+        $this->assertIsCallable($app->getHook('not.found'));
     }
 
     public function testControllerException()
@@ -145,7 +139,7 @@ class CoreTest extends \PHPUnit\Framework\TestCase
 
         $app->execute();
 
-        $this->assertInternalType('callable', $app->getHook('internal.error'));
+        $this->assertIsCallable($app->getHook('internal.error'));
     }
 }
 
@@ -154,6 +148,8 @@ class TestController
     public function index()
     {
         CoreTest::$test .= 'test';
+
+        return new \Core\Http\Response();
     }
 
     public function notFound()

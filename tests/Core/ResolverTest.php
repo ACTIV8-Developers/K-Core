@@ -18,7 +18,6 @@ class ResolverTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals($t1, $t2);
     }
-
 }
 
 class AnotherTestClass

@@ -1,6 +1,8 @@
 <?php
 namespace Core\Routing\Interfaces;
 
+use Core\Routing\Router;
+
 /**
  * RouterInterface
  *
@@ -46,7 +48,7 @@ interface RouterInterface
      * @param string $function
      * @return RouteInterface
      */
-    public function put(string $url, string $class, string $function);
+    public function put(string $url, string $class, string $function): RouteInterface;
 
     /**
      * Add a route object to the router accepting DELETE request method.
@@ -57,6 +59,14 @@ interface RouterInterface
      * @return RouteInterface
      */
     public function delete(string $url, string $class, string $function): RouteInterface;
+
+    /**
+     * @param $prefix
+     * @param callable $closure
+     * @param array $middleware
+     * @return $this
+     */
+    public function group($prefix, callable $closure, $middleware = []): RouterInterface;
 
     /**
      * Add custom route object to routes array.

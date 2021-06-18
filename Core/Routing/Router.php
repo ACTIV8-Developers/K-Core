@@ -151,7 +151,7 @@ class Router implements RouterInterface
      * @param array $middleware
      * @return $this
      */
-    public function group($prefix, callable $closure, $middleware = []): RouteInterface
+    public function group($prefix, callable $closure, $middleware = []): RouterInterface
     {
         if ($prefix) {
             $this->urlPrefix .= $prefix . '/';

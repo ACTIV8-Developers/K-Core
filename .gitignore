@@ -1,0 +1,4 @@
+coverage/
+tests/.phpunit.cache/
+tests/.phpunit.result.cache
+.phpunit.cache/
