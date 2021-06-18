@@ -6,7 +6,7 @@ use Core\Database\Interfaces\DatabaseInterface;
 /**
  * Basic database class used for common MSSQl CRUD operations.
  *
- * @author <milos@caenazzo.com>
+ * @author <milos@activ8.rs>
  */
 class MSSqlDatabase implements DatabaseInterface
 {
@@ -22,7 +22,7 @@ class MSSqlDatabase implements DatabaseInterface
      *
      * @return \PDO
      */
-    public function getConnection()
+    public function getConnection(): ?\PDO
     {
         return $this->connection;
     }
@@ -83,7 +83,7 @@ class MSSqlDatabase implements DatabaseInterface
      * @param int $attr
      * @param mixed $value
      */
-    public function setAttribute($attr, $value)
+    public function setAttribute(string $attr, $value)
     {
         $this->connection->setAttribute($attr, $value);
     }
@@ -96,7 +96,7 @@ class MSSqlDatabase implements DatabaseInterface
      * @param string $fetchMode
      * @return array
      */
-    public function select($query, array $params = [], $fetchMode = null)
+    public function select(string $query, array $params = [], $fetchMode = null): array
     {
         // Execute query
         $stmt = $this->connection->prepare($query);
@@ -114,7 +114,7 @@ class MSSqlDatabase implements DatabaseInterface
      * @param array $params
      * @return int
      */
-    public function insert($query, array $params)
+    public function insert(string $query, array $params): int
     {
         $stmt = $this->connection->prepare($query);
         $stmt->execute($params);
@@ -127,7 +127,7 @@ class MSSqlDatabase implements DatabaseInterface
      * @param string $name (optional)
      * @return int
      */
-    public function lastInsertId($name = null)
+    public function lastInsertId($name = null): int
     {
         return $this->connection->lastInsertId($name);
     }
@@ -139,7 +139,7 @@ class MSSqlDatabase implements DatabaseInterface
      * @param array $params
      * @return int
      */
-    public function update($query, array $params)
+    public function update(string $query, array $params): int
     {
         $stmt = $this->connection->prepare($query);
         $stmt->execute($params);
@@ -153,7 +153,7 @@ class MSSqlDatabase implements DatabaseInterface
      * @param array $params
      * @return int
      */
-    public function delete($query, array $params = [])
+    public function delete(string $query, array $params = []): int
     {
         $stmt = $this->connection->prepare($query);
         $stmt->execute($params);
@@ -167,7 +167,7 @@ class MSSqlDatabase implements DatabaseInterface
      * @param array $params
      * @return int
      */
-    public function count($query, array $params = [])
+    public function count(string $query, array $params = []): int
     {
         $stmt = $this->connection->prepare($query);
         $stmt->execute($params);
@@ -182,7 +182,7 @@ class MSSqlDatabase implements DatabaseInterface
      * @param string $options (additional options for table like engine, UTF etc)
      * @return int
      */
-    public function createTable($name, array $fields, $options = null)
+    public function createTable(string $name, array $fields, $options = null): int
     {
         // Make query
         $sql = "CREATE TABLE $name (";
@@ -217,7 +217,7 @@ class MSSqlDatabase implements DatabaseInterface
      * @param string $name
      * @return bool
      */
-    public function addIndex($table, $column, $name)
+    public function addIndex(string $table, string $column, string $name): bool
     {
         $sql = sprintf('ALTER TABLE %s ADD INDEX %s(%s)', $table, $name, $column);
 

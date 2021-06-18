@@ -4,7 +4,7 @@ namespace Core\Core\Exceptions;
 /**
  * Class NotFoundException.
  *
- * @author <milos@caenazzo.com>
+ * @author <milos@activ8.rs>
  */
 class NotFoundException extends \Exception
 {

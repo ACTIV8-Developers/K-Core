@@ -6,7 +6,7 @@ use Psr\Container\ContainerInterface;
 /**
  * Interface ContainerAwareInterface
  *
- * @author <milos@caenazzo.com>
+ * @author <milos@activ8.rs>
  */
 interface ContainerAwareInterface
 {
@@ -14,10 +14,10 @@ interface ContainerAwareInterface
      * @param ContainerInterface $app
      * @return self
      */
-    public function setContainer(ContainerInterface $app);
+    public function setContainer(ContainerInterface $app): ContainerAwareInterface;
 
     /**
-     * @return Container
+     * @return ContainerInterface
      */
-    public function getContainer();
+    public function getContainer(): ContainerInterface;
 }

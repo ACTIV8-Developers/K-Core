@@ -16,7 +16,7 @@ use Psr\Container\ContainerInterface;
  *
  * This is the heart of whole application.
  *
- * @author <milos@caenazzo.com>
+ * @author <milos@activ8.rs>
  */
 class Core extends ContainerAware
 {
@@ -25,7 +25,7 @@ class Core extends ContainerAware
      *
      * @var string
      */
-    const VERSION = '3.5.0';
+    const VERSION = '3.6.0';
 
     /**
      * @var Core

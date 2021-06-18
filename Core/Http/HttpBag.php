@@ -28,7 +28,7 @@ class HttpBag implements \IteratorAggregate, \Countable, \ArrayAccess
      *
      * @return array
      */
-    public function all()
+    public function all(): array
     {
         return $this->elements;
     }
@@ -38,7 +38,7 @@ class HttpBag implements \IteratorAggregate, \Countable, \ArrayAccess
      *
      * @return array
      */
-    public function keys()
+    public function keys(): array
     {
         return array_keys($this->elements);
     }
@@ -48,7 +48,7 @@ class HttpBag implements \IteratorAggregate, \Countable, \ArrayAccess
      *
      * @return array
      */
-    public function values()
+    public function values(): array
     {
         return array_values($this->elements);
     }
@@ -90,7 +90,7 @@ class HttpBag implements \IteratorAggregate, \Countable, \ArrayAccess
      * @param string $key
      * @return bool
      */
-    public function has($key)
+    public function has(string $key): bool
     {
         return array_key_exists($key, $this->elements);
     }
@@ -100,7 +100,7 @@ class HttpBag implements \IteratorAggregate, \Countable, \ArrayAccess
      *
      * @param string $key
      */
-    public function remove($key)
+    public function remove(string $key)
     {
         unset($this->elements[$key]);
     }
@@ -146,9 +146,9 @@ class HttpBag implements \IteratorAggregate, \Countable, \ArrayAccess
      * @param string $key
      * @return mixed
      */
-    public function get($key)
+    public function get(string $key)
     {
-        return isset($this->elements[$key]) ? $this->elements[$key] : null;
+        return $this->elements[$key] ?? null;
     }
 
     /**
@@ -156,7 +156,7 @@ class HttpBag implements \IteratorAggregate, \Countable, \ArrayAccess
      *
      * @return \ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->elements);
     }
@@ -166,7 +166,7 @@ class HttpBag implements \IteratorAggregate, \Countable, \ArrayAccess
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->elements);
     }
@@ -183,7 +183,7 @@ class HttpBag implements \IteratorAggregate, \Countable, \ArrayAccess
      * The return value will be casted to boolean if non-boolean was returned.
      * @since 5.0.0
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->elements[$offset]);
     }

@@ -1,8 +1,8 @@
 {
     "name": "activ8-developers/k-core",
-    "version": "3.5.0",
-    "description": "Simple and lightweight yet powerful PHP framework",
-    "keywords": ["framework", "k", "PHP", "lightweight", "simple", "router"],
+    "version": "3.6.0",
+    "description": "Simple and lightweight yet powerful PHP framework for writing REST API",
+    "keywords": ["framework", "k", "PHP", "lightweight", "simple", "router", "rest", "api"],
     "homepage": "https://github.com/ACTIV8-Developers/K-Core",
     "authors": [
         {
@@ -16,14 +16,17 @@
     ],
     "license": "MIT",
     "require":{
-        "php": ">=5.5.0",
+        "php": ">=7.2.0",
         "pimple/pimple": "3.0.*@dev",
         "psr/container": "1.0.0",
         "psr/simple-cache": "^1.0@dev",
         "predis/predis": "v1.1.0",
         "swiftmailer/swiftmailer": "v6.1.2",
         "bshaffer/oauth2-server-php": "v1.11.1",
-        "kajna/purli": "dev-master"
+        "kajna/purli": "dev-master",
+        "ext-redis": "*",
+        "ext-pdo": "*",
+        "ext-json": "*"
     },
     "suggest": {
         "gregwar/image": "Image handling",

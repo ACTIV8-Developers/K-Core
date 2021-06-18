@@ -7,7 +7,7 @@ use Core\Session\Handlers\DatabaseSessionHandler;
 /**
  * Class SessionServiceProvider.
  *
- * @author <milos@caenazzo.com>
+ * @author <milos@activ8.rs>
  */
 class SessionServiceProvider extends ContainerAware
 {

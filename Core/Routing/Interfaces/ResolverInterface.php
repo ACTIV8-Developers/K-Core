@@ -4,7 +4,7 @@ namespace Core\Routing\Interfaces;
 /**
  * ResolverInterface
  *
- * @author <milos@caenazzo.com>
+ * @author <milos@activ8.rs>
  */
 interface ResolverInterface
 {

@@ -4,7 +4,7 @@ namespace Core\Database\Connections;
 /**
  * Class MySQLConnection.
  *
- * @author <milos@caenazzo.com>
+ * @author <milos@activ8.rs>
  */
 class MySQLConnection extends PDOConnection
 {
@@ -31,7 +31,7 @@ class MySQLConnection extends PDOConnection
      * @throws \PDOException
      * @throws \InvalidArgumentException
      */
-    public function connect()
+    public function connect(): \PDO
     {
         try {
             // Make string containing database settings

@@ -29,7 +29,7 @@ class AuthMiddleware extends ContainerAware
      * @param callable $next
      * @return callable|Response
      */
-    public function __invoke($next)
+    public function __invoke(callable $next)
     {
         if (!$this->oauth->verifyResourceRequest(Request::createFromGlobals())) {
             $tokenResponse = $this->oauth->getResponse();

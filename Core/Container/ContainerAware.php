@@ -8,7 +8,7 @@ use Psr\Container\ContainerInterface;
 /**
  * Abstract class ContainerAware
  *
- * @author <milos@caenazzo.com>
+ * @author <milos@activ8.rs>
  */
 abstract class ContainerAware implements ContainerAwareInterface
 {
@@ -21,16 +21,16 @@ abstract class ContainerAware implements ContainerAwareInterface
      * @param ContainerInterface $container
      * @return self
      */
-    public function setContainer(ContainerInterface $container)
+    public function setContainer(ContainerInterface $container): ContainerAwareInterface
     {
         $this->container = $container;
         return $this;
     }
 
     /**
-     * @return Container
+     * @return ContainerInterface
      */
-    public function getContainer()
+    public function getContainer(): ContainerInterface
     {
         return $this->container;
     }

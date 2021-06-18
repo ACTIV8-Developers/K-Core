@@ -4,7 +4,7 @@ namespace Core\Database\Interfaces;
 /**
  * DatabaseInterface
  *
- * @author <milos@caenazzo.com>
+ * @author <milos@activ8.rs>
  */
 interface DatabaseInterface
 {
@@ -20,7 +20,7 @@ interface DatabaseInterface
      *
      * @return \PDO
      */
-    public function getConnection();
+    public function getConnection(): ?\PDO;
 
     /**
      * Set connection variable.
@@ -52,7 +52,7 @@ interface DatabaseInterface
      * @param string $fetchMode
      * @return array
      */
-    public function select($query, array $params = [], $fetchMode = null);
+    public function select(string $query, array $params = [], $fetchMode = null): array;
 
     /**
      * Insert query.
@@ -61,7 +61,7 @@ interface DatabaseInterface
      * @param array $params
      * @return int
      */
-    public function insert($query, array $params);
+    public function insert(string $query, array $params): int;
 
     /**
      * Wrapper for PDO last insert id.
@@ -69,7 +69,7 @@ interface DatabaseInterface
      * @param string $name (optional)
      * @return int
      */
-    public function lastInsertId($name = null);
+    public function lastInsertId($name = null): int;
 
     /**
      * Update query.
@@ -78,7 +78,7 @@ interface DatabaseInterface
      * @param array $params
      * @return int
      */
-    public function update($query, array $params);
+    public function update(string $query, array $params): int;
 
     /**
      * Delete query.
@@ -87,7 +87,7 @@ interface DatabaseInterface
      * @param array $params
      * @return int
      */
-    public function delete($query, array $params = []);
+    public function delete(string $query, array $params = []): int;
 
     /**
      * Count query.
@@ -96,7 +96,7 @@ interface DatabaseInterface
      * @param array $params
      * @return int
      */
-    public function count($query, array $params = []);
+    public function count(string $query, array $params = []): int;
 
     /**
      * Create table in database (MySQL specific).
@@ -106,7 +106,7 @@ interface DatabaseInterface
      * @param string $options (additional options for table like engine, UTF etc)
      * @return int
      */
-    public function createTable($name, array $fields, $options = null);
+    public function createTable(string $name, array $fields, $options = null): int;
 
     /**
      * Add index to table column.
@@ -116,5 +116,5 @@ interface DatabaseInterface
      * @param string $name
      * @return bool
      */
-    public function addIndex($table, $column, $name);
+    public function addIndex(string $table, string $column, string $name): bool;
 }

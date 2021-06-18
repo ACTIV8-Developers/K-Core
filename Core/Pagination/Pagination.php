@@ -5,7 +5,7 @@ namespace Core\Pagination;
  * Pagination class.
  *
  * @author <ndelevic@ymail.com>
- * @author <milos@caenazzo.com>
+ * @author <milos@activ8.rs>
  */
 class Pagination
 {

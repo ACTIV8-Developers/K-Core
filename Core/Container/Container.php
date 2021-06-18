@@ -11,7 +11,7 @@ use Psr\Container\ContainerInterface;
 /**
  * Container
  *
- * @author <milos@caenazzo.com>
+ * @author <milos@activ8.rs>
  */
 class Container extends PimpleContainer implements ContainerInterface
 {

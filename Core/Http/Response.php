@@ -10,7 +10,7 @@ use Core\Http\Interfaces\ResponseInterface;
  * This class provides methods to set the HTTP status, the HTTP headers,
  * the HTTP cookies and the HTTP body.
  *
- * @author <milos@caenazzo.com>
+ * @author <milos@activ8.rs>
  */
 class Response implements ResponseInterface
 {
@@ -151,7 +151,7 @@ class Response implements ResponseInterface
      * @param string $body
      * @return self
      */
-    public function setBody($body)
+    public function setBody(string $body)
     {
         $this->body = $body;
         return $this;
@@ -175,7 +175,7 @@ class Response implements ResponseInterface
      *     provided status code; if none is provided default one associated with code will be used
      * @return self
      */
-    public function setStatusCode($code, $reasonPhrase = null)
+    public function setStatusCode(int $code, $reasonPhrase = null)
     {
         $this->statusCode = $code;
         $this->reasonPhrase = $reasonPhrase;
@@ -198,7 +198,7 @@ class Response implements ResponseInterface
      * @param string $version
      * @return self
      */
-    public function setProtocolVersion($version)
+    public function setProtocolVersion(string $version)
     {
         $this->protocolVersion = $version;
         return $this;
@@ -224,7 +224,7 @@ class Response implements ResponseInterface
      * @param string $value Header value
      * @return self
      */
-    public function setHeader($key, $value)
+    public function setHeader(string $key, string $value)
     {
         $this->headers->set($key, $value);
         return $this;
@@ -236,7 +236,7 @@ class Response implements ResponseInterface
      * @param string $key Case-insensitive header field name
      * @return string
      */
-    public function getHeader($key)
+    public function getHeader(string $key)
     {
         return $this->headers->get($key);
     }

@@ -4,7 +4,7 @@ namespace Core\Routing\Interfaces;
 /**
  * RouterInterface
  *
- * @author <milos@caenazzo.com>
+ * @author <milos@activ8.rs>
  */
 interface RouterInterface
 {
@@ -16,7 +16,7 @@ interface RouterInterface
      * @var string $requestMethod
      * @return null|RouteInterface
      */
-    public function execute($uri, $requestMethod);
+    public function execute(string $uri, string $requestMethod): ?RouteInterface;
 
     /**
      * Add a route object to the router accepting GET request method.
@@ -26,7 +26,7 @@ interface RouterInterface
      * @param string $function
      * @return RouteInterface
      */
-    public function get($url, $class, $function);
+    public function get(string $url, string $class, string $function): RouteInterface;
 
     /**
      * Add a route object to the router accepting POST request method.
@@ -36,7 +36,7 @@ interface RouterInterface
      * @param string $function
      * @return RouteInterface
      */
-    public function post($url, $class, $function);
+    public function post(string $url, string $class, string $function): RouteInterface;
 
     /**
      * Add a route object to the router accepting PUT request method.
@@ -46,7 +46,7 @@ interface RouterInterface
      * @param string $function
      * @return RouteInterface
      */
-    public function put($url, $class, $function);
+    public function put(string $url, string $class, string $function);
 
     /**
      * Add a route object to the router accepting DELETE request method.
@@ -56,7 +56,7 @@ interface RouterInterface
      * @param string $function
      * @return RouteInterface
      */
-    public function delete($url, $class, $function);
+    public function delete(string $url, string $class, string $function): RouteInterface;
 
     /**
      * Add custom route object to routes array.
@@ -64,19 +64,19 @@ interface RouterInterface
      * @param RouteInterface
      * @return self
      */
-    public function addRoute(RouteInterface $route);
+    public function addRoute(RouteInterface $route): RouterInterface;
 
     /**
      * Get list of routes.
      *
      * @return RouteInterface[]
      */
-    public function getRoutes();
+    public function getRoutes(): array;
 
     /**
      * Clear all routes.
      *
      * @return self
      */
-    public function clearRoutes();
+    public function clearRoutes(): RouterInterface;
 }

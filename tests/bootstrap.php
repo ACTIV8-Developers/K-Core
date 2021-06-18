@@ -11,7 +11,7 @@ require __DIR__.'/../vendor/autoload.php';
 | Register timezone
 |--------------------------------------------------------------------------
 */
-date_default_timezone_set('Europe/Belgrade');
+date_default_timezone_set('UTC');
 /*
 |--------------------------------------------------------------------------
 | Mock up request

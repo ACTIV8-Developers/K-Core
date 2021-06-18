@@ -35,7 +35,7 @@ class CommandLineMiddleware extends ContainerAware
      * @param callable $next
      * @return callable|Response
      */
-    public function __invoke($next)
+    public function __invoke(callable $next)
     {
         $command = $this->argv[1];
 
@@ -43,7 +43,7 @@ class CommandLineMiddleware extends ContainerAware
         return (new Response())->setBody($this->$command());
     }
 
-    public function executor()
+    public function executor(): string
     {
         return $this->executor->execute();
     }

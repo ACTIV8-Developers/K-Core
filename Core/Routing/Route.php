@@ -8,7 +8,7 @@ use Core\Routing\Interfaces\RouteInterface;
  * Route class.
  * This class represents single application route.
  *
- * @author <milos@caenazzo.com>
+ * @author <milos@activ8.rs>
  */
 class Route implements RouteInterface
 {
@@ -97,7 +97,8 @@ class Route implements RouteInterface
     /**
      * Execute route
      *
-     * @param ResolverInterface $resolver
+     * @param \Core\Routing\Interfaces\ResolverInterface|null $resolver
+     * @return mixed
      */
     public function __invoke(ResolverInterface $resolver = null)
     {

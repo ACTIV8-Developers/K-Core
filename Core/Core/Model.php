@@ -8,7 +8,7 @@ use Core\Routing\Interfaces\RouterInterface;
 /**
  * Base model abstract class.
  *
- * @author <milos@caenazzo.com>
+ * @author <milos@activ8.rs>
  *
  * @property RequestInterface $request
  * @property RouterInterface $router

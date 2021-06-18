@@ -9,7 +9,7 @@ use Core\Database\Connections\MySQLConnection;
 /**
  * Class DatabaseServiceProvider.
  *
- * @author <milos@caenazzo.com>
+ * @author <milos@activ8.rs>
  */
 class DatabaseServiceProvider extends ContainerAware
 {

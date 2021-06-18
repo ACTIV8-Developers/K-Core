@@ -12,7 +12,7 @@ use Core\Routing\Interfaces\RouterInterface;
  * Base controller abstract class.
  * Extend to get access to container main container and common functions.
  *
- * @author <milos@caenazzo.com>
+ * @author <milos@activ8.rs>
  *
  * @property RequestInterface $request
  * @property RouterInterface $router

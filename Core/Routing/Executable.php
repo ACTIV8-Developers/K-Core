@@ -7,7 +7,7 @@ use Core\Routing\Interfaces\ResolverInterface;
  * Executable class.
  * Class contains information about action to be executed.
  *
- * @author <milos@caenazzo.com>
+ * @author <milos@activ8.rs>
  */
 class Executable
 {

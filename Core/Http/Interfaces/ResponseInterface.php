@@ -4,7 +4,7 @@ namespace Core\Http\Interfaces;
 /**
  * ResponseInterface describes outgoing HTTP response
  *
- * @author <milos@caenazzo.com>
+ * @author <milos@activ8.rs>
  */
 interface ResponseInterface extends HttpInterface
 {

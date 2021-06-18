@@ -8,7 +8,7 @@ use Core\Http\Interfaces\RequestInterface;
  *
  * This class provides processes common request parameters.
  *
- * @author <milos@caenazzo.com>
+ * @author <milos@activ8.rs>
  */
 class Request implements RequestInterface
 {
@@ -153,7 +153,7 @@ class Request implements RequestInterface
      * @param string $body
      * @return self
      */
-    public function setBody($body)
+    public function setBody(string $body)
     {
         $this->body = $body;
         return $this;
@@ -212,7 +212,7 @@ class Request implements RequestInterface
      * @param string $version
      * @return self
      */
-    public function setProtocolVersion($version)
+    public function setProtocolVersion(string $version)
     {
         $this->server->set('SERVER_PROTOCOL', $version);
         return $this;
@@ -345,7 +345,7 @@ class Request implements RequestInterface
      * @param string $value Header value
      * @return self
      */
-    public function setHeader($key, $value)
+    public function setHeader(string $key, string $value)
     {
         $this->headers->set($key, $value);
         return $this;
@@ -357,7 +357,7 @@ class Request implements RequestInterface
      * @param string $key Case-insensitive header field name
      * @return string
      */
-    public function getHeader($key)
+    public function getHeader(string $key)
     {
         return $this->headers->get($key);
     }

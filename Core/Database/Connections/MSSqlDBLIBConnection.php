@@ -4,7 +4,7 @@ namespace Core\Database\Connections;
 /**
  * Class MSSqlDBLIBConnection.
  *
- * @author <milos@caenazzo.com>
+ * @author <milos@activ8.rs>
  */
 class MSSqlDBLIBConnection extends PDOConnection
 {
@@ -31,7 +31,7 @@ class MSSqlDBLIBConnection extends PDOConnection
      * @throws \PDOException
      * @throws \InvalidArgumentException
      */
-    public function connect()
+    public function connect(): \PDO
     {
         try {
             // Make string containing database settings
