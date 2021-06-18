@@ -1,7 +1,7 @@
 {
     "name": "activ8-developers/k-core",
     "version": "3.6.0",
-    "description": "Simple and lightweight yet powerful PHP framework for writing REST API",
+    "description": "Simple and lightweight yet powerful PHP framework for writing REST APIs",
     "keywords": ["framework", "k", "PHP", "lightweight", "simple", "router", "rest", "api"],
     "homepage": "https://github.com/ACTIV8-Developers/K-Core",
     "authors": [
@@ -29,9 +29,7 @@
         "ext-json": "*"
     },
     "suggest": {
-        "gregwar/image": "Image handling",
-        "nesbot/carbon": "A simple API extension for DateTime.",
-        "mpdf/mpdf": "PDF creation library"
+        "nesbot/carbon": "A simple API extension for DateTime."
     },
     "minimum-stability": "dev",
     "autoload": {
