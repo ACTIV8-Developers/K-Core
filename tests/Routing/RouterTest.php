@@ -34,6 +34,10 @@ class RouterTest extends \PHPUnit\Framework\TestCase
 
 		$route5 = $router->get('bar/foo4', '', '');
 
+        $route6 = $router->patch('bar/foo6', '', '');
+
+        $route7 = $router->options('bar/foo7', '', '');
+
 		$this->assertContains($route1, $router->getRoutes());
 
 		$this->assertContains($route2, $router->getRoutes());
@@ -44,9 +48,15 @@ class RouterTest extends \PHPUnit\Framework\TestCase
 
 		$this->assertContains($route5, $router->getRoutes());
 
+        $this->assertContains($route6, $router->getRoutes());
+
+        $this->assertContains($route7, $router->getRoutes());
+
         $router->clearRoutes();
 
         $this->assertEquals([], $router->getRoutes());
+
+
 	}
 
 	public function testGroups()

@@ -183,4 +183,11 @@ class RouteTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals($route, $route);
 	}
+
+	public function testGetUrl()
+    {
+        $route = new Route('foo', 'GET', 'bar', 'foo');
+
+        $this->assertEquals($route->getUrl(), 'foo');
+    }
 }

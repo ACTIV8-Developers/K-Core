@@ -11,6 +11,8 @@ class ExecutableTest extends \PHPUnit\Framework\TestCase
         $e->addParams($params);
 
         $this->assertEquals($e(), 'test'.'foo');
+
+        $e->setParams($params);
     }
 }
 
