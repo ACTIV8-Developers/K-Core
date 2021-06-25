@@ -24,7 +24,6 @@
         "swiftmailer/swiftmailer": "v6.1.2",
         "bshaffer/oauth2-server-php": "v1.11.1",
         "kajna/purli": "dev-master",
-        "ext-redis": "*",
         "ext-pdo": "*",
         "ext-json": "*"
     },
