@@ -38,6 +38,15 @@ class PaginationTest extends \PHPUnit\Framework\TestCase
 
         $this->assertIsString($pagination);
 
+        //if current link in last set of links
+        $pagination = \Core\Pagination\Pagination::getNew()
+            ->totalRows(10)
+            ->perPage(1)
+            ->numLinks(1)
+            ->curOffset(10)->create();
+
+        $this->assertIsString($pagination);
+
     }
 
     public function testInvalidConfig()
