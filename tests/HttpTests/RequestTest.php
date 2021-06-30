@@ -182,6 +182,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $req = new Request($_TEST_SERVER);
 
         $this->assertEquals($req->getHeaders(), $headers);
+        $this->assertEquals($headers, $req->headers(null));
         $this->assertEquals('gzip', $req->headers->get('HTTP_ACCEPT_ENCODING'));
         $this->assertEquals('gzip', $req->headers('HTTP_ACCEPT_ENCODING'));
         $this->assertTrue($req->headers->has('HTTP_ACCEPT_ENCODING'));
