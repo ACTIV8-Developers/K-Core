@@ -142,6 +142,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
 		$this->assertEquals($request->get->get('goo'), 'gar');
 
         $this->assertEquals($request->get('goo'), 'gar');
+        $this->assertEquals($request->get(null), ['goo' => 'gar']);
 
         $request->setUri('test/2');
 
