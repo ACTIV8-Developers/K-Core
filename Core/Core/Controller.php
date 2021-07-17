@@ -27,7 +27,7 @@ abstract class Controller extends ContainerAware
      * @param array $data
      * @return ResponseInterface
      */
-    protected function render($view, array $data = [])
+    protected function render(string $view, array $data = [])
     {
         // Extract variables.
         extract($data);
@@ -55,7 +55,7 @@ abstract class Controller extends ContainerAware
      * @param array $data
      * @return string
      */
-    protected function buffer($view, array $data = [])
+    protected function buffer(string $view, array $data = []): string
     {
         // Extract variables.
         extract($data);
@@ -75,7 +75,7 @@ abstract class Controller extends ContainerAware
     /**
      * Display page with not found code.
      *
-     * @throws \Core\Core\Exceptions\NotFoundException
+     * @throws NotFoundException
      */
     protected function notFound()
     {

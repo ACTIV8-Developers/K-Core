@@ -2,6 +2,7 @@
 namespace Core\Database;
 
 use Core\Database\Interfaces\DatabaseInterface;
+use PDO;
 
 /**
  * Basic database class used for common MSSQl CRUD operations.
@@ -13,16 +14,16 @@ class MSSqlDatabase implements DatabaseInterface
     /**
      * Database connection.
      *
-     * @var \PDO
+     * @var ?PDO
      */
-    protected $connection = null;
+    protected ?PDO $connection = null;
 
     /**
      * Get connection variable.
      *
-     * @return \PDO
+     * @return PDO
      */
-    public function getConnection(): ?\PDO
+    public function getConnection(): ?PDO
     {
         return $this->connection;
     }
@@ -30,9 +31,9 @@ class MSSqlDatabase implements DatabaseInterface
     /**
      * Set connection variable.
      *
-     * @param \PDO $conn
+     * @param PDO $conn
      */
-    public function setConnection(\PDO $conn)
+    public function setConnection(PDO $conn)
     {
         $this->connection = $conn;
     }
@@ -66,9 +67,9 @@ class MSSqlDatabase implements DatabaseInterface
      *
      * @param string $query
      * @param array $params
-     * @return \PDOStatement|resource
+     * @return \PDOStatement
      */
-    public function query($query, array $params = [])
+    public function query($query, array $params = []): \PDOStatement
     {
         // Execute query
         $stmt = $this->connection->prepare($query);
@@ -80,7 +81,7 @@ class MSSqlDatabase implements DatabaseInterface
     /**
      * Set PDO attribute.
      *
-     * @param int $attr
+     * @param string $attr
      * @param mixed $value
      */
     public function setAttribute(string $attr, $value)

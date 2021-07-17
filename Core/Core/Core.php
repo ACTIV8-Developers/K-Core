@@ -25,12 +25,12 @@ class Core extends ContainerAware
      *
      * @var string
      */
-    const VERSION = '3.6.0';
+    const VERSION = '4.0.0';
 
     /**
      * @var Core
      */
-    protected static $instance;
+    protected static Core $instance;
 
     /**
      * Array of middleware actions
@@ -42,14 +42,14 @@ class Core extends ContainerAware
     /**
      * @var Container
      */
-    protected $container = null;
+    protected ?Container $container = null;
 
     /**
      * Array of hooks to be applied.
      *
      * @var callable[]
      */
-    protected $hooks = [
+    protected array $hooks = [
         'after.execute' => null,
         'not.found' => null,
         'internal.error' => null
@@ -58,7 +58,7 @@ class Core extends ContainerAware
     /**
      * Core constructor.
      *
-     * @param ContainerInterface|ContainerInterface $container
+     * @param ContainerInterface $container
      */
     public function __construct(ContainerInterface $container)
     {
@@ -79,7 +79,7 @@ class Core extends ContainerAware
      * @param ContainerInterface|null $container
      * @return Core
      */
-    public static function getInstance(ContainerInterface $container = null)
+    public static function getInstance(ContainerInterface $container = null): Core
     {
         if (null === self::$instance) {
             self::$instance = new Core($container);
@@ -94,7 +94,7 @@ class Core extends ContainerAware
      * @return ResponseInterface
      * @throws Exception
      */
-    public function execute($silent = false)
+    public function execute(bool $silent = false): ResponseInterface
     {
         try {
             // Execute middleware stack
@@ -168,7 +168,7 @@ class Core extends ContainerAware
      * @param NotFoundException $e
      * @return ResponseInterface
      */
-    protected function notFound(NotFoundException $e)
+    protected function notFound(NotFoundException $e): ResponseInterface
     {
         if (isset($this->hooks['not.found'])) {
             return $this->hooks['not.found']($e);
@@ -185,7 +185,7 @@ class Core extends ContainerAware
      * @param Exception $e
      * @return ResponseInterface
      */
-    protected function internalError(Exception $e)
+    protected function internalError(Exception $e): ResponseInterface
     {
         if (isset($this->hooks['internal.error'])) {
             return $this->hooks['internal.error']($e);
@@ -203,7 +203,7 @@ class Core extends ContainerAware
      * @param callable $hook
      * @return $this
      */
-    public function setHook($key, callable $hook)
+    public function setHook($key, callable $hook): Core
     {
         $this->hooks[$key] = $hook;
 
@@ -216,7 +216,7 @@ class Core extends ContainerAware
      * @param string $key
      * @return Executable
      */
-    public function getHook($key)
+    public function getHook(string $key)
     {
         return $this->hooks[$key];
     }
@@ -225,7 +225,7 @@ class Core extends ContainerAware
      * @param callable $callable
      * @return $this
      */
-    public function addMiddleware(callable $callable)
+    public function addMiddleware(callable $callable): Core
     {
         $next = $this->middleware->top();
         $this->middleware[] = function () use ($callable, $next) {

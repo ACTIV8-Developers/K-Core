@@ -11,9 +11,9 @@ interface ResponseInterface extends HttpInterface
     /**
      * Get the response Status-Code
      *
-     * @return integer Status code
+     * @return int Status code
      */
-    public function getStatusCode();
+    public function getStatusCode(): int;
 
     /**
      * Set the response Status-Code
@@ -23,7 +23,7 @@ interface ResponseInterface extends HttpInterface
      *     provided status code; if none is provided default one associated with code will be used
      * @return self
      */
-    public function setStatusCode($code, $reasonPhrase = null);
+    public function setStatusCode(int $code, string $reasonPhrase = null): ResponseInterface;
 
     /**
      * Send response back to browser

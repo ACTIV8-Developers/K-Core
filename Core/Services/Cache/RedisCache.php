@@ -18,7 +18,7 @@ class RedisCache implements CacheInterface
     /**
      * @var Redis
      */
-    private $handler;
+    private Redis $handler;
 
     public function __construct($config)
     {
@@ -30,7 +30,7 @@ class RedisCache implements CacheInterface
         }
     }
 
-    public function getConnection()
+    public function getConnection(): Redis
     {
         return $this->handler;
     }
@@ -47,13 +47,14 @@ class RedisCache implements CacheInterface
     /**
      * {@inheritDoc}
      */
-    public function clear()
+    public function clear(): bool
     {
         return $this->handler->flushDB();
     }
 
     /**
      * {@inheritDoc}
+     * @throws Exception
      */
     public function getMultiple($keys, $default = null)
     {
@@ -64,6 +65,9 @@ class RedisCache implements CacheInterface
         return array_merge(array_combine($keys, $this->handler->mget($keys)), $defaults);
     }
 
+    /**
+     * @throws Exception
+     */
     private function checkKeysValidity($key)
     {
         if (!is_string($key)) {
@@ -81,7 +85,7 @@ class RedisCache implements CacheInterface
     /**
      * {@inheritDoc}
      */
-    public function setMultiple($values, $ttl = null)
+    public function setMultiple($values, $ttl = null): bool
     {
         foreach ($values as $key => $value) {
             $this->checkKeysValidity($key);
@@ -103,6 +107,7 @@ class RedisCache implements CacheInterface
 
     /**
      * {@inheritDoc}
+     * @throws Exception
      */
     public function set($key, $value, $ttl = null)
     {
@@ -119,6 +124,7 @@ class RedisCache implements CacheInterface
 
     /**
      * {@inheritDoc}
+     * @throws Exception
      */
     public function deleteMultiple($keys)
     {

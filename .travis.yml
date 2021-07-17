@@ -6,6 +6,8 @@ php:
 sudo: false
 
 before_script:
+  - apt-get update
+  - apt-get install redis php7.4-redis
   - composer install
 
 script:

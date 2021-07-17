@@ -13,9 +13,9 @@ class MySqlDatabase implements DatabaseInterface
     /**
      * Database connection.
      *
-     * @var \PDO
+     * @var ?\PDO
      */
-    protected $connection = null;
+    protected ?\PDO $connection = null;
 
     /**
      * Get connection variable.
@@ -66,9 +66,9 @@ class MySqlDatabase implements DatabaseInterface
      *
      * @param string $query
      * @param array $params
-     * @return \PDOStatement|resource
+     * @return \PDOStatement
      */
-    public function query($query, array $params = [])
+    public function query($query, array $params = []): \PDOStatement
     {
         // Execute query
         $stmt = $this->connection->prepare($query);

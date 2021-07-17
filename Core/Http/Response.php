@@ -20,7 +20,7 @@ class Response implements ResponseInterface
      * @var array
      * @see http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
      */
-    protected static $messages = [
+    protected static array $messages = [
         // Informational 1xx.
         100 => '100 Continue',
         101 => '101 Switching Protocols',
@@ -75,44 +75,44 @@ class Response implements ResponseInterface
     /**
      * List of HTTP headers to be sent.
      *
-     * @var \Core\Http\HttpBag
+     * @var ?HttpBag
      */
-    public $headers = null;
+    public ?HttpBag $headers = null;
 
     /**
      * Array of cookies to be sent.
      *
-     * @var \Core\Http\HttpBag
+     * @var ?HttpBag
      */
-    public $cookies = null;
+    public ?HttpBag $cookies = null;
 
     /**
      * HTTP response protocol version.
      *
      * @var string
      */
-    protected $protocolVersion = 'HTTP/1.1';
+    protected string $protocolVersion = 'HTTP/1.1';
 
     /**
      * HTTP response code.
      *
      * @var int
      */
-    protected $statusCode = 200;
+    protected int $statusCode = 200;
 
     /**
      * HTTP reason phrase.
      *
      * @var string|null
      */
-    protected $reasonPhrase = null;
+    protected ?string $reasonPhrase = null;
 
     /**
      * HTTP response body.
      *
      * @var string
      */
-    protected $body = '';
+    protected string $body = '';
 
     /**
      * Class construct
@@ -129,7 +129,7 @@ class Response implements ResponseInterface
      * @param string $part
      * @return self
      */
-    public function writeBody($part)
+    public function writeBody($part): Response
     {
         $this->body .= $part;
         return $this;
@@ -140,7 +140,7 @@ class Response implements ResponseInterface
      *
      * @return string
      */
-    public function getBody()
+    public function getBody(): string
     {
         return $this->body;
     }
@@ -151,7 +151,7 @@ class Response implements ResponseInterface
      * @param string $body
      * @return self
      */
-    public function setBody(string $body)
+    public function setBody(string $body): Response
     {
         $this->body = $body;
         return $this;
@@ -160,9 +160,9 @@ class Response implements ResponseInterface
     /**
      * Get the response Status-Code
      *
-     * @return integer Status code
+     * @return int Status code
      */
-    public function getStatusCode()
+    public function getStatusCode(): int
     {
         return $this->statusCode;
     }
@@ -175,7 +175,7 @@ class Response implements ResponseInterface
      *     provided status code; if none is provided default one associated with code will be used
      * @return self
      */
-    public function setStatusCode(int $code, $reasonPhrase = null)
+    public function setStatusCode(int $code, string $reasonPhrase = null): Response
     {
         $this->statusCode = $code;
         $this->reasonPhrase = $reasonPhrase;
@@ -187,7 +187,7 @@ class Response implements ResponseInterface
      *
      * @return string
      */
-    public function getProtocolVersion()
+    public function getProtocolVersion(): string
     {
         return $this->protocolVersion;
     }
@@ -198,7 +198,7 @@ class Response implements ResponseInterface
      * @param string $version
      * @return self
      */
-    public function setProtocolVersion(string $version)
+    public function setProtocolVersion(string $version): Response
     {
         $this->protocolVersion = $version;
         return $this;
@@ -211,7 +211,7 @@ class Response implements ResponseInterface
      *
      * @return array
      */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->headers->all();
     }
@@ -224,7 +224,7 @@ class Response implements ResponseInterface
      * @param string $value Header value
      * @return self
      */
-    public function setHeader(string $key, string $value)
+    public function setHeader(string $key, string $value): Response
     {
         $this->headers->set($key, $value);
         return $this;
@@ -236,7 +236,7 @@ class Response implements ResponseInterface
      * @param string $key Case-insensitive header field name
      * @return string
      */
-    public function getHeader(string $key)
+    public function getHeader(string $key): string
     {
         return $this->headers->get($key);
     }
@@ -254,7 +254,7 @@ class Response implements ResponseInterface
      * @throws \InvalidArgumentException
      * @return self
      */
-    public function setCookie($name, $value = null, $expire = 7200, $path = '/', $domain = null, $secure = false, $httpOnly = true)
+    public function setCookie($name, $value = null, $expire = 7200, $path = '/', $domain = null, $secure = false, $httpOnly = true): Response
     {
         $this->cookies->set($name, new Cookie($name, $value, $expire, $path, $domain, $secure, $httpOnly));
         return $this;
@@ -265,7 +265,7 @@ class Response implements ResponseInterface
      *
      * @return self
      */
-    public function send()
+    public function send(): Response
     {
         // Check if headers are sent already.
         if (headers_sent() === false) {

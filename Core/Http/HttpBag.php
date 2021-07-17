@@ -11,7 +11,7 @@ class HttpBag implements \IteratorAggregate, \Countable, \ArrayAccess
      *
      * @var array
      */
-    protected $elements = [];
+    protected array $elements = [];
 
     /**
      * Constructor.

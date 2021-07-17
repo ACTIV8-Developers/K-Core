@@ -13,9 +13,9 @@ use Psr\Container\ContainerInterface;
 abstract class ContainerAware implements ContainerAwareInterface
 {
     /**
-     * @var Container $container
+     * @var ?ContainerInterface $container
      */
-    protected $container = null;
+    protected ?ContainerInterface $container = null;
 
     /**
      * @param ContainerInterface $container

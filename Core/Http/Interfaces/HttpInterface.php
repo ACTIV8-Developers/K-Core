@@ -1,4 +1,5 @@
 <?php
+
 namespace Core\Http\Interfaces;
 
 /**
@@ -13,7 +14,7 @@ interface HttpInterface
      *
      * @return string
      */
-    public function getProtocolVersion();
+    public function getProtocolVersion(): string;
 
     /**
      * Set HTTP protocol version ("HTTP/1.1" or "HTTP/1.0").
@@ -21,7 +22,7 @@ interface HttpInterface
      * @param string $version
      * @return self
      */
-    public function setProtocolVersion($version);
+    public function setProtocolVersion(string $version): HttpInterface;
 
     /**
      * Returns an associative array of all current headers
@@ -30,7 +31,7 @@ interface HttpInterface
      *
      * @return array
      */
-    public function getHeaders();
+    public function getHeaders(): array;
 
     /**
      * Set new header, replacing any existing values
@@ -40,7 +41,7 @@ interface HttpInterface
      * @param string $value Header value
      * @return self
      */
-    public function setHeader($key, $value);
+    public function setHeader(string $key, string $value): HttpInterface;
 
     /**
      * Get header with passed key
@@ -48,7 +49,7 @@ interface HttpInterface
      * @param string $key Case-insensitive header field name
      * @return string
      */
-    public function getHeader($key);
+    public function getHeader(string $key): string;
 
 
     /**
@@ -56,7 +57,7 @@ interface HttpInterface
      *
      * @return string
      */
-    public function getBody();
+    public function getBody(): string;
 
     /**
      * Set request body
@@ -64,5 +65,5 @@ interface HttpInterface
      * @param string $body
      * @return self
      */
-    public function setBody($body);
+    public function setBody(string $body): HttpInterface;
 }

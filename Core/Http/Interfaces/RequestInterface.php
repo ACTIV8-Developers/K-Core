@@ -13,7 +13,7 @@ interface RequestInterface extends HttpInterface
      *
      * @return string
      */
-    public function getMethod();
+    public function getMethod(): string;
 
     /**
      * Set HTTP request method
@@ -21,14 +21,14 @@ interface RequestInterface extends HttpInterface
      * @param string
      * @return self
      */
-    public function setMethod($method);
+    public function setMethod($method): RequestInterface;
 
     /**
      * Retrieves the request URI
      *
      * @return string
      */
-    public function getUri();
+    public function getUri(): string;
 
     /**
      * Sets the request URI
@@ -36,5 +36,5 @@ interface RequestInterface extends HttpInterface
      * @param string $uri New request URI to use
      * @return self
      */
-    public function setUri($uri);
+    public function setUri(string $uri): RequestInterface;
 }

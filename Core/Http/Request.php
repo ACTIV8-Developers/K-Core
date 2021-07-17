@@ -175,7 +175,7 @@ class Request implements RequestInterface
      * @param string $uri New request URI to use
      * @return self
      */
-    public function setUri($uri)
+    public function setUri(string $uri)
     {
         $this->server->set('REQUEST_URI', $uri);
         return $this;
@@ -201,7 +201,7 @@ class Request implements RequestInterface
      *
      * @return string
      */
-    public function getProtocolVersion()
+    public function getProtocolVersion(): string
     {
         return $this->server->get('SERVER_PROTOCOL');
     }
@@ -212,7 +212,7 @@ class Request implements RequestInterface
      * @param string $version
      * @return self
      */
-    public function setProtocolVersion(string $version)
+    public function setProtocolVersion(string $version): Request
     {
         $this->server->set('SERVER_PROTOCOL', $version);
         return $this;
@@ -223,7 +223,7 @@ class Request implements RequestInterface
      *
      * @return bool
      */
-    public function isAjax()
+    public function isAjax(): bool
     {
         if ($this->headers->get('HTTP_X_REQUESTED_WITH') !== null
             && strtolower($this->headers->get('HTTP_X_REQUESTED_WITH')) === 'xmlhttprequest'
@@ -238,7 +238,7 @@ class Request implements RequestInterface
      *
      * @return string
      */
-    public function getMethod()
+    public function getMethod(): string
     {
         return $this->server->get('REQUEST_METHOD');
     }
@@ -249,7 +249,7 @@ class Request implements RequestInterface
      * @param string
      * @return self
      */
-    public function setMethod($method)
+    public function setMethod($method): Request
     {
         $this->server->set('REQUEST_METHOD', $method);
         return $this;
@@ -260,7 +260,7 @@ class Request implements RequestInterface
      *
      * @return bool
      */
-    public function isHead()
+    public function isHead(): bool
     {
         return self::METHOD_HEAD === $this->server->get('REQUEST_METHOD');
     }
@@ -270,7 +270,7 @@ class Request implements RequestInterface
      *
      * @return bool
      */
-    public function isGet()
+    public function isGet(): bool
     {
         return self::METHOD_GET === $this->server->get('REQUEST_METHOD');
     }
@@ -280,7 +280,7 @@ class Request implements RequestInterface
      *
      * @return bool
      */
-    public function isPost()
+    public function isPost(): bool
     {
         return self::METHOD_POST === $this->server->get('REQUEST_METHOD');
     }
@@ -290,7 +290,7 @@ class Request implements RequestInterface
      *
      * @return bool
      */
-    public function isPut()
+    public function isPut(): bool
     {
         return self::METHOD_PUT === $this->server->get('REQUEST_METHOD');
     }
@@ -300,7 +300,7 @@ class Request implements RequestInterface
      *
      * @return bool
      */
-    public function isPatch()
+    public function isPatch(): bool
     {
         return self::METHOD_PATCH === $this->server->get('REQUEST_METHOD');
     }
@@ -310,7 +310,7 @@ class Request implements RequestInterface
      *
      * @return bool
      */
-    public function isDelete()
+    public function isDelete(): bool
     {
         return self::METHOD_DELETE === $this->server->get('REQUEST_METHOD');
     }
@@ -320,7 +320,7 @@ class Request implements RequestInterface
      *
      * @return bool
      */
-    public function isOptions()
+    public function isOptions(): bool
     {
         return self::METHOD_OPTIONS === $this->server->get('REQUEST_METHOD');
     }
@@ -332,7 +332,7 @@ class Request implements RequestInterface
      *
      * @return array
      */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->headers->all();
     }
@@ -345,7 +345,7 @@ class Request implements RequestInterface
      * @param string $value Header value
      * @return self
      */
-    public function setHeader(string $key, string $value)
+    public function setHeader(string $key, string $value): Request
     {
         $this->headers->set($key, $value);
         return $this;
@@ -357,7 +357,7 @@ class Request implements RequestInterface
      * @param string $key Case-insensitive header field name
      * @return string
      */
-    public function getHeader(string $key)
+    public function getHeader(string $key): string
     {
         return $this->headers->get($key);
     }
@@ -367,7 +367,7 @@ class Request implements RequestInterface
      *
      * @return string|null
      */
-    public function getUserAgent()
+    public function getUserAgent(): ?string
     {
         return $this->headers->get('HTTP_USER_AGENT');
     }
@@ -377,7 +377,7 @@ class Request implements RequestInterface
      *
      * @return string|null
      */
-    public function getReferrer()
+    public function getReferrer(): ?string
     {
         return $this->headers->get('HTTP_REFERRER');
     }
@@ -387,7 +387,7 @@ class Request implements RequestInterface
      *
      * @return string|null
      */
-    public function getContentType()
+    public function getContentType(): string
     {
         return $this->headers->get('CONTENT_TYPE');
     }
@@ -397,7 +397,7 @@ class Request implements RequestInterface
      *
      * @return string|null
      */
-    public function getContentLength()
+    public function getContentLength(): string
     {
         return $this->headers->get('CONTENT_LENGTH');
     }
