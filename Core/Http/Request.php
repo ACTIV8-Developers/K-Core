@@ -119,7 +119,7 @@ class Request implements RequestInterface
         }
 
         // Since PHP doesn't support PUT, DELETE, PATCH naturally for these methods we will parse data directly from source.
-        if (0 === strpos($this->headers->get('CONTENT_TYPE'), 'application/x-www-form-urlencoded')
+        if (0 === strpos($this->headers->get('CONTENT_TYPE') ?? "", 'application/x-www-form-urlencoded')
             && in_array($this->server->get('REQUEST_METHOD'), array('PUT', 'DELETE', 'PATCH'))
         ) {
             parse_str($this->getBody(), $data);
