@@ -68,7 +68,7 @@ class HttpBag implements \IteratorAggregate, \Countable, \ArrayAccess
      *
      * @param array $elements
      */
-    public function add(array $elements = [])
+    public function add(array $elements = []): void
     {
         $this->elements = array_merge($this->elements, $elements);
     }
@@ -79,7 +79,7 @@ class HttpBag implements \IteratorAggregate, \Countable, \ArrayAccess
      * @param string $key
      * @param mixed $value
      */
-    public function set($key, $value)
+    public function set($key, $value): void
     {
         $this->elements[$key] = $value;
     }
@@ -100,7 +100,7 @@ class HttpBag implements \IteratorAggregate, \Countable, \ArrayAccess
      *
      * @param string $key
      */
-    public function remove(string $key)
+    public function remove(string $key): void
     {
         unset($this->elements[$key]);
     }
@@ -108,7 +108,7 @@ class HttpBag implements \IteratorAggregate, \Countable, \ArrayAccess
     /**
      * Removes all elements.
      */
-    public function clear()
+    public function clear(): void
     {
         unset($this->elements);
         $this->elements = [];
@@ -123,7 +123,7 @@ class HttpBag implements \IteratorAggregate, \Countable, \ArrayAccess
      * @see http://php.net/manual/en/function.filter-var.php
      * @return mixed
      */
-    public function filter($key, $filter = FILTER_DEFAULT, $options = [])
+    public function filter($key, $filter = FILTER_DEFAULT, $options = []): mixed
     {
         $value = $this->get($key);
 
@@ -146,7 +146,7 @@ class HttpBag implements \IteratorAggregate, \Countable, \ArrayAccess
      * @param string $key
      * @return mixed
      */
-    public function get(string $key)
+    public function get(string $key): mixed
     {
         return $this->elements[$key] ?? null;
     }
@@ -197,7 +197,7 @@ class HttpBag implements \IteratorAggregate, \Countable, \ArrayAccess
      * @return mixed Can return all value types.
      * @since 5.0.0
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         if (isset($this->elements[$offset])) {
            return $this->elements[$offset];
@@ -217,7 +217,7 @@ class HttpBag implements \IteratorAggregate, \Countable, \ArrayAccess
      * @return void
      * @since 5.0.0
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->elements[$offset] = $value;
     }
@@ -231,7 +231,7 @@ class HttpBag implements \IteratorAggregate, \Countable, \ArrayAccess
      * @return void
      * @since 5.0.0
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->elements[$offset]);
     }
