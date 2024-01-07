@@ -30,7 +30,7 @@ class JSONParserMiddleware extends ContainerAware
      */
     public function __invoke(callable $next)
     {
-        if (strpos($this->request->getContentType(), "json") !== false) {
+        if (strpos($this->request->getContentType() ?? "", "json") !== false) {
             $this->container['data'] = json_decode($this->request->getBody(), true);
         }
 
